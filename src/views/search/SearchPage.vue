@@ -1,7 +1,6 @@
-<script setup></script>
-
 <template>
-  <router-view></router-view>
+  <div>SearchPage</div>
 </template>
 
+<script setup></script>
 <style lang="less" scoped></style>
