@@ -18,7 +18,9 @@
     ]
   },
   "dependencies": {
+    "@lordicon/element": "^1.4.2",
     "axios": "^1.6.2",
+    "lottie-web": "^5.12.2",
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^3.2.0",
     "vant": "^4.8.0",

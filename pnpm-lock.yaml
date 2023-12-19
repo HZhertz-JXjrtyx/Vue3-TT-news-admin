@@ -5,9 +5,15 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@lordicon/element':
+    specifier: ^1.4.2
+    version: 1.4.2
   axios:
     specifier: ^1.6.2
     version: 1.6.2
+  lottie-web:
+    specifier: ^5.12.2
+    version: 5.12.2
   pinia:
     specifier: ^2.1.7
     version: 2.1.7(vue@3.3.11)
@@ -356,6 +362,16 @@ packages:
 
   /@jridgewell/sourcemap-codec@1.4.15:
     resolution: {integrity: sha512-eF2rxCRulEKXHTRiDrDy6erMYWqNw4LPdQ8UQA4huuxaQsVeRPFl2oM8oDGxMFhJUWZf9McpLtJasDDZb/Bpeg==}
+
+  /@lordicon/element@1.4.2:
+    resolution: {integrity: sha512-h5T2YCk5d2O5JjSSA8StUDC/nB2S8OqrTYuOOkrg2fSOzSc1DglUFdHEaskxP5gvnSEsZCIGObtuVlXvmzbjsA==}
+    dependencies:
+      '@lordicon/helpers': 1.4.1
+    dev: false
+
+  /@lordicon/helpers@1.4.1:
+    resolution: {integrity: sha512-59TZlDSiGjN2AY2JAnyynTT3Zt05uKFmcLcv/1ZBst0Cc4emyrtglFObHxLcFyonHrsTM25cZ9FxK98Y6V90MA==}
+    dev: false
 
   /@nodelib/fs.scandir@2.1.5:
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -1626,6 +1642,10 @@ packages:
       strip-ansi: 7.1.0
       wrap-ansi: 9.0.0
     dev: true
+
+  /lottie-web@5.12.2:
+    resolution: {integrity: sha512-uvhvYPC8kGPjXT3MyKMrL3JitEAmDMp30lVkuq/590Mw9ok6pWcFCwXJveo0t5uqYw1UREQHofD+jVpdjBv8wg==}
+    dev: false
 
   /lru-cache@6.0.0:
     resolution: {integrity: sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA==}
