@@ -1,5 +1,5 @@
 <template>
-  <div>UserFollow</div>
+  <div>UserSpace</div>
 </template>
 
 <script setup></script>

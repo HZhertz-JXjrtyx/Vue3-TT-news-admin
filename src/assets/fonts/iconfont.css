@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 4382232 */
-  src: url('iconfont.woff2?t=1703083118313') format('woff2'),
-       url('iconfont.woff?t=1703083118313') format('woff'),
-       url('iconfont.ttf?t=1703083118313') format('truetype');
+  src: url('iconfont.woff2?t=1703168725372') format('woff2'),
+       url('iconfont.woff?t=1703168725372') format('woff'),
+       url('iconfont.ttf?t=1703168725372') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,10 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-a-44tubiao-62:before {
+  content: "\e6b7";
 }
 
 .icon-a-44tubiao-07:before {
