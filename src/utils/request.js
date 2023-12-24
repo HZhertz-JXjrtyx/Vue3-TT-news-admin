@@ -1,9 +1,9 @@
 import axios from 'axios'
 import { showToast } from 'vant'
+import 'vant/es/toast/style'
 import { useUserStore } from '@/stores'
 import router from '@/router'
 
-const userStore = useUserStore()
 const baseURL = 'http://localhost:3007'
 const instance = axios.create({
   baseURL,
@@ -12,6 +12,8 @@ const instance = axios.create({
 
 instance.interceptors.request.use(
   (config) => {
+    //const userStore = useUserStore()不能写在外面
+    const userStore = useUserStore()
     if (userStore.token) {
       config.headers.Authorization = userStore.token
     }
@@ -25,7 +27,10 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
   (response) => {
     if (response.data.status >= 200 && response.data.status < 300) {
+      console.log(response)
       return response.data
+    } else if (response.data.status === 409) {
+      return Promise.reject(response.data)
     } else {
       showToast({
         message: `!!!${response.data.message || '服务异常'}`,
