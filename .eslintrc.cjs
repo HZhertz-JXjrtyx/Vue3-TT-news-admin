@@ -21,5 +21,6 @@ module.exports = {
     ],
     'vue/no-setup-props-destructure': ['off'],
     'no-undef': 'error'
-  }
+  },
+  ignorePatterns: ['src/assets*']
 }

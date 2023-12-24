@@ -9,8 +9,11 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue'
+import lottie from 'lottie-web'
+import { defineElement } from '@lordicon/element'
 
+// 定义 "lord-icon" 自定义元素
+defineElement(lottie.loadAnimation)
 const props = defineProps({
   iconSrc: String,
   active: Boolean
