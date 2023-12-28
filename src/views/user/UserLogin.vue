@@ -131,11 +131,12 @@ import { login, register, isOnlyName, sendCode } from '@/api'
 import { showToast } from 'vant'
 import 'vant/es/toast/style'
 import { useRouter } from 'vue-router'
-import { useUserStore } from '@/stores'
+import { useUserStore, useChannelStore } from '@/stores'
 import { debounce } from 'lodash'
 
 const router = useRouter()
-const user = useUserStore()
+const userStore = useUserStore()
+const channelStore = useChannelStore()
 const status = ref('登录')
 const errorMessage = ref('')
 const isCountDownShow = ref(false)
@@ -188,7 +189,8 @@ const loginSubmit = async () => {
   const res = await login(loginInfo.value)
   console.log(res)
   if (res.status === 200) {
-    user.setToken(res.token)
+    userStore.setToken(res.token)
+    channelStore.fetchUserChannels()
     showToast({
       message: '登录成功',
       position: 'bottom'
