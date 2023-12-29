@@ -3,59 +3,23 @@
     <div class="image-none" v-if="uiStyle === 'image_none'">
       <div class="title">{{ news.title }}</div>
       <div class="description">{{ news.article_info.description }}</div>
-      <div class="bottom">
-        <div class="user">
-          <van-image
-            class="user-avatar"
-            round
-            width="30px"
-            height="30px"
-            :src="news.user_info.user_avatar"
-          />
-          <span class="user-name">{{ news.user_info.user_nickname }}</span>
-        </div>
-        <div class="pub-time">{{ news.publish_time }}</div>
-      </div>
     </div>
     <div class="image-right" v-if="uiStyle === 'image_right'">
       <div class="title">{{ news.title }}</div>
       <div class="middle">
         <div class="description">{{ news.article_info.description }}</div>
-        <img class="img" :src="news.image_list[0].url" alt="" />
-      </div>
-      <div class="bottom">
-        <div class="user">
-          <van-image
-            class="user-avatar"
-            round
-            width="30px"
-            height="30px"
-            :src="news.user_info.user_avatar"
-          />
-          <span class="user-name">{{ news.user_info.user_nickname }}</span>
-        </div>
-        <div class="pub-time">{{ news.publish_time }}</div>
+        <img class="img" :src="news.image_list[0]" alt="" />
       </div>
     </div>
     <div class="image-list" v-if="uiStyle === 'image_list'">
       <div class="title">{{ news.title }}</div>
       <div class="img-wrap">
-        <div class="img-wrap-item" v-for="(img, index) in news.image_list" :key="index">
-          <van-image class="img-item" fit="cover" :src="img.url" />
+        <div v-for="(img, index) in imgList" :key="index" class="img-wrap-item">
+          <img class="img-item" :src="img" alt="" />
+          <div v-if="news.image_list.length > 4 && index === 3" class="overlay">
+            <div class="overlay-text">+{{ news.image_list.length }}</div>
+          </div>
         </div>
-      </div>
-      <div class="bottom">
-        <div class="user">
-          <van-image
-            class="user-avatar"
-            round
-            width="30px"
-            height="30px"
-            :src="news.user_info.user_avatar"
-          />
-          <span class="user-name">{{ news.user_info.user_nickname }}</span>
-        </div>
-        <div class="pub-time">{{ news.publish_time }}</div>
       </div>
     </div>
     <div class="image-right-video" v-if="uiStyle === 'image_right|video'">
@@ -67,19 +31,6 @@
           <span class="iconfont icon-play1"></span>
         </div>
       </div>
-      <div class="bottom">
-        <div class="user">
-          <van-image
-            class="user-avatar"
-            round
-            width="30px"
-            height="30px"
-            :src="news.user_info.user_avatar"
-          />
-          <span class="user-name">{{ news.user_info.user_nickname }}</span>
-        </div>
-        <div class="pub-time">{{ news.publish_time }}</div>
-      </div>
     </div>
     <div class="image-large-video" v-if="uiStyle === 'image_large|video'">
       <div class="play">
@@ -89,36 +40,39 @@
           <div class="left">
             <div class="item">
               <span class="iconfont icon-shipinbofangliang"></span>
-              {{ '12万' }}
+              {{ playCount }}
             </div>
             <div class="item">
               <span class="iconfont icon-a-44tubiao-112"></span>
-              {{ '2222' }}
+              {{ commentCount }}
             </div>
           </div>
-          <div class="duraction">{{ '41:36' }}</div>
+          <div class="duraction">{{ duraction }}</div>
         </div>
       </div>
       <div class="title">{{ news.title }}</div>
-      <div class="bottom">
-        <div class="user">
-          <van-image
-            class="user-avatar"
-            round
-            width="30px"
-            height="30px"
-            :src="news.user_info.user_avatar"
-          />
-          <span class="user-name">{{ news.user_info.user_nickname }}</span>
-        </div>
-        <div class="pub-time">{{ news.publish_time }}</div>
+    </div>
+    <div class="bottom">
+      <div class="user">
+        <van-image
+          class="user-avatar"
+          round
+          width="30px"
+          height="30px"
+          :src="news.user_info.user_avatar"
+        />
+        <span class="user-name">{{ news.user_info.user_nickname }}</span>
       </div>
+      <div class="pub-time">{{ pubtime }}</div>
     </div>
     <van-divider :style="{ color: '#ccc', borderColor: '#ccc' }"> </van-divider>
   </div>
 </template>
 
 <script setup>
+import { ref } from 'vue'
+import dayjs from 'dayjs'
+
 const props = defineProps({
   news: {
     type: Object,
@@ -126,6 +80,33 @@ const props = defineProps({
   }
 })
 const uiStyle = props.news.ui_style
+const imgList = props.news.image_list ? props.news.image_list.slice(0, 4) : []
+let playCount = ref('')
+let commentCount = ref('')
+let duraction = ref('')
+let pubtime = ref('')
+const formatCount = (count) => {
+  if (count > 10000) {
+    return (count / 10000).toFixed(1) + '万'
+  } else {
+    return count.toString()
+  }
+}
+const convertToMMSS = (value) => {
+  let minutes = Math.floor(value / 60)
+  let seconds = Math.round(value % 60)
+  return minutes + ':' + (seconds < 10 ? '0' : '') + seconds
+}
+const convertToMMDDHHmm = (value) => {
+  let date = dayjs.unix(value)
+  return date.format('MM-DD HH:mm')
+}
+pubtime.value = convertToMMDDHHmm(props.news.publish_time)
+if (props.news.type === 'video') {
+  playCount.value = formatCount(props.news.play_count)
+  commentCount.value = formatCount(props.news.comment_count)
+  duraction.value = convertToMMSS(props.news.video_info.duration)
+}
 </script>
 <style lang="less" scoped>
 .title {
@@ -144,10 +125,10 @@ const uiStyle = props.news.ui_style
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 4;
-  height: 80px;
+  height: 100px;
   margin: 10px 0;
   font-size: 14px;
-  line-height: 20px;
+  line-height: 25px;
   line-break: anywhere;
   text-indent: 28px;
   color: #555555;
@@ -157,8 +138,8 @@ const uiStyle = props.news.ui_style
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 12px;
-  color: #bbbbbb;
+  font-size: 13px;
+  color: #aaa;
   .user {
     display: flex;
     align-items: center;
@@ -167,8 +148,10 @@ const uiStyle = props.news.ui_style
     }
     .user-name {
       margin-left: 6px;
-      font-size: 14px;
     }
+  }
+  .pub-time {
+    margin-right: 10px;
   }
 }
 
@@ -177,8 +160,8 @@ const uiStyle = props.news.ui_style
     display: flex;
 
     .img {
-      height: 80px;
-      margin-top: 10px;
+      height: 100px;
+      margin: 10px 0 10px 10px;
       border-radius: 4px;
     }
   }
@@ -189,9 +172,25 @@ const uiStyle = props.news.ui_style
     justify-content: space-between;
     margin: 10px 0;
     .img-wrap-item {
+      position: relative;
+      width: 80px;
+      height: 80px;
       .img-item {
-        width: 78px;
-        height: 78px;
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 2px;
+      }
+      .overlay {
+        position: absolute;
+        top: 0;
+        width: 80px;
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        font-size: 20px;
+        text-align: center;
+        line-height: 80px;
+        border-radius: 2px;
       }
     }
   }
@@ -204,6 +203,7 @@ const uiStyle = props.news.ui_style
       position: relative;
       .img {
         height: 100px;
+        margin: 10px 0 10px 10px;
         border-radius: 4px;
       }
       .iconfont {
@@ -257,8 +257,4 @@ const uiStyle = props.news.ui_style
     }
   }
 }
-
-// .divider {
-//   color: #555555;
-// }
 </style>

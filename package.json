@@ -20,6 +20,7 @@
   "dependencies": {
     "@lordicon/element": "^1.4.2",
     "axios": "^1.6.2",
+    "dayjs": "^1.11.10",
     "lodash": "^4.17.21",
     "lottie-web": "^5.12.2",
     "pinia": "^2.1.7",
