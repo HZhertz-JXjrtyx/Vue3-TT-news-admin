@@ -2,7 +2,7 @@
   <lord-icon
     trigger="click"
     :src="props.iconSrc"
-    :colors="props.active ? 'primary:#c71f16' : 'primary:#545454'"
+    :colors="props.active ? 'primary:#f04142' : 'primary:#545454'"
     style="width: 93px; height: 26px"
   >
   </lord-icon>

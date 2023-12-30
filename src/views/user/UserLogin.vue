@@ -258,7 +258,7 @@ const registerSubmit = async () => {
   padding: 37px 27px;
 
   .submit-btn {
-    background-color: rgb(197, 66, 34);
+    background-color: #f04142;
     color: #fff;
     border: none !important;
   }

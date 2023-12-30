@@ -14,7 +14,7 @@
         ></ListItem>
       </van-list>
     </van-pull-refresh>
-    <van-back-top right="15vw" bottom="10vh" />
+    <van-back-top right="28px" bottom="90px" />
   </div>
 </template>
 

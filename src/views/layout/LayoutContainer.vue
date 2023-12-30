@@ -1,7 +1,7 @@
 <template>
   <div>
     <router-view></router-view>
-    <van-tabbar route active-color="rgb(197, 66, 34)">
+    <van-tabbar route active-color="#f04142">
       <van-tabbar-item replace to="/home">
         <template #icon="{ active }">
           <LoadIcon iconSrc="https://cdn.lordicon.com/cnpvyndp.json" :active="active"></LoadIcon>
