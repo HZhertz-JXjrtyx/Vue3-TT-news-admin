@@ -7,18 +7,19 @@
         finished-text="没有更多了"
         @load="onLoad"
       >
-        <NewsItem
+        <ListItem
           v-for="item in newsStore.newsList[channelName]"
           :key="item._id"
           :news="item"
-        ></NewsItem>
+        ></ListItem>
       </van-list>
     </van-pull-refresh>
+    <van-back-top right="15vw" bottom="10vh" />
   </div>
 </template>
 
 <script setup>
-import NewsItem from '@/components/home/NewsItem.vue'
+import ListItem from '@/components/home/ListItem.vue'
 import { useNewsStore } from '@/stores'
 import { ref } from 'vue'
 

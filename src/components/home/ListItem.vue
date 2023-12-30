@@ -71,7 +71,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import dayjs from 'dayjs'
+import { formatCount, convertToMMSS, convertToMMDDHHmm } from '@/utils/convert'
 
 const props = defineProps({
   news: {
@@ -85,22 +85,7 @@ let playCount = ref('')
 let commentCount = ref('')
 let duraction = ref('')
 let pubtime = ref('')
-const formatCount = (count) => {
-  if (count > 10000) {
-    return (count / 10000).toFixed(1) + '万'
-  } else {
-    return count.toString()
-  }
-}
-const convertToMMSS = (value) => {
-  let minutes = Math.floor(value / 60)
-  let seconds = Math.round(value % 60)
-  return minutes + ':' + (seconds < 10 ? '0' : '') + seconds
-}
-const convertToMMDDHHmm = (value) => {
-  let date = dayjs.unix(value)
-  return date.format('MM-DD HH:mm')
-}
+
 pubtime.value = convertToMMDDHHmm(props.news.publish_time)
 if (props.news.type === 'video') {
   playCount.value = formatCount(props.news.play_count)
@@ -206,7 +191,7 @@ if (props.news.type === 'video') {
         margin: 10px 0 10px 10px;
         border-radius: 4px;
       }
-      .iconfont {
+      .icon-play1 {
         position: absolute;
         left: 50%;
         top: 50%;
@@ -255,6 +240,9 @@ if (props.news.type === 'video') {
         }
       }
     }
+  }
+  .title {
+    margin-bottom: 10px;
   }
 }
 </style>

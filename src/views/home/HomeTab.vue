@@ -10,6 +10,7 @@
       v-model:active="active"
       sticky
       animated
+      swipeable
       color="rgb(197, 66, 34)"
       title-active-color="rgb(197, 66, 34)"
     >
