@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import storeNames from '@/stores/storeNames'
-import { getUserChannels } from '@/api'
+import { getUserChannels, updateUserChannels as updateUserChannelsRequest } from '@/api'
 
 export const useChannelStore = defineStore(
   storeNames.CHANNEL,
@@ -12,9 +12,14 @@ export const useChannelStore = defineStore(
       console.log(response)
       userChannel.value = response.data
     }
+    const updateUserChannels = async (newUserChannel) => {
+      const response = await updateUserChannelsRequest(newUserChannel)
+      console.log(response)
+    }
     return {
       userChannel,
-      fetchUserChannels
+      fetchUserChannels,
+      updateUserChannels
     }
   },
   {

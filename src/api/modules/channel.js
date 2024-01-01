@@ -6,3 +6,10 @@ export const getUserChannels = () => {
     url: '/channel/user'
   })
 }
+export const updateUserChannels = (data) => {
+  return instance({
+    method: 'PATCH',
+    url: '/channel/user',
+    data
+  })
+}
