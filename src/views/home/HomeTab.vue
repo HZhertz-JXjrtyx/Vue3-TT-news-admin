@@ -1,6 +1,7 @@
 <template>
   <div class="home-tab">
-    <van-search v-model="value" shape="round" background="#F04142" placeholder="请输入搜索关键词" />
+    <van-search shape="round" background="#F04142" placeholder="请输入搜索关键词" />
+
     <van-tabs
       v-model:active="active"
       sticky
@@ -28,7 +29,6 @@
       :style="{ height: '100%' }"
       teleport="body"
       z-index="9999"
-      @click-close-icon="onClickCloseIcon"
     >
       <ChannelEdit></ChannelEdit>
     </van-popup>
@@ -36,7 +36,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, onActivated, onDeactivated } from 'vue'
 import { useUserStore, useChannelStore } from '@/stores'
 import NewsList from '@/components/home/NewsList.vue'
 import ChannelEdit from '@/components/home/ChannelEdit.vue'
@@ -46,7 +46,6 @@ const userStore = useUserStore()
 const isChannelEditShow = ref(false)
 let initialUserChannel = null
 
-console.log(channelStore.userChannel)
 if (Object.keys(channelStore.userChannel).length === 0) {
   channelStore.fetchUserChannels()
 }
@@ -70,6 +69,13 @@ watch(isChannelEditShow, async (newValue) => {
       }
     }
   }
+})
+onActivated(() => {
+  console.log('组件被重新激活')
+})
+
+onDeactivated(() => {
+  console.log('组件被缓存')
 })
 </script>
 <style lang="less" scoped>

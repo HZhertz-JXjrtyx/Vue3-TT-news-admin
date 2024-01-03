@@ -1,9 +1,10 @@
 <template>
   <lord-icon
     trigger="click"
+    target=".van-tabbar-item"
     :src="props.iconSrc"
     :colors="props.active ? 'primary:#f04142' : 'primary:#545454'"
-    style="width: 93px; height: 26px"
+    style="width: 30px; height: 26px"
   >
   </lord-icon>
 </template>

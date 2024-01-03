@@ -31,12 +31,18 @@ const router = createRouter({
         {
           path: 'home',
           name: 'home',
-          component: HomeTab
+          component: HomeTab,
+          meta: {
+            keepAlive: true
+          }
         },
         {
           path: 'video',
           name: 'video',
-          component: VideoTab
+          component: VideoTab,
+          meta: {
+            keepAlive: true
+          }
         },
         {
           path: 'message',
