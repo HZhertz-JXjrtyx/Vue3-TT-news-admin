@@ -9,7 +9,7 @@
         :move="checkMove"
       >
         <template #item="{ element }">
-          <div class="item container">
+          <div class="item container" @click="switchChannel(element.name)">
             {{ element.name }}
           </div>
         </template>
@@ -36,6 +36,7 @@
 import { useChannelStore } from '@/stores'
 import draggable from 'vuedraggable'
 
+const emit = defineEmits(['switch-channel'])
 const channelStore = useChannelStore()
 const checkMove = (evt) => {
   if (evt.draggedContext.element.id === 0) {
@@ -45,6 +46,10 @@ const checkMove = (evt) => {
       return false
     }
   }
+}
+const switchChannel = (name) => {
+  let index = channelStore.userChannel.selected.findIndex((item) => item.name === name)
+  emit('switch-channel', index)
 }
 </script>
 

@@ -10,7 +10,11 @@
       color="#FF373C"
       title-active-color="#FF373C"
     >
-      <van-tab v-for="item in channelStore.userChannel.selected" :key="item.id" :title="item.name">
+      <van-tab
+        v-for="(item, index) in channelStore.userChannel.selected"
+        :key="index"
+        :title="item.name"
+      >
         <NewsList :channelId="item.channel_id" :channelName="item.name"></NewsList>
       </van-tab>
       <template #nav-bottom>
@@ -29,47 +33,64 @@
       :style="{ height: '100%' }"
       teleport="body"
       z-index="9999"
+      @open="handleOpen"
+      @click-close-icon="onClickCloseIcon"
+      @close="handleClose"
     >
-      <ChannelEdit></ChannelEdit>
+      <ChannelEdit @switch-channel="onSwitchChannel"></ChannelEdit>
     </van-popup>
   </div>
 </template>
 
 <script setup>
-import { ref, watch, onActivated, onDeactivated } from 'vue'
+import { ref, onActivated, onDeactivated } from 'vue'
 import { useUserStore, useChannelStore } from '@/stores'
 import NewsList from '@/components/home/NewsList.vue'
 import ChannelEdit from '@/components/home/ChannelEdit.vue'
 
 const channelStore = useChannelStore()
 const userStore = useUserStore()
+const active = ref(0)
 const isChannelEditShow = ref(false)
 let initialUserChannel = null
+let initialName = ''
+let newIndex = 0
 
 if (Object.keys(channelStore.userChannel).length === 0) {
   channelStore.fetchUserChannels()
 }
-// 监听van-popup打开与关闭
-watch(isChannelEditShow, async (newValue) => {
+
+const onSwitchChannel = (index) => {
+  isChannelEditShow.value = false
+  active.value = index
+}
+const onClickCloseIcon = () => {
+  // 如果选中频道位置发生变化，根据之前记录的name找到新索引
+  newIndex = channelStore.userChannel.selected.findIndex((item) => item.name === initialName)
+  active.value = newIndex
+}
+const handleOpen = () => {
+  // van-popup打开时，记录选中频道的name
+  initialName = channelStore.userChannel.selected[active.value].name
+  // van-popup打开时，记录userChannel
+  initialUserChannel = JSON.parse(JSON.stringify(channelStore.userChannel))
+}
+const handleClose = async () => {
   if (userStore.token) {
-    if (newValue) {
-      // van-popup打开时，记录userChannel
-      initialUserChannel = JSON.parse(JSON.stringify(channelStore.userChannel))
-    } else {
-      // van-popup关闭时，比较userChannel
-      if (JSON.stringify(channelStore.userChannel) !== JSON.stringify(initialUserChannel)) {
-        // 如果userChannel有改变，再发起请求
-        // 将userChannel转换为只包含id的形式
-        const transformedUserChannel = {
-          selected: channelStore.userChannel.selected.map((item) => item.id),
-          unselected: channelStore.userChannel.unselected.map((item) => item.id)
-        }
-        // console.log(transformedUserChannel)
-        await channelStore.updateUserChannels(transformedUserChannel)
+    // van-popup关闭时，比较userChannel
+    if (JSON.stringify(channelStore.userChannel) !== JSON.stringify(initialUserChannel)) {
+      console.log('change')
+      // 如果userChannel有改变，再发起请求
+      // 将userChannel转换为只包含id的形式
+      const transformedUserChannel = {
+        selected: channelStore.userChannel.selected.map((item) => item.id),
+        unselected: channelStore.userChannel.unselected.map((item) => item.id)
       }
+      await channelStore.updateUserChannels(transformedUserChannel)
     }
   }
-})
+}
+
 onActivated(() => {
   console.log('组件被重新激活')
 })
