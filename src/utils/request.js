@@ -32,6 +32,7 @@ instance.interceptors.response.use(
     } else if (response.data.status === 409) {
       return Promise.reject(response.data)
     } else {
+      console.log(response)
       showToast({
         message: `!!!${response.data.message || '服务异常'}`,
         position: 'bottom'

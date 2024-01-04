@@ -114,7 +114,7 @@ if (userStore.token) {
       border-radius: 50%;
       .icon-a-44tubiao-57 {
         font-size: 35px;
-        color: rgb(197, 66, 34);
+        color: #f04142;
       }
     }
     .text {
@@ -194,7 +194,7 @@ if (userStore.token) {
 
     .iconfont {
       font-size: 28px;
-      color: rgb(197, 66, 34);
+      color: #f04142;
     }
 
     .text {
