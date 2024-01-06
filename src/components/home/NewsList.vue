@@ -11,6 +11,7 @@
           v-for="item in newsStore.newsList[channelName]"
           :key="item._id"
           :news="item"
+          @click="goDetail(item)"
         ></ListItem>
       </van-list>
     </van-pull-refresh>
@@ -20,6 +21,7 @@
 
 <script setup>
 import ListItem from '@/components/home/ListItem.vue'
+import { useRouter } from 'vue-router'
 import { useNewsStore } from '@/stores'
 import { ref } from 'vue'
 
@@ -33,12 +35,33 @@ const props = defineProps({
     required: true
   }
 })
+const router = useRouter()
 const newsStore = useNewsStore()
 const page = ref(1)
 const pageSize = ref(10)
 const loading = ref(false)
 const finished = ref(false)
 const refreshing = ref(false)
+
+const goDetail = (item) => {
+  console.log(item)
+  if (item.type === 'article') {
+    router.push({
+      name: 'articledetail',
+      params: {
+        articleId: item.article_id
+      }
+    })
+  }
+  if (item.type === 'video') {
+    router.push({
+      name: 'videodetail',
+      params: {
+        videoId: item.video_id
+      }
+    })
+  }
+}
 
 const onLoad = async () => {
   const hasMore = await newsStore.fetchNewsList(

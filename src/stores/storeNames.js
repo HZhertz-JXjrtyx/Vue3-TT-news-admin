@@ -1,5 +1,6 @@
 export default {
   USER: 'USER',
   CHANNEL: 'CHANNEL',
-  NEWS: 'NEWS'
+  NEWS: 'NEWS',
+  COMMENT: 'COMMENT'
 }

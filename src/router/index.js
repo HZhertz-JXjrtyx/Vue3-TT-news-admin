@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import LayoutContainer from '@/views/layout/LayoutContainer.vue'
 import HomeTab from '@/views/home/HomeTab.vue'
-import VideoTab from '@/views/video/VideoTab.vue'
+import DynamicTab from '@/views/dynamic/DynamicTab.vue'
 import MessageTab from '@/views/message/MessageTab.vue'
 import UserTab from '@/views/user/UserTab.vue'
 import SearchPage from '@/views/search/SearchPage.vue'
@@ -37,9 +37,9 @@ const router = createRouter({
           }
         },
         {
-          path: 'video',
-          name: 'video',
-          component: VideoTab,
+          path: 'dynamic',
+          name: 'dynamic',
+          component: DynamicTab,
           meta: {
             keepAlive: true
           }

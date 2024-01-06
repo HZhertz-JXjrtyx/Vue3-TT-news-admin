@@ -7,6 +7,7 @@
         class="selected-channels"
         :group="{ name: 'channels' }"
         :move="checkMove"
+        itemKey="id"
       >
         <template #item="{ element }">
           <div class="item container" @click="switchChannel(element.name)">
@@ -23,6 +24,7 @@
         class="unselected-channels"
         :group="{ name: 'channels' }"
         :move="checkMove"
+        itemKey="id"
       >
         <template #item="{ element }">
           <div class="item container">{{ element.name }}</div>

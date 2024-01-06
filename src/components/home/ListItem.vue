@@ -81,10 +81,10 @@ const props = defineProps({
 })
 const uiStyle = props.news.ui_style
 const imgList = props.news.image_list ? props.news.image_list.slice(0, 4) : []
-let playCount = ref('')
-let commentCount = ref('')
-let duraction = ref('')
-let pubtime = ref('')
+const playCount = ref('')
+const commentCount = ref('')
+const duraction = ref('')
+const pubtime = ref('')
 
 pubtime.value = convertToMMDDHHmm(props.news.publish_time)
 if (props.news.type === 'video') {
