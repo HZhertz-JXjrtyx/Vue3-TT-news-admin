@@ -26,6 +26,6 @@ export const useUserStore = defineStore(storeNames.USER, () => {
     setToken,
     removeToken,
     userInfo,
-    fetchUserInfo
+    fetchUserInfo,
   }
 })

@@ -1,3 +1,25 @@
+<script setup>
+import { ref, onMounted } from 'vue'
+import '@/styles/github-markdown-light.css'
+// import { convertToMMDDHHmm } from '@/utils/convert'
+import ArticleComment from '@/components/article/ArticleComment.vue'
+
+defineProps({
+  articleId: {
+    type: String,
+    required: true,
+  },
+})
+
+const pubtime = ref('')
+const commentContent = ref('asddfhahjfajfjhahjf')
+
+onMounted(async () => {
+  // await newsStore.getArticle(props.articleId)
+  // pubtime.value = convertToMMDDHHmm(newsStore.article.publish_time)
+})
+</script>
+
 <template>
   <div class="article-page">
     <van-sticky
@@ -8,7 +30,7 @@
     ></van-sticky>
 
     <div class="article">
-      <h1 class="title">{{ newsStore.article.title }}</h1>
+      <!-- <h1 class="title">{{ newsStore.article.title }}</h1> -->
       <div class="user-info">
         <van-image
           class="user-avatar"
@@ -52,28 +74,6 @@
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted } from 'vue'
-import { useNewsStore } from '@/stores'
-import '@/styles/github-markdown-light.css'
-import { convertToMMDDHHmm } from '@/utils/convert'
-import ArticleComment from '@/components/article/ArticleComment.vue'
-
-const props = defineProps({
-  articleId: {
-    type: String,
-    required: true
-  }
-})
-const newsStore = useNewsStore()
-const pubtime = ref('')
-const commentContent = ref('asddfhahjfajfjhahjf')
-
-onMounted(async () => {
-  await newsStore.getArticle(props.articleId)
-  pubtime.value = convertToMMDDHHmm(newsStore.article.publish_time)
-})
-</script>
 <style lang="less" scoped>
 .article {
   margin: 10px 10px 50px;
@@ -93,7 +93,7 @@ onMounted(async () => {
       top: 24px;
       left: 45px;
       font-size: 14px;
-      color: var(--main-color-black-2);
+      color: var(--text-color-2);
     }
     .follow-btn {
       position: absolute;
@@ -101,14 +101,12 @@ onMounted(async () => {
       right: 0px;
     }
   }
-  .article-content {
-  }
 }
 .divider {
   width: 375px;
   height: 6px;
   margin: 0;
-  background-color: var(--main-color-white-1);
+  background-color: var(--bg-color-3);
 }
 .comment {
   margin: 10px 10px 80px;
@@ -122,17 +120,17 @@ onMounted(async () => {
   width: 100%;
   height: 50px;
   padding: 0 20px;
-  background-color: var(--main-color-white-3);
-  border-top: 1px solid var(--main-color-white-1);
+  background-color: var(--bg-color-1);
+  border-top: 1px solid var(--bg-color-3);
   .bottom-comment {
     width: 140px;
     height: 30px;
     padding-left: 12px;
     overflow: hidden;
     text-overflow: ellipsis;
-    border: 1px solid var(--main-color-white-2);
+    border: 1px solid var(--bg-color-2);
     border-radius: 15px;
-    background-color: var(--main-color-white-1);
+    background-color: var(--bg-color-3);
   }
   .iconfont {
     font-size: 20px;

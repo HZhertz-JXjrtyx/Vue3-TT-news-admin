@@ -5,7 +5,7 @@ export const getNews = (params) => {
   return instance({
     method: 'GET',
     url: '/news/list',
-    params
+    params,
   })
 }
 export const getArticle = (params) => {
@@ -13,6 +13,6 @@ export const getArticle = (params) => {
   return instance({
     method: 'GET',
     url: '/news/article',
-    params
+    params,
   })
 }

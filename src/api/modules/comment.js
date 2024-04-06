@@ -5,6 +5,6 @@ export const getComment = (params) => {
   return instance({
     method: 'GET',
     url: '/comment/list',
-    params
+    params,
   })
 }

@@ -1,3 +1,12 @@
+<script setup>
+import { useUserStore } from '@/stores'
+
+const userStore = useUserStore()
+if (userStore.token) {
+  userStore.fetchUserInfo()
+}
+</script>
+
 <template>
   <div class="user-tab-container">
     <div v-if="userStore.token" class="login">
@@ -9,26 +18,18 @@
             <span class="iconfont icon-a-44tubiao-17" @click="$router.push('/user/profile')"></span>
           </span>
           <span class="user-id">UID:{{ userStore.userInfo.user_id }}</span>
-          <div class="space-btn" @click="$router.push('/user/space')">
-            空间<van-icon name="arrow" />
-          </div>
+          <div class="space-btn" @click="$router.push('/user/space')">空间<van-icon name="arrow" /></div>
         </div>
         <div class="data-status">
           <div class="data-item" @click="$router.push('/user')">
             <span class="count">{{ 0 }}</span>
             <span class="text">动态</span>
           </div>
-          <div
-            class="data-item"
-            @click="$router.push({ name: 'userlist', params: { type: 'follow' } })"
-          >
+          <div class="data-item" @click="$router.push({ name: 'userlist', params: { type: 'follow' } })">
             <span class="count">{{ 6 }}</span>
             <span class="text">关注</span>
           </div>
-          <div
-            class="data-item"
-            @click="$router.push({ name: 'userlist', params: { type: 'fans' } })"
-          >
+          <div class="data-item" @click="$router.push({ name: 'userlist', params: { type: 'fans' } })">
             <span class="count">{{ 0 }}</span>
             <span class="text">粉丝</span>
           </div>
@@ -82,17 +83,9 @@
   </div>
 </template>
 
-<script setup>
-import { useUserStore } from '@/stores'
-
-const userStore = useUserStore()
-if (userStore.token) {
-  userStore.fetchUserInfo()
-}
-</script>
 <style lang="less" scoped>
 .top {
-  height: 230px;
+  height: 460px;
   background: url('@/assets/image/OIG.jpg');
   background-size: cover;
 }
@@ -108,58 +101,58 @@ if (userStore.token) {
       justify-content: center;
       align-items: center;
 
-      width: 70px;
-      height: 70px;
+      width: 140px;
+      height: 140px;
       background-color: #fff;
       border-radius: 50%;
       .icon-a-44tubiao-57 {
-        font-size: 35px;
+        font-size: 70px;
         color: #f04142;
       }
     }
     .text {
       color: #fff;
-      font-size: 18px;
-      margin-top: 10px;
+      font-size: 36px;
+      margin-top: 20px;
     }
   }
 }
 .login {
   .base-info {
     position: relative;
-    height: 160px;
+    height: 320px;
     .avatar {
       position: absolute;
-      top: 50px;
-      left: 30px;
+      top: 100px;
+      left: 60px;
       border-radius: 50%;
-      width: 70px;
-      height: 70px;
+      width: 140px;
+      height: 140px;
     }
     .nickname {
       position: absolute;
-      top: 65px;
-      left: 110px;
-      font-size: 20px;
+      top: 130px;
+      left: 220px;
+      font-size: 40px;
       color: #000000;
     }
     .user-id {
       position: absolute;
-      top: 100px;
-      left: 110px;
-      font-size: 12px;
+      top: 200px;
+      left: 220px;
+      font-size: 24px;
       font-weight: 700;
       color: #505050;
     }
     .iconfont {
-      font-size: 20px;
+      font-size: 40px;
       color: #000000;
     }
     .space-btn {
       position: absolute;
-      top: 80px;
-      left: 300px;
-      font-size: 14px;
+      top: 160px;
+      left: 600px;
+      font-size: 28px;
       font-weight: 700;
       color: #505050;
     }
@@ -168,7 +161,7 @@ if (userStore.token) {
     display: flex;
 
     .data-item {
-      height: 60px;
+      height: 160px;
       flex: 1;
       display: flex;
       flex-direction: column;
@@ -177,36 +170,36 @@ if (userStore.token) {
       color: #000000;
 
       .count {
-        font-size: 20px;
+        font-size: 40px;
       }
 
       .text {
-        font-size: 16px;
+        font-size: 32px;
       }
     }
   }
 }
 .grid-nav {
-  margin-bottom: 15px;
+  margin-bottom: 30px;
 
   .grid-item {
-    height: 70px;
+    height: 140px;
 
     .iconfont {
-      font-size: 28px;
+      font-size: 56px;
       color: #f04142;
     }
 
     .text {
-      font-size: 16px;
+      font-size: 32px;
     }
   }
 }
 .van-cell {
   .iconfont {
-    font-size: 20px;
-    margin-right: 10px;
+    font-size: 40px;
+    margin-right: 20px;
   }
-  font-size: 16px;
+  font-size: 32px;
 }
 </style>

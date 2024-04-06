@@ -31,12 +31,12 @@ export const useNewsStore = defineStore(
       newsList,
       article,
       fetchNewsList,
-      getArticle
+      getArticle,
     }
   },
   {
     persist: {
-      paths: ['newsList']
-    }
+      paths: ['newsList'],
+    },
   }
 )

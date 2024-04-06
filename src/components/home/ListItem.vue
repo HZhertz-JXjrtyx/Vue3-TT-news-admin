@@ -1,3 +1,28 @@
+<script setup>
+import { ref } from 'vue'
+import { formatCount, convertToMMSS, convertToMMDDHHmm } from '@/utils/convert'
+
+const props = defineProps({
+  news: {
+    type: Object,
+    required: true,
+  },
+})
+const uiStyle = props.news.ui_style
+const imgList = props.news.image_list ? props.news.image_list.slice(0, 4) : []
+const playCount = ref('')
+const commentCount = ref('')
+const duraction = ref('')
+const pubtime = ref('')
+
+pubtime.value = convertToMMDDHHmm(props.news.publish_time)
+if (props.news.type === 'video') {
+  playCount.value = formatCount(props.news.play_count)
+  commentCount.value = formatCount(props.news.comment_count)
+  duraction.value = convertToMMSS(props.news.video_info.duration)
+}
+</script>
+
 <template>
   <div class="news-item">
     <div class="image-none" v-if="uiStyle === 'image_none'">
@@ -54,13 +79,7 @@
     </div>
     <div class="bottom">
       <div class="user">
-        <van-image
-          class="user-avatar"
-          round
-          width="30px"
-          height="30px"
-          :src="news.user_info.user_avatar"
-        />
+        <van-image class="user-avatar" round width="30px" height="30px" :src="news.user_info.user_avatar" />
         <span class="user-name">{{ news.user_info.user_nickname }}</span>
       </div>
       <div class="pub-time">{{ pubtime }}</div>
@@ -69,74 +88,50 @@
   </div>
 </template>
 
-<script setup>
-import { ref } from 'vue'
-import { formatCount, convertToMMSS, convertToMMDDHHmm } from '@/utils/convert'
-
-const props = defineProps({
-  news: {
-    type: Object,
-    required: true
-  }
-})
-const uiStyle = props.news.ui_style
-const imgList = props.news.image_list ? props.news.image_list.slice(0, 4) : []
-const playCount = ref('')
-const commentCount = ref('')
-const duraction = ref('')
-const pubtime = ref('')
-
-pubtime.value = convertToMMDDHHmm(props.news.publish_time)
-if (props.news.type === 'video') {
-  playCount.value = formatCount(props.news.play_count)
-  commentCount.value = formatCount(props.news.comment_count)
-  duraction.value = convertToMMSS(props.news.video_info.duration)
-}
-</script>
 <style lang="less" scoped>
 .title {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
-  height: 40px;
-  font-size: 17px;
-  font-weight: 600;
-  line-height: 20px;
-  line-break: anywhere;
-  color: #140505;
   overflow: hidden;
+  max-height: 80px;
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 40px;
+  line-break: anywhere;
+  color: var(--title-color);
 }
 .description {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 4;
-  height: 100px;
-  margin: 10px 0;
-  font-size: 14px;
-  line-height: 25px;
+  max-height: 200px;
+  margin: 20px 0;
+  font-size: 28px;
+  line-height: 50px;
   line-break: anywhere;
-  text-indent: 28px;
-  color: #555555;
+  text-indent: 56px;
+  color: var(--text-color-2);
   overflow: hidden;
 }
 .bottom {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 13px;
-  color: #aaa;
+  font-size: 26px;
+  color: var(--text-color-3);
   .user {
     display: flex;
     align-items: center;
     .user-avatar {
-      border: 1px solid #aaa;
+      border: 1px solid var(--text-color-3);
     }
     .user-name {
-      margin-left: 6px;
+      margin-left: 12px;
     }
   }
   .pub-time {
-    margin-right: 10px;
+    margin-right: 20px;
   }
 }
 
@@ -145,9 +140,9 @@ if (props.news.type === 'video') {
     display: flex;
 
     .img {
-      height: 100px;
-      margin: 10px 0 10px 10px;
-      border-radius: 4px;
+      height: 200px;
+      margin: 20px 0 20px 20px;
+      border-radius: 8px;
     }
   }
 }
@@ -155,27 +150,27 @@ if (props.news.type === 'video') {
   .img-wrap {
     display: flex;
     justify-content: space-between;
-    margin: 10px 0;
+    margin: 20px 0;
     .img-wrap-item {
       position: relative;
-      width: 80px;
-      height: 80px;
+      width: 160px;
+      height: 160px;
       .img-item {
-        width: 80px;
-        height: 80px;
+        width: 160px;
+        height: 160px;
         object-fit: cover;
-        border-radius: 2px;
+        border-radius: 4px;
       }
       .overlay {
         position: absolute;
         top: 0;
-        width: 80px;
+        width: 160px;
         background: rgba(0, 0, 0, 0.5);
         color: white;
-        font-size: 20px;
+        font-size: 40px;
         text-align: center;
-        line-height: 80px;
-        border-radius: 2px;
+        line-height: 160px;
+        border-radius: 4px;
       }
     }
   }
@@ -187,17 +182,17 @@ if (props.news.type === 'video') {
     .play {
       position: relative;
       .img {
-        height: 100px;
-        margin: 10px 0 10px 10px;
-        border-radius: 4px;
+        height: 200px;
+        margin: 20px 0 20px 20px;
+        border-radius: 8px;
       }
       .icon-play1 {
         position: absolute;
         left: 50%;
         top: 50%;
         transform: translate(-50%, -50%);
-        font-size: 20px;
-        color: rgba(255, 255, 255, 0.8);
+        font-size: 40px;
+        color: var(--bg-color-3);
       }
     }
   }
@@ -205,44 +200,44 @@ if (props.news.type === 'video') {
 .image-large-video {
   .play {
     position: relative;
-    width: 340px;
-    margin-bottom: 5px;
+    width: 680px;
+    margin: 30px auto;
     .img {
       width: 100%;
-      border-radius: 6px;
+      border-radius: 12px;
     }
     .icon-play1 {
       position: absolute;
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
-      font-size: 40px;
-      color: rgba(255, 255, 255, 0.6);
+      font-size: 80px;
+      color: var(--bg-color-3);
     }
     .info {
       position: absolute;
-      bottom: 6px;
+      bottom: 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      width: 340px;
-      height: 20px;
-      padding: 0 10px;
-      font-size: 14px;
-      color: #ffffff;
+      width: 680px;
+      height: 40px;
+      padding: 0 20px;
+      font-size: 28px;
+      color: var(--bg-color-1);
       .left {
         display: flex;
         align-items: center;
         .item {
           display: flex;
           align-items: center;
-          margin-right: 16px;
+          margin-right: 32px;
         }
       }
     }
   }
   .title {
-    margin-bottom: 10px;
+    margin: 20px 0;
   }
 }
 </style>

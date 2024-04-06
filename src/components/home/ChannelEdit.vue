@@ -1,3 +1,24 @@
+<script setup>
+import draggable from 'vuedraggable'
+import { useChannelStore } from '@/stores'
+
+const emit = defineEmits(['switch-channel'])
+const channelStore = useChannelStore()
+const checkMove = (evt) => {
+  if (evt.draggedContext.element.id === 0) {
+    return false
+  } else if (evt.relatedContext.element) {
+    if (channelStore.userChannel.selected.length !== 1 && evt.relatedContext.element.id === 0) {
+      return false
+    }
+  }
+}
+const switchChannel = (name) => {
+  let index = channelStore.userChannel.selected.findIndex((item) => item.name === name)
+  emit('switch-channel', index)
+}
+</script>
+
 <template>
   <div class="channel-edit">
     <div class="selected">
@@ -34,51 +55,29 @@
   </div>
 </template>
 
-<script setup>
-import { useChannelStore } from '@/stores'
-import draggable from 'vuedraggable'
-
-const emit = defineEmits(['switch-channel'])
-const channelStore = useChannelStore()
-const checkMove = (evt) => {
-  if (evt.draggedContext.element.id === 0) {
-    return false
-  } else if (evt.relatedContext.element) {
-    if (channelStore.userChannel.selected.length !== 1 && evt.relatedContext.element.id === 0) {
-      return false
-    }
-  }
-}
-const switchChannel = (name) => {
-  let index = channelStore.userChannel.selected.findIndex((item) => item.name === name)
-  emit('switch-channel', index)
-}
-</script>
-
 <style lang="less" scoped>
 .title {
-  margin: 14px;
-  font-size: 18px;
+  margin: 28px;
+  font-size: 34px;
 }
 .selected {
-  margin-top: 50px;
-  border-top: 1px solid var(--main-color-white-1);
+  margin-top: 100px;
+  border-top: 2px solid var(--bg-color-3);
 }
 .selected-channels,
 .unselected-channels {
   display: flex;
   flex-wrap: wrap;
-  min-height: 70px;
-  border-bottom: 1px solid var(--main-color-white-1);
-  background-color: var(--main-color-white-3);
+  min-height: 140px;
+  border-bottom: 2px solid var(--bg-color-3);
+  background-color: var(--bg-color-1);
 }
 
 .item {
-  width: 70px;
-  height: 50px;
-  margin: 10px;
-  background-color: var(--main-color-white-2);
-  border: 2px solid var(--main-color-red-3);
+  width: 140px;
+  height: 80px;
+  margin: 20px;
+  border: 4px solid var(--main-color-red-1);
   border-radius: 10px;
 }
 </style>

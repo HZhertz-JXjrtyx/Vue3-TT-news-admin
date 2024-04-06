@@ -1,3 +1,10 @@
+<script setup>
+import { useUserStore } from '@/stores'
+import LoadIcon from '@/components/layout/LoadIcon.vue'
+
+const userStore = useUserStore()
+</script>
+
 <template>
   <div>
     <!-- 使用keepalive缓存组件状态，结合路由meta对象配置 -->
@@ -12,10 +19,7 @@
     <van-tabbar route active-color="#f04142">
       <van-tabbar-item replace to="/home">
         <template #icon="{ active }">
-          <LoadIcon
-            iconSrc="http://127.0.0.1:3007/other/lord_icon/home.json"
-            :active="active"
-          ></LoadIcon>
+          <LoadIcon iconSrc="http://127.0.0.1:3007/other/lord_icon/home.json" :active="active"></LoadIcon>
         </template>
         首页
       </van-tabbar-item>
@@ -26,23 +30,17 @@
             :active="active"
           ></LoadIcon>
         </template>
-        动态
+        热点
       </van-tabbar-item>
       <van-tabbar-item replace to="/message">
         <template #icon="{ active }">
-          <LoadIcon
-            iconSrc="http://127.0.0.1:3007/other/lord_icon/chat.json"
-            :active="active"
-          ></LoadIcon>
+          <LoadIcon iconSrc="http://127.0.0.1:3007/other/lord_icon/chat.json" :active="active"></LoadIcon>
         </template>
         消息
       </van-tabbar-item>
       <van-tabbar-item replace to="/user">
         <template #icon="{ active }">
-          <LoadIcon
-            iconSrc="http://127.0.0.1:3007/other/lord_icon/account.json"
-            :active="active"
-          ></LoadIcon>
+          <LoadIcon iconSrc="http://127.0.0.1:3007/other/lord_icon/account.json" :active="active"></LoadIcon>
         </template>
         {{ userStore.token ? '我的' : '未登录' }}
       </van-tabbar-item>
@@ -50,10 +48,4 @@
   </div>
 </template>
 
-<script setup>
-import LoadIcon from '@/components/layout/LoadIcon.vue'
-import { useUserStore } from '@/stores'
-
-const userStore = useUserStore()
-</script>
 <style lang="less" scoped></style>

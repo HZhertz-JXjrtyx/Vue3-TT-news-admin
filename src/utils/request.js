@@ -7,7 +7,7 @@ import router from '@/router'
 const baseURL = 'http://localhost:3007'
 const instance = axios.create({
   baseURL,
-  timeout: 10000
+  timeout: 10000,
 })
 
 instance.interceptors.request.use(
@@ -35,7 +35,7 @@ instance.interceptors.response.use(
       console.log(response)
       showToast({
         message: `!!!${response.data.message || '服务异常'}`,
-        position: 'bottom'
+        position: 'bottom',
       })
       return Promise.reject(response.data)
     }
@@ -46,7 +46,7 @@ instance.interceptors.response.use(
     }
     showToast({
       message: `!!!${error.response.data.message || '服务异常'}`,
-      position: 'bottom'
+      position: 'bottom',
     })
     return Promise.reject(error)
   }

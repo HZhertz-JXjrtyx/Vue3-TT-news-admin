@@ -18,6 +18,6 @@ export const useCommentStore = defineStore(storeNames.COMMENT, () => {
   }
   return {
     comment,
-    getComment
+    getComment,
   }
 })
