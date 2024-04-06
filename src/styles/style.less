@@ -1,27 +1,32 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+:root {
+	--main-color-red-1: #ff373c;
+	--main-color-red-2: #f04142;
+	--main-color-red-3: #eb6565;
+	--main-color-blue: #4e83fc;
+	--title-color: #140505;
+	--text-color-1: #1f2329;
+	--text-color-2: #40444a;
+	--text-color-3: #aaaaaa;
+	--bg-color-1: #ffffff;
+	--bg-color-2: #f7f7f7;
+	--bg-color-3: #f0f0f0;
 }
 
 body {
-  background-color: rgb(247, 247, 247);
+	background-color: var(--bg-color-1);
 }
 
 .container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .app-nav-bar {
-  background-color: rgb(197, 66, 34) ;
-  .iconfont {
-    color: #fff;
-  }
-  .van-nav-bar__title {
-    color: #fff;
-  }
+	background-color: var(--main-color-red-2);
 
-  
+	.iconfont,
+	.van-nav-bar__title {
+		color: var(--bg-color-1);
+	}
 }
