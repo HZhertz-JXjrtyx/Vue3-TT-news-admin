@@ -1,3 +1,13 @@
+<template>
+  <lord-icon
+    trigger="click"
+    :src="props.iconSrc"
+    :colors="props.active ? 'primary:#c71f16' : 'primary:#545454'"
+    style="width: 93px; height: 26px"
+  >
+  </lord-icon>
+</template>
+
 <script setup>
 import lottie from 'lottie-web'
 import { defineElement } from '@lordicon/element'
@@ -6,24 +16,6 @@ import { defineElement } from '@lordicon/element'
 defineElement(lottie.loadAnimation)
 const props = defineProps({
   iconSrc: String,
-  active: Boolean,
+  active: Boolean
 })
 </script>
-
-<template>
-  <lord-icon
-    class="lord-icon"
-    trigger="click"
-    target=".van-tabbar-item"
-    :src="props.iconSrc"
-    :colors="props.active ? 'primary:#f04142' : 'primary:#545454'"
-  >
-  </lord-icon>
-</template>
-
-<style lang="less" scoped>
-.lord-icon {
-  width: 60px;
-  height: 52px;
-}
-</style>
