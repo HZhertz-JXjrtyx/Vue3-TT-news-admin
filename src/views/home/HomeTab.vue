@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watchEffect, onActivated, onDeactivated } from 'vue'
+import { ref, watchEffect, onActivated, onDeactivated, watch } from 'vue'
 import { useUserStore, useChannelStore } from '@/stores'
 import NewsList from '@/components/home/NewsList.vue'
 import ChannelEdit from '@/components/home/ChannelEdit.vue'
@@ -8,6 +8,20 @@ const channelStore = useChannelStore()
 const userStore = useUserStore()
 
 const active = ref(0)
+const tabsKey = ref(0)
+
+const list = ref([])
+watch(
+  channelStore.userChannel,
+  (nv) => {
+    list.value = nv.selected
+    tabsKey.value++
+  },
+  {
+    deep: true,
+    immediate: true,
+  }
+)
 
 watchEffect(() => {
   if (channelStore.userChannel.selected?.length + channelStore.userChannel.unselected?.length !== 16) {
@@ -16,11 +30,8 @@ watchEffect(() => {
 })
 
 const isChannelEditShow = ref(false)
-let initialName = ''
 let initialUserChannel = null
 const handleOpen = () => {
-  // van-popup打开时，记录选中频道的name
-  initialName = channelStore.userChannel.selected[active.value].name
   // van-popup打开时，记录userChannel
   initialUserChannel = JSON.parse(JSON.stringify(channelStore.userChannel))
 }
@@ -38,14 +49,6 @@ const handleClose = async () => {
       await channelStore.updateUserChannels(transformedUserChannel)
     }
   }
-}
-
-// 不在handleClose处理因为切换频道时也会触发handleClose
-let newIndex = 0
-const onClickCloseIcon = () => {
-  // 如果选中频道位置发生变化，根据之前记录的name找到新索引
-  newIndex = channelStore.userChannel.selected.findIndex((item) => item.name === initialName)
-  active.value = newIndex
 }
 
 const onSwitchChannel = (index) => {
@@ -68,6 +71,7 @@ onDeactivated(() => {
 
     <van-tabs
       v-model:active="active"
+      :key="tabsKey"
       animated
       sticky
       swipeable
@@ -75,7 +79,7 @@ onDeactivated(() => {
       title-active-color="#FF373C"
       @change="handleChange"
     >
-      <van-tab v-for="(item, index) in channelStore.userChannel.selected" :key="index" :title="item.name">
+      <van-tab v-for="item in list" :key="item.id" :name="item.id" :title="item.name">
         <NewsList :channelId="item.channel_id" :channelName="item.name"></NewsList>
       </van-tab>
       <template #nav-bottom>

@@ -1,8 +1,10 @@
 <script setup>
 import { useUserStore } from '@/stores'
+import { useRoute } from 'vue-router'
 import LoadIcon from '@/components/layout/LoadIcon.vue'
 
 const userStore = useUserStore()
+const route = useRoute()
 </script>
 
 <template>
@@ -11,9 +13,9 @@ const userStore = useUserStore()
     <!-- 需要将keepalive写在routerview内部 -->
     <router-view v-slot="{ Component }">
       <keep-alive>
-        <component v-if="$route.meta.keepAlive" :key="$route.name" :is="Component" />
+        <component v-if="route.meta.keepAlive" :key="route.name" :is="Component" />
       </keep-alive>
-      <component v-if="!$route.meta.keepAlive" :key="$route.name" :is="Component" />
+      <component v-if="!route.meta.keepAlive" :key="route.name" :is="Component" />
     </router-view>
 
     <van-tabbar route active-color="#f04142">
@@ -23,7 +25,7 @@ const userStore = useUserStore()
         </template>
         首页
       </van-tabbar-item>
-      <van-tabbar-item replace to="/video">
+      <van-tabbar-item replace to="/hot">
         <template #icon="{ active }">
           <LoadIcon
             iconSrc="http://127.0.0.1:3007/other/lord_icon/explore-compass.json"
