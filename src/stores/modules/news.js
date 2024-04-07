@@ -1,12 +1,14 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import storeNames from '@/stores/storeNames'
-import { getNews } from '@/api'
+import { getNews, getArticle as getArticleRequest } from '@/api'
 
 export const useNewsStore = defineStore(
   storeNames.NEWS,
   () => {
     const newsList = ref({})
+    const article = ref({})
+
     const fetchNewsList = async (channel_id, channel_name, page, pageSize) => {
       const response = await getNews({ channel_id, page, pageSize })
       console.log(response)
@@ -20,12 +22,21 @@ export const useNewsStore = defineStore(
         return false
       }
     }
+    const getArticle = async (articleId) => {
+      const response = await getArticleRequest({ article_id: articleId })
+      article.value = response.data
+    }
+
     return {
       newsList,
-      fetchNewsList
+      article,
+      fetchNewsList,
+      getArticle,
     }
   },
   {
-    persist: true
+    persist: {
+      paths: ['newsList'],
+    },
   }
 )

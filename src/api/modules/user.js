@@ -4,20 +4,20 @@ export const login = (data) => {
   return instance({
     method: 'POST',
     url: '/user/login',
-    data
+    data,
   })
 }
 export const logout = () => {
   return instance({
     method: 'POST',
-    url: '/user/logout'
+    url: '/user/logout',
   })
 }
 export const isOnlyName = (data) => {
   return instance({
     method: 'POST',
     url: '/user/checkname',
-    data
+    data,
   })
 }
 export const sendCode = (params) => {
@@ -25,19 +25,19 @@ export const sendCode = (params) => {
   return instance({
     method: 'GET',
     url: '/user/codes',
-    params
+    params,
   })
 }
 export const register = (data) => {
   return instance({
     method: 'POST',
     url: '/user/register',
-    data
+    data,
   })
 }
 export const getUserInfo = () => {
   return instance({
     method: 'GET',
-    url: '/user/info'
+    url: '/user/info',
   })
 }

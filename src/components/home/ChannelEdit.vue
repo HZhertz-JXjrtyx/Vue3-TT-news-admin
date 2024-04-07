@@ -1,40 +1,6 @@
-<template>
-  <div class="channel-edit">
-    <div class="selected">
-      <div class="title">已选频道</div>
-      <draggable
-        v-model="channelStore.userChannel.selected"
-        class="selected-channels"
-        :group="{ name: 'channels' }"
-        :move="checkMove"
-      >
-        <template #item="{ element }">
-          <div class="item container" @click="switchChannel(element.name)">
-            {{ element.name }}
-          </div>
-        </template>
-      </draggable>
-    </div>
-
-    <div class="unselected">
-      <div class="title">未选频道</div>
-      <draggable
-        v-model="channelStore.userChannel.unselected"
-        class="unselected-channels"
-        :group="{ name: 'channels' }"
-        :move="checkMove"
-      >
-        <template #item="{ element }">
-          <div class="item container">{{ element.name }}</div>
-        </template>
-      </draggable>
-    </div>
-  </div>
-</template>
-
 <script setup>
-import { useChannelStore } from '@/stores'
 import draggable from 'vuedraggable'
+import { useChannelStore } from '@/stores'
 
 const emit = defineEmits(['switch-channel'])
 const channelStore = useChannelStore()
@@ -53,30 +19,65 @@ const switchChannel = (name) => {
 }
 </script>
 
+<template>
+  <div class="channel-edit">
+    <div class="selected">
+      <div class="title">已选频道</div>
+      <draggable
+        v-model="channelStore.userChannel.selected"
+        class="selected-channels"
+        :group="{ name: 'channels' }"
+        :move="checkMove"
+        itemKey="id"
+      >
+        <template #item="{ element }">
+          <div class="item container" @click="switchChannel(element.name)">
+            {{ element.name }}
+          </div>
+        </template>
+      </draggable>
+    </div>
+
+    <div class="unselected">
+      <div class="title">未选频道</div>
+      <draggable
+        v-model="channelStore.userChannel.unselected"
+        class="unselected-channels"
+        :group="{ name: 'channels' }"
+        :move="checkMove"
+        itemKey="id"
+      >
+        <template #item="{ element }">
+          <div class="item container">{{ element.name }}</div>
+        </template>
+      </draggable>
+    </div>
+  </div>
+</template>
+
 <style lang="less" scoped>
 .title {
-  margin: 14px;
-  font-size: 18px;
+  margin: 28px;
+  font-size: 34px;
 }
 .selected {
-  margin-top: 50px;
-  border-top: 1px solid var(--main-color-white-1);
+  margin-top: 100px;
+  border-top: 2px solid var(--bg-color-3);
 }
 .selected-channels,
 .unselected-channels {
   display: flex;
   flex-wrap: wrap;
-  min-height: 70px;
-  border-bottom: 1px solid var(--main-color-white-1);
-  background-color: var(--main-color-white-3);
+  min-height: 140px;
+  border-bottom: 2px solid var(--bg-color-3);
+  background-color: var(--bg-color-1);
 }
 
 .item {
-  width: 70px;
-  height: 50px;
-  margin: 10px;
-  background-color: var(--main-color-white-2);
-  border: 2px solid var(--main-color-red-3);
+  width: 140px;
+  height: 80px;
+  margin: 20px;
+  border: 4px solid var(--main-color-red-1);
   border-radius: 10px;
 }
 </style>
