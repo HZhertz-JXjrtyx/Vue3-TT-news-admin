@@ -14,7 +14,7 @@ const userStore = useUserStore()
 const router = useRouter()
 function onLogout() {
   showConfirmDialog({
-    title: '确认退出吗？',
+    title: '确认退出吗？'
   })
     .then(async () => {
       await logout()

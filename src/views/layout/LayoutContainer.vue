@@ -1,51 +1,54 @@
-<script setup>
-import { useUserStore } from '@/stores'
-import LoadIcon from '@/components/layout/LoadIcon.vue'
-
-const userStore = useUserStore()
-</script>
-
 <template>
   <div>
-    <!-- 使用keepalive缓存组件状态，结合路由meta对象配置 -->
-    <!-- 需要将keepalive写在routerview内部 -->
-    <router-view v-slot="{ Component }">
-      <keep-alive>
-        <component v-if="$route.meta.keepAlive" :key="$route.name" :is="Component" />
-      </keep-alive>
-      <component v-if="!$route.meta.keepAlive" :key="$route.name" :is="Component" />
-    </router-view>
-
-    <van-tabbar route active-color="#f04142">
+    <router-view></router-view>
+    <van-tabbar route active-color="rgb(197, 66, 34)">
       <van-tabbar-item replace to="/home">
         <template #icon="{ active }">
-          <LoadIcon iconSrc="http://127.0.0.1:3007/other/lord_icon/home.json" :active="active"></LoadIcon>
+          <LoadIcon iconSrc="https://cdn.lordicon.com/cnpvyndp.json" :active="active"></LoadIcon>
         </template>
         首页
       </van-tabbar-item>
       <van-tabbar-item replace to="/video">
         <template #icon="{ active }">
-          <LoadIcon
-            iconSrc="http://127.0.0.1:3007/other/lord_icon/explore-compass.json"
-            :active="active"
-          ></LoadIcon>
+          <LoadIcon iconSrc="https://cdn.lordicon.com/aklfruoc.json" :active="active"></LoadIcon>
         </template>
-        热点
+        视频
       </van-tabbar-item>
       <van-tabbar-item replace to="/message">
         <template #icon="{ active }">
-          <LoadIcon iconSrc="http://127.0.0.1:3007/other/lord_icon/chat.json" :active="active"></LoadIcon>
+          <LoadIcon iconSrc="https://cdn.lordicon.com/fdxqrdfe.json" :active="active"></LoadIcon>
         </template>
         消息
       </van-tabbar-item>
       <van-tabbar-item replace to="/user">
         <template #icon="{ active }">
-          <LoadIcon iconSrc="http://127.0.0.1:3007/other/lord_icon/account.json" :active="active"></LoadIcon>
+          <LoadIcon iconSrc="https://cdn.lordicon.com/kthelypq.json" :active="active"></LoadIcon>
         </template>
-        {{ userStore.token ? '我的' : '未登录' }}
+        {{ user.token ? '我的' : '未登录' }}
       </van-tabbar-item>
     </van-tabbar>
   </div>
 </template>
 
-<style lang="less" scoped></style>
+<script setup>
+import lottie from 'lottie-web'
+import { defineElement } from '@lordicon/element'
+import LoadIcon from '@/components/layout/LoadIcon.vue'
+import { useUserStore } from '@/stores'
+
+const user = useUserStore()
+
+// 定义 "lord-icon" 自定义元素
+defineElement(lottie.loadAnimation)
+</script>
+<style lang="less">
+.van-tabbar-item__icon {
+  margin-bottom: 0;
+  padding-top: 4px;
+  font-size: 0;
+}
+.van-tabbar-item__text {
+  font-size: 14px;
+  padding-bottom: 3px;
+}
+</style>
