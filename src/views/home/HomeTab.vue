@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watchEffect, onActivated, onDeactivated, watch } from 'vue'
+import { ref, watchEffect, onActivated, onDeactivated, watch, onMounted, nextTick } from 'vue'
 import { useUserStore, useChannelStore } from '@/stores'
 import NewsList from '@/components/home/NewsList.vue'
 import ChannelEdit from '@/components/home/ChannelEdit.vue'
@@ -49,15 +49,49 @@ const handleClose = async () => {
       await channelStore.updateUserChannels(transformedUserChannel)
     }
   }
+  scrollTo()
 }
 
-const onSwitchChannel = (index) => {
+const onSwitchChannel = (id) => {
   isChannelEditShow.value = false
-  active.value = index
+  active.value = id
+  scrollTo()
+}
+
+// tab滚动时记录位置信息
+const scrollPositions = ref(JSON.parse(sessionStorage.getItem('scrollPositions')) || {})
+const handleScroll = (e) => {
+  scrollPositions.value[active.value] = e.target.scrollTop
+  sessionStorage.setItem('scrollPositions', JSON.stringify(scrollPositions.value))
+}
+// 恢复滚动位置
+const scrollTo = () => {
+  const scrollTop = scrollPositions.value[active.value] || 0
+  nextTick(() => {
+    if (scrollContainers.value[active.value]) {
+      scrollContainers.value[active.value].scrollTop = scrollTop
+    }
+  })
+}
+
+const scrollContainers = ref({})
+onMounted(() => {
+  console.log('onMounted')
+  sessionStorage.removeItem('scrollPositions')
+  scrollPositions.value = {}
+  list.value.forEach((item) => {
+    scrollContainers.value[item.id] = ref(null)
+  })
+  console.log(scrollContainers.value)
+})
+const handleChange = (name, title) => {
+  console.log(name, title)
+  scrollTo()
 }
 
 onActivated(() => {
   console.log('组件被重新激活')
+  scrollTo()
 })
 
 onDeactivated(() => {
@@ -80,8 +114,16 @@ onDeactivated(() => {
       @change="handleChange"
     >
       <van-tab v-for="item in list" :key="item.id" :name="item.id" :title="item.name">
-        <NewsList :channelId="item.channel_id" :channelName="item.name"></NewsList>
+        <div
+          class="scroll-container"
+          :ref="(el) => (scrollContainers[item.id] = el)"
+          @scroll="handleScroll"
+          style="height: calc(100vh - 100px); overflow: auto"
+        >
+          <NewsList :channelId="item.channel_id" :channelName="item.name"></NewsList>
+        </div>
       </van-tab>
+
       <template #nav-bottom>
         <span @click="isChannelEditShow = true" class="iconfont icon-a-44tubiao-93 container"></span>
       </template>
@@ -96,7 +138,6 @@ onDeactivated(() => {
       teleport="body"
       z-index="9999"
       @open="handleOpen"
-      @click-close-icon="onClickCloseIcon"
       @close="handleClose"
     >
       <ChannelEdit @switch-channel="onSwitchChannel"></ChannelEdit>

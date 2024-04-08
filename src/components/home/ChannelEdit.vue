@@ -13,9 +13,8 @@ const checkMove = (evt) => {
     }
   }
 }
-const switchChannel = (name) => {
-  let index = channelStore.userChannel.selected.findIndex((item) => item.name === name)
-  emit('switch-channel', index)
+const switchChannel = (element) => {
+  emit('switch-channel', element.id)
 }
 </script>
 
@@ -31,7 +30,7 @@ const switchChannel = (name) => {
         itemKey="id"
       >
         <template #item="{ element }">
-          <div class="item container" @click="switchChannel(element.name)">
+          <div class="item container" @click="switchChannel(element)">
             {{ element.name }}
           </div>
         </template>
