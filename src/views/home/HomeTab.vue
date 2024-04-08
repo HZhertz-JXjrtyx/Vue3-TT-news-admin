@@ -52,19 +52,19 @@ const handleClose = async () => {
   scrollTo()
 }
 
-const onSwitchChannel = (index) => {
+const onSwitchChannel = (id) => {
   isChannelEditShow.value = false
-  active.value = index
+  active.value = id
   scrollTo()
 }
 
+// tab滚动时记录位置信息
 const scrollPositions = ref(JSON.parse(sessionStorage.getItem('scrollPositions')) || {})
 const handleScroll = (e) => {
-  console.log(e.target.scrollTop)
   scrollPositions.value[active.value] = e.target.scrollTop
   sessionStorage.setItem('scrollPositions', JSON.stringify(scrollPositions.value))
 }
-
+// 恢复滚动位置
 const scrollTo = () => {
   const scrollTop = scrollPositions.value[active.value] || 0
   nextTick(() => {
@@ -138,7 +138,6 @@ onDeactivated(() => {
       teleport="body"
       z-index="9999"
       @open="handleOpen"
-      @click-close-icon="onClickCloseIcon"
       @close="handleClose"
     >
       <ChannelEdit @switch-channel="onSwitchChannel"></ChannelEdit>
