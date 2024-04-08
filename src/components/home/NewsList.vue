@@ -1,10 +1,8 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-// import { useNewsStore } from '@/stores'
 import { getNews } from '@/api'
 import ListItem from '@/components/home/ListItem.vue'
-// import useScrollPosition from '@/composables/useScrollPosition.js' // 引入useScrollPosition
 
 const props = defineProps({
   channelId: {
@@ -53,23 +51,11 @@ const onRefresh = () => {
   refreshing.value = false
 }
 
-// const scrollPositions = ref(JSON.parse(sessionStorage.getItem('scrollPositions')) || {})
 onMounted(() => {
-  // console.log('onMounted')
   onLoad()
-
-  // window.addEventListener('scroll', function () {
-  //   // document.documentElement.scrollTop || 0
-  //   // const scrollTop = newsTab.value.scrollTop
-  //   // console.log(window.scrollY)
-  //   // console.log(document.documentElement.scrollTop)
-  //   // console.log('实时滚动位置：', document.documentElement.scrollTop)
-  //   // scrollPositions.value[props.channelId] = scrollTop
-  //   // sessionStorage.setItem('scrollPositions', JSON.stringify(scrollPositions.value))
-  // })
 })
 onUnmounted(() => {
-  // console.log('onUnmounted')
+  console.log('onUnmounted')
 })
 
 const router = useRouter()
@@ -95,7 +81,7 @@ const goDetail = (item) => {
 </script>
 
 <template>
-  <div class="news-list" ref="newsTab">
+  <div class="news-list">
     <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
       <van-list v-model:loading="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
         <ListItem v-for="item in newsList" :key="item._id" :news="item" @click="goDetail(item)"></ListItem>
