@@ -52,6 +52,9 @@ const router = createRouter({
           component: UserTab,
         },
       ],
+      meta: {
+        keepAlive: true,
+      },
     },
     {
       path: '/home/search',

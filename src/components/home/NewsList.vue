@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getNews } from '@/api'
 import ListItem from '@/components/home/ListItem.vue'
@@ -53,9 +53,6 @@ const onRefresh = () => {
 
 onMounted(() => {
   onLoad()
-})
-onUnmounted(() => {
-  console.log('onUnmounted')
 })
 
 const router = useRouter()
