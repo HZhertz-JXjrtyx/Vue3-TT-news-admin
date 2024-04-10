@@ -2,9 +2,10 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import '@/styles/github-markdown-light.css'
+
 import { getArticle } from '@/api'
 import { convertToMMDDHHmm } from '@/utils/convert'
-import ArticleComment from '@/components/article/ArticleComment.vue'
+import CommentList from '@/components/article/CommentList.vue'
 
 const props = defineProps({
   articleId: {
@@ -18,10 +19,13 @@ const commentContent = ref('asddfhahjfajfjhahjf')
 
 const articleInfo = ref({})
 const pubtime = ref('')
+const commentCount = ref(0)
 const getArticleInfo = async () => {
   const res = await getArticle({ article_id: props.articleId })
+  console.log(res)
   articleInfo.value = res.data
   pubtime.value = convertToMMDDHHmm(articleInfo.value.publish_time)
+  commentCount.value = res.data.comment_count
 }
 
 onMounted(() => {
@@ -68,9 +72,9 @@ onMounted(() => {
       ></div>
     </div>
     <div class="divider"></div>
-    <div class="comment">
-      <ArticleComment :sourceId="articleId"></ArticleComment>
-    </div>
+
+    <CommentList :sourceId="articleId" :commentCount="commentCount"></CommentList>
+
     <div class="bottom">
       <input class="bottom-comment" v-model="commentContent" rows="1" placeholder="请输入评论" />
       <span class="iconfont icon-fenxiang"></span>

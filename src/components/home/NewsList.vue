@@ -18,6 +18,7 @@ const props = defineProps({
 const page = ref(1)
 const pageSize = ref(10)
 const newsList = ref([])
+const loading = ref(false)
 const hasMore = ref(true)
 
 const getNewsList = async () => {
@@ -30,7 +31,6 @@ const getNewsList = async () => {
   loading.value = false
 }
 
-const loading = ref(false)
 const finished = ref(false)
 const onLoad = async () => {
   // console.log('hasMore.value', hasMore.value)
