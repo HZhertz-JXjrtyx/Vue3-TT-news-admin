@@ -1,10 +1,13 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { debounce } from 'lodash'
+import { showToast } from 'vant'
 import '@/styles/github-markdown-light.css'
-
-import { getArticle } from '@/api'
+import { useUserStore } from '@/stores'
+import { getArticle, followUserApi } from '@/api'
 import { convertToMMDDHHmm } from '@/utils/convert'
+import FollowBotton from '@/components/FollowBotton.vue'
 import CommentList from '@/components/article/CommentList.vue'
 
 const props = defineProps({
@@ -14,23 +17,44 @@ const props = defineProps({
   },
 })
 const router = useRouter()
+const userStore = useUserStore()
+const isLogin = computed(() => {
+  return !!userStore.token
+})
 
 const commentContent = ref('asddfhahjfajfjhahjf')
 
 const articleInfo = ref({})
 const pubtime = ref('')
+const isFollow = ref(false)
 const commentCount = ref(0)
 const getArticleInfo = async () => {
   const res = await getArticle({ article_id: props.articleId })
   console.log(res)
   articleInfo.value = res.data
   pubtime.value = convertToMMDDHHmm(articleInfo.value.publish_time)
+  isFollow.value = res.data.is_followed
   commentCount.value = res.data.comment_count
 }
 
 onMounted(() => {
   getArticleInfo()
 })
+
+const followUser = async () => {
+  const res = await followUserApi(articleInfo.value.user_info.user_id, isFollow.value)
+  console.log(res)
+  showToast(res.message)
+}
+const debouncedFollowUser = debounce(followUser, 500)
+const handleFollowClick = () => {
+  if (isLogin.value) {
+    isFollow.value = !isFollow.value
+    debouncedFollowUser()
+  } else {
+    showToast('请登录后进行操作')
+  }
+}
 
 const commentSection = ref(null)
 const scrollToComment = () => {
@@ -57,32 +81,22 @@ const scrollToComment = () => {
           round
           width="40px"
           height="40px"
-          :src="articleInfo.user_info ? articleInfo.user_info.user_avatar : ''"
+          :src="articleInfo.user_info?.user_avatar || ''"
         />
-        <span class="user-name">{{ articleInfo.user_info ? articleInfo.user_info.user_nickname : '' }}</span>
+        <span class="user-name">{{ articleInfo.user_info?.user_nickname || '' }}</span>
         <span class="pub-time">{{ pubtime }}</span>
-        <van-button
-          v-if="!articleInfo.is_followed"
-          class="follow-btn"
-          size="small"
-          color="linear-gradient(to right, #ff6034, #ee0a24)"
-        >
-          <span class="text">关注 </span>
-          <span class="iconfont icon-a-44tubiao-88"></span>
-        </van-button>
-        <span v-else class="iconfont icon-a-44tubiao-66 follow-btn" style="font-size: 20px"></span>
+        <div class="follow-btn">
+          <FollowBotton :isFollow="isFollow" @click="handleFollowClick" />
+        </div>
       </div>
-      <div
-        class="article-content markdown-body"
-        v-html="articleInfo.article_info ? articleInfo.article_info.content : ''"
-      ></div>
+      <div class="article-content markdown-body" v-html="articleInfo.article_info?.content || ''"></div>
     </div>
     <div class="divider"></div>
     <div class="comment" ref="commentSection">
       <div class="comment-header">
         <div class="title">评论{{ commentCount }}</div>
       </div>
-      <CommentList :sourceId="articleId"></CommentList>
+      <CommentList :sourceId="articleId" />
     </div>
 
     <div class="bottom">
@@ -99,10 +113,12 @@ const scrollToComment = () => {
 <style lang="less" scoped>
 .article {
   margin: 20px 20px 100px;
+
   .title {
     margin-bottom: 20px;
     font-size: 42px;
   }
+
   .user-info {
     position: relative;
     margin-bottom: 20px;
@@ -111,6 +127,7 @@ const scrollToComment = () => {
       position: absolute;
       left: 90px;
     }
+
     .pub-time {
       position: absolute;
       top: 48px;
@@ -118,23 +135,28 @@ const scrollToComment = () => {
       font-size: 28px;
       color: var(--text-color-2);
     }
+
     .follow-btn {
       position: absolute;
-      top: 10px;
+      top: 20px;
       right: 0px;
     }
   }
 }
+
 .divider {
   width: 750px;
   height: 12px;
   margin: 0;
   background-color: var(--bg-color-3);
 }
+
 .comment {
   margin: 20px 20px 160px;
+
   .comment-header {
     border-bottom: 1px solid var(--bg-color-3);
+
     .title {
       display: inline-block;
 
@@ -144,6 +166,7 @@ const scrollToComment = () => {
     }
   }
 }
+
 .bottom {
   position: fixed;
   bottom: 0;
@@ -155,6 +178,7 @@ const scrollToComment = () => {
   padding: 0 40px;
   background-color: var(--bg-color-1);
   border-top: 2px solid var(--bg-color-3);
+
   .bottom-comment {
     width: 280px;
     height: 60px;
@@ -165,9 +189,11 @@ const scrollToComment = () => {
     border-radius: 30px;
     background-color: var(--bg-color-3);
   }
+
   .iconfont {
     font-size: 40px;
   }
+
   .icon-a-44tubiao-188,
   .icon-a-44tubiao-242 {
     color: var(--main-color-red-2);

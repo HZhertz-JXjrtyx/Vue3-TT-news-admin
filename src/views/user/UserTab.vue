@@ -1,10 +1,13 @@
 <script setup>
+import { watchEffect } from 'vue'
 import { useUserStore } from '@/stores'
 
 const userStore = useUserStore()
-if (userStore.token) {
-  userStore.fetchUserInfo()
-}
+watchEffect(() => {
+  if (userStore.token) {
+    userStore.fetchUserInfo()
+  }
+})
 </script>
 
 <template>

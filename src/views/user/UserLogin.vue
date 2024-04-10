@@ -62,7 +62,7 @@ const loginSubmit = async () => {
   const res = await login(loginInfo.value)
   console.log(res)
   if (res.status === 200) {
-    userStore.setToken(res.token)
+    userStore.token = res.token
     channelStore.fetchUserChannels()
     showToast({
       message: '登录成功',
