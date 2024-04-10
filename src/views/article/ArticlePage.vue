@@ -30,8 +30,14 @@ const getArticleInfo = async () => {
 
 onMounted(() => {
   getArticleInfo()
-  // await newsStore.getArticle(props.articleId)
 })
+
+const commentSection = ref(null)
+const scrollToComment = () => {
+  const rect = commentSection.value.getBoundingClientRect()
+  const isInViewPort = rect.top >= 0 && rect.top <= window.innerHeight
+  !isInViewPort && commentSection.value.scrollIntoView({ behavior: 'smooth' })
+}
 </script>
 
 <template>
@@ -72,13 +78,17 @@ onMounted(() => {
       ></div>
     </div>
     <div class="divider"></div>
-
-    <CommentList :sourceId="articleId" :commentCount="commentCount"></CommentList>
+    <div class="comment" ref="commentSection">
+      <div class="comment-header">
+        <div class="title">评论{{ commentCount }}</div>
+      </div>
+      <CommentList :sourceId="articleId"></CommentList>
+    </div>
 
     <div class="bottom">
       <input class="bottom-comment" v-model="commentContent" rows="1" placeholder="请输入评论" />
       <span class="iconfont icon-fenxiang"></span>
-      <span class="iconfont icon-a-44tubiao-112"></span>
+      <span class="iconfont icon-a-44tubiao-112" @click="scrollToComment"></span>
       <span class="iconfont icon-a-44tubiao-242"></span>
       <span class="iconfont icon-a-44tubiao-188"></span>
     </div>
@@ -123,6 +133,16 @@ onMounted(() => {
 }
 .comment {
   margin: 20px 20px 160px;
+  .comment-header {
+    border-bottom: 1px solid var(--bg-color-3);
+    .title {
+      display: inline-block;
+
+      height: 60px;
+      color: var(--main-color-red-1);
+      border-bottom: 2px solid var(--main-color-red-1);
+    }
+  }
 }
 .bottom {
   position: fixed;

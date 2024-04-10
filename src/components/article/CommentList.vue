@@ -8,10 +8,6 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  commentCount: {
-    type: Number,
-    required: true,
-  },
 })
 
 const page = ref(1)
@@ -46,27 +42,10 @@ const onLoad = async () => {
 
 <template>
   <div class="comment-list">
-    <div class="comment-header">
-      <div class="title">评论{{ commentCount }}</div>
-    </div>
-
     <van-list v-model:loading="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
       <CommentItem v-for="item in commentList" :key="item.comment_id" :comment="item" />
     </van-list>
   </div>
 </template>
 
-<style lang="less" scoped>
-.comment-list {
-  .comment-header {
-    border-bottom: 1px solid var(--bg-color-3);
-    .title {
-      display: inline-block;
-      // width: 120px;
-      height: 60px;
-      color: var(--main-color-red-1);
-      border-bottom: 2px solid var(--main-color-red-1);
-    }
-  }
-}
-</style>
+<style lang="less" scoped></style>
