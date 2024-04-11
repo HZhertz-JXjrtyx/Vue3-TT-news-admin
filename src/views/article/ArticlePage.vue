@@ -2,9 +2,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { debounce } from 'lodash'
-import { showToast } from 'vant'
 import '@/styles/github-markdown-light.css'
-import { useUserStore } from '@/stores'
 import { getArticle, followUserApi, addCommentApi, collectArticleApi, likeArticleApi } from '@/api'
 import { convertToMMDDHHmm } from '@/utils/convert'
 import FollowBotton from '@/components/FollowBotton.vue'
@@ -17,10 +15,6 @@ const props = defineProps({
   },
 })
 const router = useRouter()
-const userStore = useUserStore()
-const isLogin = computed(() => {
-  return !!userStore.token
-})
 
 // 获取文章详情
 const articleInfo = ref({})
@@ -49,12 +43,8 @@ const followUser = async () => {
 }
 const debouncedFollowUser = debounce(followUser, 500)
 const handleFollowClick = () => {
-  if (isLogin.value) {
-    isFollow.value = !isFollow.value
-    debouncedFollowUser()
-  } else {
-    showToast('请登录后进行操作')
-  }
+  isFollow.value = !isFollow.value
+  debouncedFollowUser()
 }
 
 // 评论
@@ -100,12 +90,8 @@ const collectArticle = async () => {
 }
 const debouncedCollectArticle = debounce(collectArticle, 500)
 const handleCollectClick = () => {
-  if (isLogin.value) {
-    isCollected.value = !isCollected.value
-    debouncedCollectArticle()
-  } else {
-    showToast('请登录后进行操作')
-  }
+  isCollected.value = !isCollected.value
+  debouncedCollectArticle()
 }
 // 点赞文章
 const likeArticle = async () => {
@@ -113,12 +99,8 @@ const likeArticle = async () => {
 }
 const debouncedLikeArticle = debounce(likeArticle, 500)
 const handleLikeClick = () => {
-  if (isLogin.value) {
-    isLike.value = !isLike.value
-    debouncedLikeArticle()
-  } else {
-    showToast('请登录后进行操作')
-  }
+  isLike.value = !isLike.value
+  debouncedLikeArticle()
 }
 
 // 滚动至评论
@@ -152,7 +134,7 @@ const scrollToComment = () => {
         <span class="user-name">{{ articleInfo.user_info?.user_nickname || '' }}</span>
         <span class="pub-time">{{ pubtime }}</span>
         <div class="follow-btn">
-          <FollowBotton :isFollow="isFollow" @click="handleFollowClick" />
+          <FollowBotton :isFollow="isFollow" v-login="handleFollowClick" />
         </div>
       </div>
       <div class="article-content markdown-body" v-html="articleInfo.article_info?.content || ''"></div>
@@ -171,19 +153,19 @@ const scrollToComment = () => {
         v-model="commentContent"
         rows="1"
         placeholder="请输入评论"
-        @click="handleClickInput"
+        v-login="handleClickInput"
       />
       <span class="iconfont icon-fenxiang" @click="isShowShare = true"></span>
       <span class="iconfont icon-a-44tubiao-112" @click="scrollToComment"></span>
       <span
         class="iconfont"
         :class="isCollected ? 'icon-a-44tubiao-242' : 'icon-a-44tubiao-134'"
-        @click="handleCollectClick"
+        v-login="handleCollectClick"
       ></span>
       <span
         class="iconfont"
         :class="isLike ? 'icon-a-44tubiao-188' : 'icon-a-44tubiao-21'"
-        @click="handleLikeClick"
+        v-login="handleLikeClick"
       ></span>
     </div>
     <van-back-top right="28px" bottom="80px" />
