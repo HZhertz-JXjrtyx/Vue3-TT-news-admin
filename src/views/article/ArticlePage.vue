@@ -5,7 +5,7 @@ import { debounce } from 'lodash'
 import { showToast } from 'vant'
 import '@/styles/github-markdown-light.css'
 import { useUserStore } from '@/stores'
-import { getArticle, followUserApi, addCommentApi } from '@/api'
+import { getArticle, followUserApi, addCommentApi, collectArticleApi } from '@/api'
 import { convertToMMDDHHmm } from '@/utils/convert'
 import FollowBotton from '@/components/FollowBotton.vue'
 import CommentList from '@/components/article/CommentList.vue'
@@ -26,6 +26,7 @@ const isLogin = computed(() => {
 const articleInfo = ref({})
 const pubtime = ref('')
 const isFollow = ref(false)
+const isCollected = ref(false)
 const commentCount = ref(0)
 const getArticleInfo = async () => {
   const res = await getArticle({ article_id: props.articleId })
@@ -33,6 +34,7 @@ const getArticleInfo = async () => {
   articleInfo.value = res.data
   pubtime.value = convertToMMDDHHmm(articleInfo.value.publish_time)
   isFollow.value = res.data.is_followed
+  isCollected.value = res.data.is_collected
   commentCount.value = res.data.comment_count
 }
 
@@ -41,9 +43,7 @@ onMounted(() => {
 })
 // 关注
 const followUser = async () => {
-  const res = await followUserApi(articleInfo.value.user_info.user_id, isFollow.value)
-  console.log(res)
-  showToast(res.message)
+  await followUserApi(articleInfo.value.user_info.user_id, isFollow.value)
 }
 const debouncedFollowUser = debounce(followUser, 500)
 const handleFollowClick = () => {
@@ -91,6 +91,20 @@ const options = [
     { name: '小程序码', icon: 'weapp-qrcode' },
   ],
 ]
+
+// 收藏
+const collectArticle = async () => {
+  await collectArticleApi(articleInfo.value.article_id, isCollected.value)
+}
+const debouncedCollectArticle = debounce(collectArticle, 500)
+const handleCollectClick = () => {
+  if (isLogin.value) {
+    isCollected.value = !isCollected.value
+    debouncedCollectArticle()
+  } else {
+    showToast('请登录后进行操作')
+  }
+}
 
 // 滚动至评论
 const commentSection = ref(null)
@@ -146,12 +160,21 @@ const scrollToComment = () => {
       />
       <span class="iconfont icon-fenxiang" @click="isShowShare = true"></span>
       <span class="iconfont icon-a-44tubiao-112" @click="scrollToComment"></span>
-      <span class="iconfont icon-a-44tubiao-242"></span>
+      <span
+        class="iconfont"
+        :class="isCollected ? 'icon-a-44tubiao-242' : 'icon-a-44tubiao-134'"
+        @click="handleCollectClick"
+      ></span>
       <span class="iconfont icon-a-44tubiao-188"></span>
     </div>
     <van-back-top right="28px" bottom="80px" />
 
-    <van-popup v-model:show="isShowTextarea" position="bottom" :style="{ height: '30%' }">
+    <van-popup
+      class="commentPopup"
+      v-model:show="isShowTextarea"
+      position="bottom"
+      :style="{ height: '30%' }"
+    >
       <van-field
         v-model="commentContent"
         rows="4"
@@ -267,11 +290,12 @@ const scrollToComment = () => {
     color: var(--main-color-red-2);
   }
 }
-
-:deep(.van-button--small) {
-  position: absolute;
-  right: 20px;
-  height: 60px;
-  padding: 0 40px;
+.commentPopup {
+  :deep(.van-button--small) {
+    position: absolute;
+    right: 20px;
+    height: 60px;
+    padding: 0 40px;
+  }
 }
 </style>
