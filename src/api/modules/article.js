@@ -20,3 +20,14 @@ export const collectArticleApi = (articleId, type) => {
     },
   })
 }
+// 点赞、取消点赞文章
+export const likeArticleApi = (articleId, type) => {
+  return instance({
+    method: 'POST',
+    url: '/article/like',
+    data: {
+      articleId,
+      type,
+    },
+  })
+}

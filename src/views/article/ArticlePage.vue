@@ -5,7 +5,7 @@ import { debounce } from 'lodash'
 import { showToast } from 'vant'
 import '@/styles/github-markdown-light.css'
 import { useUserStore } from '@/stores'
-import { getArticle, followUserApi, addCommentApi, collectArticleApi } from '@/api'
+import { getArticle, followUserApi, addCommentApi, collectArticleApi, likeArticleApi } from '@/api'
 import { convertToMMDDHHmm } from '@/utils/convert'
 import FollowBotton from '@/components/FollowBotton.vue'
 import CommentList from '@/components/article/CommentList.vue'
@@ -27,6 +27,7 @@ const articleInfo = ref({})
 const pubtime = ref('')
 const isFollow = ref(false)
 const isCollected = ref(false)
+const isLike = ref(false)
 const commentCount = ref(0)
 const getArticleInfo = async () => {
   const res = await getArticle({ article_id: props.articleId })
@@ -35,6 +36,7 @@ const getArticleInfo = async () => {
   pubtime.value = convertToMMDDHHmm(articleInfo.value.publish_time)
   isFollow.value = res.data.is_followed
   isCollected.value = res.data.is_collected
+  isLike.value = res.data.is_liked
   commentCount.value = res.data.comment_count
 }
 
@@ -92,7 +94,7 @@ const options = [
   ],
 ]
 
-// 收藏
+// 收藏文章
 const collectArticle = async () => {
   await collectArticleApi(articleInfo.value.article_id, isCollected.value)
 }
@@ -101,6 +103,19 @@ const handleCollectClick = () => {
   if (isLogin.value) {
     isCollected.value = !isCollected.value
     debouncedCollectArticle()
+  } else {
+    showToast('请登录后进行操作')
+  }
+}
+// 点赞文章
+const likeArticle = async () => {
+  await likeArticleApi(articleInfo.value.article_id, isLike.value)
+}
+const debouncedLikeArticle = debounce(likeArticle, 500)
+const handleLikeClick = () => {
+  if (isLogin.value) {
+    isLike.value = !isLike.value
+    debouncedLikeArticle()
   } else {
     showToast('请登录后进行操作')
   }
@@ -165,13 +180,18 @@ const scrollToComment = () => {
         :class="isCollected ? 'icon-a-44tubiao-242' : 'icon-a-44tubiao-134'"
         @click="handleCollectClick"
       ></span>
-      <span class="iconfont icon-a-44tubiao-188"></span>
+      <span
+        class="iconfont"
+        :class="isLike ? 'icon-a-44tubiao-188' : 'icon-a-44tubiao-21'"
+        @click="handleLikeClick"
+      ></span>
     </div>
     <van-back-top right="28px" bottom="80px" />
 
     <van-popup
       class="commentPopup"
       v-model:show="isShowTextarea"
+      round
       position="bottom"
       :style="{ height: '30%' }"
     >
