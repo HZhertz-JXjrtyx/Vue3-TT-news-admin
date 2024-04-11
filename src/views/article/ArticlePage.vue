@@ -75,6 +75,22 @@ const submitComment = async () => {
     scrollToComment()
   }
 }
+// 分享面板
+const isShowShare = ref(false)
+const options = [
+  [
+    { name: '微信', icon: 'wechat' },
+    { name: '朋友圈', icon: 'wechat-moments' },
+    { name: '微博', icon: 'weibo' },
+    { name: 'QQ', icon: 'qq' },
+  ],
+  [
+    { name: '复制链接', icon: 'link' },
+    { name: '分享海报', icon: 'poster' },
+    { name: '二维码', icon: 'qrcode' },
+    { name: '小程序码', icon: 'weapp-qrcode' },
+  ],
+]
 
 // 滚动至评论
 const commentSection = ref(null)
@@ -128,7 +144,7 @@ const scrollToComment = () => {
         placeholder="请输入评论"
         @click="handleClickInput"
       />
-      <span class="iconfont icon-fenxiang"></span>
+      <span class="iconfont icon-fenxiang" @click="isShowShare = true"></span>
       <span class="iconfont icon-a-44tubiao-112" @click="scrollToComment"></span>
       <span class="iconfont icon-a-44tubiao-242"></span>
       <span class="iconfont icon-a-44tubiao-188"></span>
@@ -156,6 +172,8 @@ const scrollToComment = () => {
         >发送</van-button
       >
     </van-popup>
+    <!-- 分享面板 -->
+    <van-share-sheet v-model:show="isShowShare" title="立即分享给好友" :options="options" />
   </div>
 </template>
 
