@@ -38,6 +38,10 @@ const onLoad = async () => {
     finished.value = true
   }
 }
+
+defineExpose({
+  commentList,
+})
 </script>
 
 <template>

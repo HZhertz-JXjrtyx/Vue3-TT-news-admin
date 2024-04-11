@@ -5,7 +5,7 @@ import { debounce } from 'lodash'
 import { showToast } from 'vant'
 import '@/styles/github-markdown-light.css'
 import { useUserStore } from '@/stores'
-import { getArticle, followUserApi } from '@/api'
+import { getArticle, followUserApi, addCommentApi } from '@/api'
 import { convertToMMDDHHmm } from '@/utils/convert'
 import FollowBotton from '@/components/FollowBotton.vue'
 import CommentList from '@/components/article/CommentList.vue'
@@ -22,8 +22,7 @@ const isLogin = computed(() => {
   return !!userStore.token
 })
 
-const commentContent = ref('asddfhahjfajfjhahjf')
-
+// 获取文章详情
 const articleInfo = ref({})
 const pubtime = ref('')
 const isFollow = ref(false)
@@ -40,7 +39,7 @@ const getArticleInfo = async () => {
 onMounted(() => {
   getArticleInfo()
 })
-
+// 关注
 const followUser = async () => {
   const res = await followUserApi(articleInfo.value.user_info.user_id, isFollow.value)
   console.log(res)
@@ -56,6 +55,28 @@ const handleFollowClick = () => {
   }
 }
 
+// 评论
+const commentContent = ref('')
+const isShowTextarea = ref(false)
+const commentList = ref(null)
+const isSubmitDisabled = computed(() => {
+  return !commentContent.value
+})
+const handleClickInput = () => {
+  isShowTextarea.value = true
+}
+const submitComment = async () => {
+  const res = await addCommentApi(1, articleInfo.value.article_id, commentContent.value)
+  console.log(res)
+  if (res.status === 200) {
+    commentContent.value = ''
+    isShowTextarea.value = false
+    commentList.value.commentList.unshift(res.data)
+    scrollToComment()
+  }
+}
+
+// 滚动至评论
 const commentSection = ref(null)
 const scrollToComment = () => {
   const rect = commentSection.value.getBoundingClientRect()
@@ -96,17 +117,45 @@ const scrollToComment = () => {
       <div class="comment-header">
         <div class="title">评论{{ commentCount }}</div>
       </div>
-      <CommentList :sourceId="articleId" />
+      <CommentList ref="commentList" :sourceId="articleId" />
     </div>
 
     <div class="bottom">
-      <input class="bottom-comment" v-model="commentContent" rows="1" placeholder="请输入评论" />
+      <input
+        class="bottom-comment"
+        v-model="commentContent"
+        rows="1"
+        placeholder="请输入评论"
+        @click="handleClickInput"
+      />
       <span class="iconfont icon-fenxiang"></span>
       <span class="iconfont icon-a-44tubiao-112" @click="scrollToComment"></span>
       <span class="iconfont icon-a-44tubiao-242"></span>
       <span class="iconfont icon-a-44tubiao-188"></span>
     </div>
     <van-back-top right="28px" bottom="80px" />
+
+    <van-popup v-model:show="isShowTextarea" position="bottom" :style="{ height: '30%' }">
+      <van-field
+        v-model="commentContent"
+        rows="4"
+        label="评论"
+        type="textarea"
+        maxlength="200"
+        placeholder="请输入留言"
+        show-word-limit
+        label-align="top"
+      />
+
+      <van-button
+        :disabled="isSubmitDisabled"
+        round
+        size="small"
+        color="linear-gradient(to right, #ff6034, #ee0a24)"
+        @click="submitComment"
+        >发送</van-button
+      >
+    </van-popup>
   </div>
 </template>
 
@@ -153,6 +202,7 @@ const scrollToComment = () => {
 
 .comment {
   margin: 20px 20px 160px;
+  padding-top: 100px;
 
   .comment-header {
     border-bottom: 1px solid var(--bg-color-3);
@@ -198,5 +248,12 @@ const scrollToComment = () => {
   .icon-a-44tubiao-242 {
     color: var(--main-color-red-2);
   }
+}
+
+:deep(.van-button--small) {
+  position: absolute;
+  right: 20px;
+  height: 60px;
+  padding: 0 40px;
 }
 </style>
