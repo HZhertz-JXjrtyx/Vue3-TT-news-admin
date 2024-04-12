@@ -8,11 +8,3 @@ export const getNews = (params) => {
     params,
   })
 }
-export const getArticle = (params) => {
-  console.log(params)
-  return instance({
-    method: 'GET',
-    url: '/news/article',
-    params,
-  })
-}

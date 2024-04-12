@@ -2,6 +2,7 @@ import { fileURLToPath, URL } from 'node:url'
 
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { VantResolver } from '@vant/auto-import-resolver'
 import pxtovw from 'postcss-px-to-viewport'
@@ -26,6 +27,10 @@ export default defineConfig({
           isCustomElement: (tag) => tag === 'lord-icon',
         },
       },
+    }),
+
+    AutoImport({
+      resolvers: [VantResolver()],
     }),
     Components({
       resolvers: [VantResolver()],
