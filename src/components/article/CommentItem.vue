@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue'
+import { useCommentStore } from '@/stores'
 import { formatCount, convertToMMDDHHmm } from '@/utils/convert'
 import CommentReply from './CommentReply.vue'
 
@@ -13,6 +14,17 @@ const props = defineProps({
 const isShowCommentReply = computed(() => {
   return props.comment.replies.length !== 0
 })
+
+// 回复评论
+const commentStore = useCommentStore()
+
+const handleReplyCommentClick = () => {
+  commentStore.textareaPlaceholder = `回复 ${props.comment.user_info.user_nickname}:`
+  commentStore.isShowTextarea = true
+  commentStore.typeParam = 3
+  commentStore.sourceidParam = props.comment.comment_id
+  commentStore.replyUseridParam = props.comment.user_info.user_id
+}
 </script>
 
 <template>
@@ -29,7 +41,7 @@ const isShowCommentReply = computed(() => {
       </div>
     </div>
 
-    <div class="content">{{ comment.content }}</div>
+    <div class="content" @click="handleReplyCommentClick">{{ comment.content }}</div>
     <div class="operation">
       <div class="like-count">
         <span class="iconfont icon-a-44tubiao-21"></span>
@@ -37,14 +49,10 @@ const isShowCommentReply = computed(() => {
       </div>
 
       <span class="iconfont icon-fenxiang"></span>
-      <span class="iconfont icon-a-44tubiao-112"></span>
+      <span class="iconfont icon-a-44tubiao-112" @click="handleReplyCommentClick"></span>
     </div>
     <div class="comment_reply" v-if="isShowCommentReply">
-      <CommentReply
-        :commentReply="comment.replies"
-        :replyCount="comment.reply_count"
-        :username="comment.user_info.user_nickname"
-      />
+      <CommentReply :commentReply="comment.replies" :userid="comment.user_info.user_id" />
     </div>
   </div>
 </template>

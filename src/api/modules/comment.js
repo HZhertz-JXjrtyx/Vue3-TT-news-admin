@@ -17,7 +17,8 @@ export const getComment = (type, id, page, pageSize) => {
 }
 
 // 新增评论
-export const addCommentApi = (type, id, content, pubTime = ~~(Date.now() / 1000), replyId = '') => {
+// content:评论内容 pubTime:发布时间 replyId:如果是评论回复，回复的用户的id
+export const addCommentApi = (type, id, content, replyId = 0, pubTime = ~~(Date.now() / 1000)) => {
   return instance({
     method: 'POST',
     url: '/comment/add',
@@ -25,8 +26,8 @@ export const addCommentApi = (type, id, content, pubTime = ~~(Date.now() / 1000)
       type,
       id,
       content,
-      pubTime,
       replyId,
+      pubTime,
     },
   })
 }

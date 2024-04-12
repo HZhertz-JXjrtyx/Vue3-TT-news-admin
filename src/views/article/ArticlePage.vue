@@ -3,6 +3,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { debounce } from 'lodash'
 import '@/styles/github-markdown-light.css'
+import { useCommentStore } from '@/stores'
 import { getArticle, followUserApi, addCommentApi, collectArticleApi, likeArticleApi } from '@/api'
 import { convertToMMDDHHmm } from '@/utils/convert'
 import FollowBotton from '@/components/FollowBotton.vue'
@@ -48,22 +49,42 @@ const handleFollowClick = () => {
 }
 
 // 评论
-const commentContent = ref('')
-const isShowTextarea = ref(false)
+const commentStore = useCommentStore()
+
 const commentList = ref(null)
+
+const commentContent = ref('')
+
 const isSubmitDisabled = computed(() => {
   return !commentContent.value
 })
 const handleClickInput = () => {
-  isShowTextarea.value = true
+  commentStore.textareaPlaceholder = '请输入评论'
+  commentStore.isShowTextarea = true
+  commentStore.typeParam = 1
+  commentStore.sourceidParam = articleInfo.value.article_id
 }
 const submitComment = async () => {
-  const res = await addCommentApi(1, articleInfo.value.article_id, commentContent.value)
+  const res = await addCommentApi(
+    commentStore.typeParam,
+    commentStore.sourceidParam,
+    commentContent.value,
+    commentStore.replyUseridParam
+  )
   console.log(res)
   if (res.status === 200) {
     commentContent.value = ''
-    isShowTextarea.value = false
-    commentList.value.commentList.unshift(res.data)
+    commentStore.isShowTextarea = false
+    if (res.data.type === 3) {
+      const replyIndex = commentList.value.commentList.findIndex((item) => {
+        return item.comment_id === res.data.source_id
+      })
+      commentList.value.commentList[replyIndex].replies.unshift(res.data)
+      commentCount.value++
+    } else {
+      commentList.value.commentList.unshift(res.data)
+    }
+
     scrollToComment()
   }
 }
@@ -172,7 +193,7 @@ const scrollToComment = () => {
 
     <van-popup
       class="commentPopup"
-      v-model:show="isShowTextarea"
+      v-model:show="commentStore.isShowTextarea"
       round
       position="bottom"
       :style="{ height: '30%' }"
@@ -183,7 +204,7 @@ const scrollToComment = () => {
         label="评论"
         type="textarea"
         maxlength="200"
-        placeholder="请输入留言"
+        :placeholder="commentStore.textareaPlaceholder"
         show-word-limit
         label-align="top"
       />
