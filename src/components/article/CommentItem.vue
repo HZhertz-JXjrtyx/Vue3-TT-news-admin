@@ -1,6 +1,8 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
+import { debounce } from 'lodash'
 import { useCommentStore } from '@/stores'
+import { likeCommentApi } from '@/api'
 import { formatCount, convertToMMDDHHmm } from '@/utils/convert'
 import CommentReply from './CommentReply.vue'
 
@@ -14,6 +16,19 @@ const props = defineProps({
 const isShowCommentReply = computed(() => {
   return props.comment.replies.length !== 0
 })
+
+// 点赞评论
+const isLikeComment = ref(props.comment.is_like)
+const likeCount = ref(props.comment.like_count)
+const LikeComment = async () => {
+  await likeCommentApi(props.comment.comment_id, isLikeComment.value)
+}
+const debouncedLikeComment = debounce(LikeComment, 500)
+const handleLikeCommentClick = () => {
+  isLikeComment.value ? likeCount.value-- : likeCount.value++
+  isLikeComment.value = !isLikeComment.value
+  debouncedLikeComment()
+}
 
 // 回复评论
 const commentStore = useCommentStore()
@@ -41,15 +56,19 @@ const handleReplyCommentClick = () => {
       </div>
     </div>
 
-    <div class="content" @click="handleReplyCommentClick">{{ comment.content }}</div>
+    <div class="content" v-login="handleReplyCommentClick">{{ comment.content }}</div>
     <div class="operation">
       <div class="like-count">
-        <span class="iconfont icon-a-44tubiao-21"></span>
-        <span class="count">{{ formatCount(comment.like_count) }}</span>
+        <span
+          class="iconfont"
+          :class="isLikeComment ? 'icon-a-44tubiao-188' : 'icon-a-44tubiao-21'"
+          v-login="handleLikeCommentClick"
+        ></span>
+        <span class="count">{{ formatCount(likeCount) }}</span>
       </div>
 
       <span class="iconfont icon-fenxiang"></span>
-      <span class="iconfont icon-a-44tubiao-112" @click="handleReplyCommentClick"></span>
+      <span class="iconfont icon-a-44tubiao-112" v-login="handleReplyCommentClick"></span>
     </div>
     <div class="comment_reply" v-if="isShowCommentReply">
       <CommentReply :commentReply="comment.replies" :userid="comment.user_info.user_id" />

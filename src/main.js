@@ -15,6 +15,7 @@ app.use(router)
 app.use(Lazyload)
 
 const userStore = useUserStore()
+//  自定义指令 v-login ，未登录状态不会触发点击事件
 app.directive('login', {
   beforeMount(el, binding) {
     el.addEventListener('click', () => {

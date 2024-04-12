@@ -31,3 +31,15 @@ export const addCommentApi = (type, id, content, replyId = 0, pubTime = ~~(Date.
     },
   })
 }
+
+// 点赞评论
+export const likeCommentApi = (commentId, type) => {
+  return instance({
+    method: 'POST',
+    url: '/comment/like',
+    data: {
+      commentId,
+      type,
+    },
+  })
+}
