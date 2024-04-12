@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, provide } from 'vue'
 import { useRouter } from 'vue-router'
 import { debounce } from 'lodash'
 import '@/styles/github-markdown-light.css'
@@ -24,6 +24,7 @@ const isFollow = ref(false)
 const isCollected = ref(false)
 const isLike = ref(false)
 const commentCount = ref(0)
+provide('commentCount', commentCount)
 const getArticleInfo = async () => {
   const res = await getArticle({ article_id: props.articleId })
   console.log(res)
@@ -74,13 +75,13 @@ const submitComment = async () => {
   console.log(res)
   if (res.status === 200) {
     commentContent.value = ''
+    commentCount.value++
     commentStore.isShowTextarea = false
     if (res.data.type === 3) {
       const replyIndex = commentList.value.commentList.findIndex((item) => {
         return item.comment_id === res.data.source_id
       })
       commentList.value.commentList[replyIndex].replies.unshift(res.data)
-      commentCount.value++
     } else {
       commentList.value.commentList.unshift(res.data)
     }

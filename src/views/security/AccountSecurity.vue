@@ -19,6 +19,7 @@ function onLogout() {
     .then(async () => {
       await logout()
       userStore.token = ''
+      userStore.userInfo = {}
       router.push('/user')
     })
     .catch(() => {

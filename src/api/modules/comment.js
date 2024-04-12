@@ -43,3 +43,16 @@ export const likeCommentApi = (commentId, type) => {
     },
   })
 }
+
+// 删除评论
+export const deleteCommentApi = (commentId, type, sourceId) => {
+  return instance({
+    method: 'DELETE',
+    url: '/comment/delete',
+    data: {
+      commentId,
+      type,
+      sourceId,
+    },
+  })
+}

@@ -1,8 +1,10 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, inject } from 'vue'
 import { debounce } from 'lodash'
-import { useCommentStore } from '@/stores'
-import { likeCommentApi } from '@/api'
+import { showConfirmDialog } from 'vant'
+import 'vant/es/dialog/style'
+import { useCommentStore, useUserStore } from '@/stores'
+import { likeCommentApi, deleteCommentApi } from '@/api'
 import { formatCount, convertToMMDDHHmm } from '@/utils/convert'
 import CommentReply from './CommentReply.vue'
 
@@ -12,6 +14,8 @@ const props = defineProps({
     required: true,
   },
 })
+
+const emit = defineEmits(['updCommentlist'])
 
 const isShowCommentReply = computed(() => {
   return props.comment.replies.length !== 0
@@ -40,6 +44,33 @@ const handleReplyCommentClick = () => {
   commentStore.sourceidParam = props.comment.comment_id
   commentStore.replyUseridParam = props.comment.user_info.user_id
 }
+
+// 删除评论
+const userStore = useUserStore()
+const commentCount = inject('commentCount')
+const isShowDelIcon = computed(() => {
+  return userStore.userInfo.user_id === props.comment.user_info.user_id
+})
+const handleDelCommentClick = () => {
+  showConfirmDialog({
+    title: '确认删除吗？',
+  })
+    .then(async () => {
+      const res = await deleteCommentApi(
+        props.comment.comment_id,
+        props.comment.type,
+        props.comment.source_id
+      )
+      console.log(res)
+      if (res.status === 200) {
+        commentCount.value--
+        emit('updCommentlist', props.comment.comment_id)
+      }
+    })
+    .catch(() => {
+      console.log('取消')
+    })
+}
 </script>
 
 <template>
@@ -58,18 +89,23 @@ const handleReplyCommentClick = () => {
 
     <div class="content" v-login="handleReplyCommentClick">{{ comment.content }}</div>
     <div class="operation">
-      <div class="like-count">
-        <span
-          class="iconfont"
-          :class="isLikeComment ? 'icon-a-44tubiao-188' : 'icon-a-44tubiao-21'"
-          v-login="handleLikeCommentClick"
-        ></span>
-        <span class="count">{{ formatCount(likeCount) }}</span>
+      <div class="base">
+        <div class="like-count">
+          <span
+            class="iconfont"
+            :class="isLikeComment ? 'icon-a-44tubiao-188' : 'icon-a-44tubiao-21'"
+            v-login="handleLikeCommentClick"
+          ></span>
+          <span class="count">{{ formatCount(likeCount) }}</span>
+        </div>
+        <span class="iconfont icon-fenxiang"></span>
+        <span class="iconfont icon-a-44tubiao-112" v-login="handleReplyCommentClick"></span>
       </div>
-
-      <span class="iconfont icon-fenxiang"></span>
-      <span class="iconfont icon-a-44tubiao-112" v-login="handleReplyCommentClick"></span>
+      <div class="del" v-if="isShowDelIcon">
+        <span class="iconfont icon-a-44tubiao-46" @click="handleDelCommentClick"></span>
+      </div>
     </div>
+
     <div class="comment_reply" v-if="isShowCommentReply">
       <CommentReply :commentReply="comment.replies" :userid="comment.user_info.user_id" />
     </div>
@@ -110,15 +146,23 @@ const handleReplyCommentClick = () => {
   }
   .operation {
     display: flex;
-    justify-content: space-between;
+    // justify-content: space-between;
     align-items: center;
     margin: 10px 0;
     padding-left: 100px;
-    width: 300px;
-    .like-count {
-      .count {
-        font-size: 26px;
+
+    .base {
+      display: flex;
+      justify-content: space-between;
+      width: 200px;
+      .like-count {
+        .count {
+          font-size: 26px;
+        }
       }
+    }
+    .del {
+      margin-left: 40px;
     }
   }
   .comment_reply {

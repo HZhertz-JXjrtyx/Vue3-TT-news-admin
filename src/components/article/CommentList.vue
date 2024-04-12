@@ -39,6 +39,12 @@ const onLoad = async () => {
   }
 }
 
+const updCommentlist = (commentId) => {
+  commentList.value = commentList.value.filter((item) => {
+    return item.comment_id !== commentId
+  })
+}
+
 defineExpose({
   commentList,
 })
@@ -47,7 +53,12 @@ defineExpose({
 <template>
   <div class="comment-list">
     <van-list v-model:loading="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-      <CommentItem v-for="item in commentList" :key="item.comment_id" :comment="item" />
+      <CommentItem
+        v-for="item in commentList"
+        :key="item.comment_id"
+        :comment="item"
+        @updCommentlist="updCommentlist"
+      />
     </van-list>
   </div>
 </template>
