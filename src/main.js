@@ -10,6 +10,23 @@ import App from './App.vue'
 
 const app = createApp(App)
 
+// app.directive('check-login', {
+//   beforeMount: (el) => {
+//     el.addEventListener('click', (event) => {
+//       const userStore = useUserStore()
+//       if (!userStore.token) {
+//         console.log(event)
+//         event.preventDefault()
+//         // event.stopImmediatePropagation()
+//         showToast({
+//           message: '登录后查看更多',
+//           position: 'bottom'
+//         })
+//       }
+//     })
+//   }
+// })
+
 app.use(pinia)
 app.use(router)
 app.use(Lazyload)
@@ -25,7 +42,7 @@ app.directive('login', {
         binding.value()
       }
     })
-  },
+  }
 })
 
 app.mount('#app')
