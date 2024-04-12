@@ -41,3 +41,15 @@ export const getUserInfo = () => {
     url: '/user/info'
   })
 }
+
+// 关注、取消关注 用户
+export const followUserApi = (userId, type) => {
+  return instance({
+    method: 'POST',
+    url: '/user/followings',
+    data: {
+      userId,
+      type
+    }
+  })
+}

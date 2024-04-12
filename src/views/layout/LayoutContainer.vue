@@ -1,14 +1,31 @@
+<script setup>
+// import { useUserStore } from '@/stores'
+import { useRoute } from 'vue-router'
+import LoadIcon from '@/components/layout/LoadIcon.vue'
+
+// const userStore = useUserStore()
+const route = useRoute()
+</script>
+
 <template>
   <div>
-    <router-view></router-view>
-    <van-tabbar route active-color="rgb(197, 66, 34)">
+    <!-- 使用keepalive缓存组件状态，结合路由meta对象配置 -->
+    <!-- 需要将keepalive写在routerview内部 -->
+    <router-view v-slot="{ Component }">
+      <keep-alive>
+        <component v-if="route.meta.keepAlive" :key="route.name" :is="Component" />
+      </keep-alive>
+      <component v-if="!route.meta.keepAlive" :key="route.name" :is="Component" />
+    </router-view>
+
+    <van-tabbar route active-color="#f04142">
       <van-tabbar-item replace to="/home">
         <template #icon="{ active }">
           <LoadIcon iconSrc="https://cdn.lordicon.com/cnpvyndp.json" :active="active"></LoadIcon>
         </template>
         首页
       </van-tabbar-item>
-      <van-tabbar-item replace to="/video">
+      <van-tabbar-item replace to="/hot">
         <template #icon="{ active }">
           <LoadIcon iconSrc="https://cdn.lordicon.com/aklfruoc.json" :active="active"></LoadIcon>
         </template>
@@ -30,17 +47,6 @@
   </div>
 </template>
 
-<script setup>
-import lottie from 'lottie-web'
-import { defineElement } from '@lordicon/element'
-import LoadIcon from '@/components/layout/LoadIcon.vue'
-import { useUserStore } from '@/stores'
-
-const user = useUserStore()
-
-// 定义 "lord-icon" 自定义元素
-defineElement(lottie.loadAnimation)
-</script>
 <style lang="less">
 .van-tabbar-item__icon {
   margin-bottom: 0;

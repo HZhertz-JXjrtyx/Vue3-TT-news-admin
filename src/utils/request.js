@@ -27,7 +27,6 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
   (response) => {
     if (response.data.status >= 200 && response.data.status < 300) {
-      console.log(response)
       return response.data
     } else if (response.data.status === 409) {
       return Promise.reject(response.data)

@@ -1,3 +1,15 @@
+<script setup>
+import { watchEffect } from 'vue'
+import { useUserStore } from '@/stores'
+
+const userStore = useUserStore()
+watchEffect(() => {
+  if (userStore.token) {
+    userStore.fetchUserInfo()
+  }
+})
+</script>
+
 <template>
   <div class="user-tab-container">
     <div v-if="userStore.token" class="login">
@@ -82,14 +94,6 @@
   </div>
 </template>
 
-<script setup>
-import { useUserStore } from '@/stores'
-
-const userStore = useUserStore()
-if (userStore.token) {
-  userStore.fetchUserInfo()
-}
-</script>
 <style lang="less" scoped>
 .top {
   height: 230px;
