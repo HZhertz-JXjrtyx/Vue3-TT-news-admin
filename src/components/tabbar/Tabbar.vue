@@ -1,27 +1,15 @@
 <script setup>
 import { useUserStore } from '@/stores'
-import { useRoute } from 'vue-router'
-import LoadIcon from '@/components/layout/LoadIcon.vue'
+import LoadIcon from './LoadIcon.vue'
 
 const userStore = useUserStore()
-const route = useRoute()
 </script>
-
 <template>
-  <div>
-    <!-- 使用keepalive缓存组件状态，结合路由meta对象配置 -->
-    <!-- 需要将keepalive写在routerview内部 -->
-    <router-view v-slot="{ Component }">
-      <keep-alive>
-        <component v-if="route.meta.keepAlive" :key="route.name" :is="Component" />
-      </keep-alive>
-      <component v-if="!route.meta.keepAlive" :key="route.name" :is="Component" />
-    </router-view>
-
+  <div class="tabbar">
     <van-tabbar route active-color="#f04142">
       <van-tabbar-item replace to="/home">
         <template #icon="{ active }">
-          <LoadIcon iconSrc="http://127.0.0.1:3007/other/lord_icon/home.json" :active="active"></LoadIcon>
+          <LoadIcon iconSrc="http://127.0.0.1:3007/other/lord_icon/home.json" :active="active" />
         </template>
         首页
       </van-tabbar-item>
@@ -50,4 +38,9 @@ const route = useRoute()
   </div>
 </template>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+:deep(.van-tabbar-item__icon) {
+  margin: 0;
+  padding: 0;
+}
+</style>

@@ -1,5 +1,8 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import LayoutContainer from '@/views/layout/LayoutContainer.vue'
+import { showToast } from 'vant'
+import 'vant/es/toast/style'
+import { useUserStore } from '@/stores'
+
 import HomeTab from '@/views/home/HomeTab.vue'
 import HotTab from '@/views/hot/HotTab.vue'
 import MessageTab from '@/views/message/MessageTab.vue'
@@ -16,45 +19,32 @@ import UserFavorites from '@/views/user/UserFavorites.vue'
 import UserBrowsingHistory from '@/views/user/UserBrowsingHistory.vue'
 import AccountSecurity from '@/views/security/AccountSecurity.vue'
 import ChangePassword from '@/views/security/ChangePassword.vue'
-import { useUserStore } from '@/stores'
-import { showToast } from 'vant'
-import 'vant/es/toast/style'
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      component: LayoutContainer,
-      redirect: '/home',
-      children: [
-        {
-          path: 'home',
-          name: 'home',
-          component: HomeTab,
-          meta: {
-            keepAlive: true,
-          },
-        },
-        {
-          path: 'hot',
-          name: 'hot',
-          component: HotTab,
-        },
-        {
-          path: 'message',
-          name: 'message',
-          component: MessageTab,
-        },
-        {
-          path: 'user',
-          name: 'user',
-          component: UserTab,
-        },
-      ],
+      path: '/home',
+      name: 'home',
+      component: HomeTab,
       meta: {
         keepAlive: true,
       },
+    },
+    {
+      path: '/hot',
+      name: 'hot',
+      component: HotTab,
+    },
+    {
+      path: '/message',
+      name: 'message',
+      component: MessageTab,
+    },
+    {
+      path: '/user',
+      name: 'user',
+      component: UserTab,
     },
     {
       path: '/home/search',
@@ -64,6 +54,12 @@ const router = createRouter({
     {
       path: '/article/detail/:articleId',
       name: 'articledetail',
+      component: ArticlePage,
+      props: true,
+    },
+    {
+      path: '/comment/detail/:commentId',
+      name: 'commentdetail',
       component: ArticlePage,
       props: true,
     },
@@ -138,10 +134,9 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const userStore = useUserStore()
-
   // 检查该路由是否需要登录
   if (to.meta.requiresAuth && !userStore.token) {
-    // 如果用户未登录，显示提示并取消导航
+    // 如果用户未登录，提示并取消导航
     showToast('登录后查看更多')
     next(false)
   } else {
