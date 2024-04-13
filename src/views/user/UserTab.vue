@@ -21,18 +21,26 @@ watchEffect(() => {
             <span class="iconfont icon-a-44tubiao-17" @click="$router.push('/user/profile')"></span>
           </span>
           <span class="user-id">UID:{{ userStore.userInfo.user_id }}</span>
-          <div class="space-btn" @click="$router.push('/user/space')">空间<van-icon name="arrow" /></div>
+          <div class="space-btn" @click="$router.push('/user/space')">
+            空间<van-icon name="arrow" />
+          </div>
         </div>
         <div class="data-status">
           <div class="data-item" @click="$router.push('/user')">
             <span class="count">{{ 0 }}</span>
             <span class="text">动态</span>
           </div>
-          <div class="data-item" @click="$router.push({ name: 'userlist', params: { type: 'follow' } })">
+          <div
+            class="data-item"
+            @click="$router.push({ name: 'userlist', params: { type: 'follow' } })"
+          >
             <span class="count">{{ 6 }}</span>
             <span class="text">关注</span>
           </div>
-          <div class="data-item" @click="$router.push({ name: 'userlist', params: { type: 'fans' } })">
+          <div
+            class="data-item"
+            @click="$router.push({ name: 'userlist', params: { type: 'fans' } })"
+          >
             <span class="count">{{ 0 }}</span>
             <span class="text">粉丝</span>
           </div>
@@ -88,7 +96,7 @@ watchEffect(() => {
 
 <style lang="less" scoped>
 .top {
-  height: 460px;
+  height: 230px;
   background: url('@/assets/image/OIG.jpg');
   background-size: cover;
 }
@@ -104,58 +112,58 @@ watchEffect(() => {
       justify-content: center;
       align-items: center;
 
-      width: 140px;
-      height: 140px;
+      width: 70px;
+      height: 70px;
       background-color: #fff;
       border-radius: 50%;
       .icon-a-44tubiao-57 {
-        font-size: 70px;
-        color: #f04142;
+        font-size: 35px;
+        color: rgb(197, 66, 34);
       }
     }
     .text {
       color: #fff;
-      font-size: 36px;
-      margin-top: 20px;
+      font-size: 18px;
+      margin-top: 10px;
     }
   }
 }
 .login {
   .base-info {
     position: relative;
-    height: 320px;
+    height: 160px;
     .avatar {
       position: absolute;
-      top: 100px;
-      left: 60px;
+      top: 50px;
+      left: 30px;
       border-radius: 50%;
-      width: 140px;
-      height: 140px;
+      width: 70px;
+      height: 70px;
     }
     .nickname {
       position: absolute;
-      top: 130px;
-      left: 220px;
-      font-size: 40px;
+      top: 65px;
+      left: 110px;
+      font-size: 20px;
       color: #000000;
     }
     .user-id {
       position: absolute;
-      top: 200px;
-      left: 220px;
-      font-size: 24px;
+      top: 100px;
+      left: 110px;
+      font-size: 12px;
       font-weight: 700;
       color: #505050;
     }
     .iconfont {
-      font-size: 40px;
+      font-size: 20px;
       color: #000000;
     }
     .space-btn {
       position: absolute;
-      top: 160px;
-      left: 600px;
-      font-size: 28px;
+      top: 80px;
+      left: 300px;
+      font-size: 14px;
       font-weight: 700;
       color: #505050;
     }
@@ -164,7 +172,7 @@ watchEffect(() => {
     display: flex;
 
     .data-item {
-      height: 160px;
+      height: 60px;
       flex: 1;
       display: flex;
       flex-direction: column;
@@ -173,36 +181,36 @@ watchEffect(() => {
       color: #000000;
 
       .count {
-        font-size: 40px;
+        font-size: 20px;
       }
 
       .text {
-        font-size: 32px;
+        font-size: 16px;
       }
     }
   }
 }
 .grid-nav {
-  margin-bottom: 30px;
+  margin-bottom: 15px;
 
   .grid-item {
-    height: 140px;
+    height: 70px;
 
     .iconfont {
-      font-size: 56px;
-      color: #f04142;
+      font-size: 28px;
+      color: rgb(197, 66, 34);
     }
 
     .text {
-      font-size: 32px;
+      font-size: 16px;
     }
   }
 }
 .van-cell {
   .iconfont {
-    font-size: 40px;
-    margin-right: 20px;
+    font-size: 20px;
+    margin-right: 10px;
   }
-  font-size: 32px;
+  font-size: 16px;
 }
 </style>

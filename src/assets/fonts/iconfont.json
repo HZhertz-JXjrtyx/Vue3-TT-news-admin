@@ -6,62 +6,6 @@
   "description": "",
   "glyphs": [
     {
-      "icon_id": "23036429",
-      "name": "分享",
-      "font_class": "fenxiang",
-      "unicode": "e61c",
-      "unicode_decimal": 58908
-    },
-    {
-      "icon_id": "38661789",
-      "name": "点赞",
-      "font_class": "a-44tubiao-188",
-      "unicode": "e6ba",
-      "unicode_decimal": 59066
-    },
-    {
-      "icon_id": "38661833",
-      "name": "收藏",
-      "font_class": "a-44tubiao-242",
-      "unicode": "e6bb",
-      "unicode_decimal": 59067
-    },
-    {
-      "icon_id": "15188514",
-      "name": "play",
-      "font_class": "play1",
-      "unicode": "e70b",
-      "unicode_decimal": 59147
-    },
-    {
-      "icon_id": "25367362",
-      "name": "视频播放量",
-      "font_class": "shipinbofangliang",
-      "unicode": "e602",
-      "unicode_decimal": 58882
-    },
-    {
-      "icon_id": "38644720",
-      "name": "消息",
-      "font_class": "a-44tubiao-112",
-      "unicode": "e6b9",
-      "unicode_decimal": 59065
-    },
-    {
-      "icon_id": "15838511",
-      "name": "play",
-      "font_class": "play",
-      "unicode": "e67a",
-      "unicode_decimal": 59002
-    },
-    {
-      "icon_id": "38644692",
-      "name": "添加好友",
-      "font_class": "a-44tubiao-88",
-      "unicode": "e6b8",
-      "unicode_decimal": 59064
-    },
-    {
       "icon_id": "38644679",
       "name": "提示",
       "font_class": "a-44tubiao-62",

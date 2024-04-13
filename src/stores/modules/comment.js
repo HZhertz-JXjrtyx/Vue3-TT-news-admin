@@ -14,6 +14,6 @@ export const useCommentStore = defineStore(storeNames.COMMENT, () => {
     textareaPlaceholder,
     typeParam,
     sourceidParam,
-    replyUseridParam,
+    replyUseridParam
   }
 })

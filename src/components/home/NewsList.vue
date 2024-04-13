@@ -7,12 +7,12 @@ import ListItem from '@/components/home/ListItem.vue'
 const props = defineProps({
   channelId: {
     type: String,
-    required: true,
+    required: true
   },
   channelName: {
     type: String,
-    required: true,
-  },
+    required: true
+  }
 })
 
 const page = ref(1)
@@ -22,7 +22,11 @@ const loading = ref(false)
 const hasMore = ref(true)
 
 const getNewsList = async () => {
-  const res = await getNews({ channel_id: props.channelId, page: page.value, pageSize: pageSize.value })
+  const res = await getNews({
+    channel_id: props.channelId,
+    page: page.value,
+    pageSize: pageSize.value
+  })
   // console.log(res)
   if (res.data.length < pageSize.value) {
     hasMore.value = false
@@ -62,16 +66,16 @@ const goDetail = (item) => {
     router.push({
       name: 'articledetail',
       params: {
-        articleId: item.article_id,
-      },
+        articleId: item.article_id
+      }
     })
   }
   if (item.type === 'video') {
     router.push({
       name: 'videodetail',
       params: {
-        videoId: item.video_id,
-      },
+        videoId: item.video_id
+      }
     })
   }
 }
@@ -80,8 +84,18 @@ const goDetail = (item) => {
 <template>
   <div class="news-list">
     <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
-      <van-list v-model:loading="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-        <ListItem v-for="item in newsList" :key="item._id" :news="item" @click="goDetail(item)"></ListItem>
+      <van-list
+        v-model:loading="loading"
+        :finished="finished"
+        finished-text="没有更多了"
+        @load="onLoad"
+      >
+        <ListItem
+          v-for="item in newsList"
+          :key="item._id"
+          :news="item"
+          @click="goDetail(item)"
+        ></ListItem>
       </van-list>
     </van-pull-refresh>
     <!-- <van-back-top right="28px" bottom="90px" /> -->

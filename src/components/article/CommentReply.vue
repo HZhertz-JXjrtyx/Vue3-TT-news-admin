@@ -2,13 +2,13 @@
 defineProps({
   commentReply: {
     type: Array,
-    required: true,
+    required: true
   },
 
   userid: {
     type: Number,
-    required: true,
-  },
+    required: true
+  }
 })
 </script>
 

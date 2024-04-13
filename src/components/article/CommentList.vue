@@ -6,8 +6,8 @@ import CommentItem from './CommentItem.vue'
 const props = defineProps({
   sourceId: {
     type: String,
-    required: true,
-  },
+    required: true
+  }
 })
 
 const page = ref(1)
@@ -46,13 +46,18 @@ const updCommentlist = (commentId) => {
 }
 
 defineExpose({
-  commentList,
+  commentList
 })
 </script>
 
 <template>
   <div class="comment-list">
-    <van-list v-model:loading="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+    <van-list
+      v-model:loading="loading"
+      :finished="finished"
+      finished-text="没有更多了"
+      @load="onLoad"
+    >
       <CommentItem
         v-for="item in commentList"
         :key="item.comment_id"

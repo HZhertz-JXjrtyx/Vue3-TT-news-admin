@@ -6,7 +6,7 @@ export const getArticle = (params) => {
   return instance({
     method: 'GET',
     url: '/article/info',
-    params,
+    params
   })
 }
 // 收藏、取消收藏文章
@@ -16,8 +16,8 @@ export const collectArticleApi = (articleId, type) => {
     url: '/article/collect',
     data: {
       articleId,
-      type,
-    },
+      type
+    }
   })
 }
 // 点赞、取消点赞文章
@@ -27,7 +27,7 @@ export const likeArticleApi = (articleId, type) => {
     url: '/article/like',
     data: {
       articleId,
-      type,
-    },
+      type
+    }
   })
 }

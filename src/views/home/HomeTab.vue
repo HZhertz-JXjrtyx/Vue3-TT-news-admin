@@ -19,12 +19,15 @@ watch(
   },
   {
     deep: true,
-    immediate: true,
+    immediate: true
   }
 )
 
 watchEffect(() => {
-  if (channelStore.userChannel.selected?.length + channelStore.userChannel.unselected?.length !== 16) {
+  if (
+    channelStore.userChannel.selected?.length + channelStore.userChannel.unselected?.length !==
+    16
+  ) {
     channelStore.fetchUserChannels()
   }
 })
@@ -44,7 +47,7 @@ const handleClose = async () => {
       // 将userChannel转换为只包含id的形式
       const transformedUserChannel = {
         selected: channelStore.userChannel.selected.map((item) => item.id),
-        unselected: channelStore.userChannel.unselected.map((item) => item.id),
+        unselected: channelStore.userChannel.unselected.map((item) => item.id)
       }
       await channelStore.updateUserChannels(transformedUserChannel)
     }
@@ -125,7 +128,10 @@ onDeactivated(() => {
       </van-tab>
 
       <template #nav-bottom>
-        <span @click="isChannelEditShow = true" class="iconfont icon-a-44tubiao-93 container"></span>
+        <span
+          @click="isChannelEditShow = true"
+          class="iconfont icon-a-44tubiao-93 container"
+        ></span>
       </template>
     </van-tabs>
 
@@ -145,14 +151,5 @@ onDeactivated(() => {
   </div>
 </template>
 
-<style lang="less" scoped>
-.icon-a-44tubiao-93 {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 60px;
-  height: 88px;
-  font-size: 36px;
-  background: var(--bg-color-1);
-}
-</style>
+<script setup></script>
+<style lang="less" scoped></style>
