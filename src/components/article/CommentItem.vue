@@ -11,8 +11,8 @@ import CommentReply from './CommentReply.vue'
 const props = defineProps({
   comment: {
     type: Object,
-    required: true
-  }
+    required: true,
+  },
 })
 
 const emit = defineEmits(['updCommentlist'])
@@ -53,7 +53,7 @@ const isShowDelIcon = computed(() => {
 })
 const handleDelCommentClick = () => {
   showConfirmDialog({
-    title: '确认删除吗？'
+    title: '确认删除吗？',
   })
     .then(async () => {
       const res = await deleteCommentApi(
@@ -77,13 +77,7 @@ const handleDelCommentClick = () => {
   <div class="comment-item">
     <div class="user-info">
       <div class="avatar">
-        <van-image
-          width="50px"
-          height="50px"
-          round
-          lazy-load
-          :src="comment.user_info.user_avatar"
-        />
+        <van-image width="50px" height="50px" round lazy-load :src="comment.user_info.user_avatar" />
       </div>
       <div class="info">
         <div class="name">

@@ -11,8 +11,8 @@ export const getComment = (type, id, page, pageSize) => {
       type,
       id,
       page,
-      pageSize
-    }
+      pageSize,
+    },
   })
 }
 
@@ -27,8 +27,8 @@ export const addCommentApi = (type, id, content, replyId = 0, pubTime = ~~(Date.
       id,
       content,
       replyId,
-      pubTime
-    }
+      pubTime,
+    },
   })
 }
 
@@ -39,8 +39,8 @@ export const likeCommentApi = (commentId, type) => {
     url: '/comment/like',
     data: {
       commentId,
-      type
-    }
+      type,
+    },
   })
 }
 
@@ -52,7 +52,7 @@ export const deleteCommentApi = (commentId, type, sourceId) => {
     data: {
       commentId,
       type,
-      sourceId
-    }
+      sourceId,
+    },
   })
 }

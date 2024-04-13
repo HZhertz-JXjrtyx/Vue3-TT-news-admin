@@ -18,10 +18,10 @@ export const useUserStore = defineStore(
     return {
       token,
       userInfo,
-      fetchUserInfo
+      fetchUserInfo,
     }
   },
   {
-    persist: true
+    persist: true,
   }
 )
