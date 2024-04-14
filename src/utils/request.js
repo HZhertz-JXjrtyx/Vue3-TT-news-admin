@@ -3,6 +3,7 @@ import { showToast } from 'vant'
 import 'vant/es/toast/style'
 import { useUserStore } from '@/stores'
 import router from '@/router'
+import { removeLocal } from './storage'
 
 const baseURL = 'http://localhost:3007'
 const instance = axios.create({
@@ -26,10 +27,16 @@ instance.interceptors.request.use(
 
 instance.interceptors.response.use(
   (response) => {
+    const userStore = useUserStore()
     if (response.data.status >= 200 && response.data.status < 300) {
       return response.data
     } else if (response.data.status === 409) {
       return Promise.reject(response.data)
+    } else if (response.data.status === 405) {
+      removeLocal('USER')
+      userStore.token = ''
+      userStore.userInfo = {}
+      router.push('home')
     } else {
       console.log(response)
       showToast({

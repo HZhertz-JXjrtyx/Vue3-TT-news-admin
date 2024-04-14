@@ -1,12 +1,12 @@
 <script setup>
 import { onMounted, ref, provide } from 'vue'
-// import { useRouter } from 'vue-router'
-import { getCommentDetailApi } from '@/api'
-import CommentList from '@/components/article/CommentList.vue'
+import { debounce } from 'lodash'
+import { getCommentDetailApi, likeCommentApi } from '@/api'
+import NavBar from '@/components/NavBar.vue'
 import UserInfo from '@/components/UserInfo.vue'
 import UserInfoSkt from '@/components/UserInfoSkt.vue'
-import NavBar from '@/components/NavBar.vue'
-// import { convertToMMDDHHmm } from '@/utils/convert'
+import CommentList from '@/components/article/CommentList.vue'
+import DetailBottom from '@/components/DetailBottom.vue'
 
 const props = defineProps({
   commentId: {
@@ -15,23 +15,40 @@ const props = defineProps({
   },
 })
 
-// const router = useRouter()
-
-// 获取评论详情
-const commentDetail = ref({})
-const isLoading = ref(true)
 const commentUserId = ref('')
 provide('commentUserId', commentUserId)
+const commentList = ref([])
+provide('commentList', commentList)
+const isLike = ref(false)
+provide('isLike', isLike)
+// 获取评论详情
+const commentDetail = ref({})
+const commentReplyCount = ref(0)
+const isLoading = ref(true)
+
 const getCommentDetail = async () => {
   const res = await getCommentDetailApi(props.commentId)
   console.log(res)
-  commentDetail.value = res.data
   commentUserId.value = res.data.user_id
+  commentDetail.value = res.data
+  commentReplyCount.value = res.data.reply_count
+  isLike.value = res.data.is_like
   isLoading.value = false
 }
 onMounted(() => {
   getCommentDetail()
 })
+
+// 点赞
+const likeComment = async () => {
+  await likeCommentApi(commentDetail.value.comment_id, isLike.value)
+}
+const debouncedLikeComment = debounce(likeComment, 500)
+const handleClickLike = () => {
+  console.log('>>>')
+  isLike.value = !isLike.value
+  debouncedLikeComment()
+}
 </script>
 
 <template>
@@ -48,8 +65,17 @@ onMounted(() => {
     </div>
     <div class="divider"></div>
     <div class="reply">
-      <CommentList :type="3" :sourceId="commentId" />
+      <div class="reply-header">
+        <div class="title">评论回复 {{ commentReplyCount }}</div>
+      </div>
+      <CommentList :type="3" :sourceId="commentId" @clickLike="handleClickLike" />
     </div>
+    <DetailBottom
+      v-if="!isLoading"
+      :sourceType="3"
+      :sourceId="props.commentId"
+      :replyName="commentDetail.user_info.user_nickname"
+    />
   </div>
 </template>
 
@@ -72,6 +98,17 @@ onMounted(() => {
   }
   .reply {
     margin: 20px 20px 200px 20px;
+    .reply-header {
+      border-bottom: 1px solid var(--bg-color-3);
+
+      .title {
+        display: inline-block;
+
+        height: 60px;
+        color: var(--main-color-red-1);
+        border-bottom: 2px solid var(--main-color-red-1);
+      }
+    }
   }
 }
 </style>

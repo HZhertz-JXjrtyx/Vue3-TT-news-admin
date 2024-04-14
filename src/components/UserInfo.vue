@@ -19,7 +19,7 @@ const props = defineProps({
 
 const userStore = useUserStore()
 const isShowFollowBtn = computed(() => {
-  return props.userInfo.user_id === userStore.user_id
+  return props.userInfo.user_id !== userStore.userInfo.user_id
 })
 
 // 是否关注
@@ -29,7 +29,7 @@ const getIsFollow = async () => {
   console.log(res)
 }
 onMounted(() => {
-  if (props.userInfo.user_id) {
+  if (props.userInfo.user_id && userStore.userInfo.user_id) {
     getIsFollow()
   }
 })

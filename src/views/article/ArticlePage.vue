@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, provide } from 'vue'
 import { useRouter } from 'vue-router'
 import { debounce } from 'lodash'
 import '@/styles/github-markdown-light.css'
@@ -52,7 +52,9 @@ const handleFollowClick = () => {
 
 // 评论
 
-const commentList = ref(null)
+// const commentList = ref(null)
+const commentList = ref([])
+provide('commentList', commentList)
 
 const commentContent = ref('')
 
@@ -78,12 +80,12 @@ const submitComment = async () => {
     commentStore.commentCount++
     commentStore.isShowTextarea = false
     if (res.data.type === 3) {
-      const replyIndex = commentList.value.commentList.findIndex((item) => {
+      const replyIndex = commentList.value.findIndex((item) => {
         return item.comment_id === res.data.source_id
       })
-      commentList.value.commentList[replyIndex].replies.unshift(res.data)
+      commentList.value[replyIndex].replies.unshift(res.data)
     } else {
-      commentList.value.commentList.unshift(res.data)
+      commentList.value.unshift(res.data)
     }
 
     scrollToComment()
@@ -166,7 +168,7 @@ const scrollToComment = () => {
       <div class="comment-header">
         <div class="title">评论{{ commentStore.commentCount }}</div>
       </div>
-      <CommentList ref="commentList" :type="1" :sourceId="articleId" />
+      <CommentList :type="1" :sourceId="articleId" />
     </div>
 
     <div class="bottom">

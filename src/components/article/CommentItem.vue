@@ -17,7 +17,10 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['updCommentlist'])
-const commentUserId = inject('commentUserId') || ref('')
+let commentUserId
+if (props.comment.type === 3) {
+  commentUserId = inject('commentUserId')
+}
 
 // 展开折叠
 const contentRef = ref(null)
@@ -76,7 +79,7 @@ const handleReplyCommentClick = () => {
 
 // 删除评论
 const userStore = useUserStore()
-const commentCount = commentStore.commentCount
+// const commentCount = commentStore.commentCount
 // const commentCount = inject('commentCount')
 const isShowDelIcon = computed(() => {
   return userStore.userInfo.user_id === props.comment.user_info.user_id
@@ -93,12 +96,12 @@ const handleDelCommentClick = () => {
       )
       console.log(res)
       if (res.status === 200) {
-        commentCount.value--
+        commentStore.commentCount--
         emit('updCommentlist', props.comment.comment_id)
       }
     })
-    .catch(() => {
-      console.log('取消')
+    .catch((error) => {
+      console.log(error)
     })
 }
 

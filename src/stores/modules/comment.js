@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import storeNames from '@/stores/storeNames'
+import { addCommentApi } from '@/api'
 
 export const useCommentStore = defineStore(storeNames.COMMENT, () => {
   const commentCount = ref(0)
@@ -11,6 +12,10 @@ export const useCommentStore = defineStore(storeNames.COMMENT, () => {
   const sourceidParam = ref('')
   const replyUseridParam = ref(0)
 
+  const submitComment = async (commentContent) => {
+    return await addCommentApi(typeParam.value, sourceidParam.value, commentContent, replyUseridParam.value)
+  }
+
   return {
     commentCount,
     isShowTextarea,
@@ -18,5 +23,6 @@ export const useCommentStore = defineStore(storeNames.COMMENT, () => {
     typeParam,
     sourceidParam,
     replyUseridParam,
+    submitComment,
   }
 })
