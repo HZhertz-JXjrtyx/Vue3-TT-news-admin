@@ -15,16 +15,16 @@ defineProps({
 <template>
   <div class="comment-reply">
     <div class="list">
-      <div class="item" v-for="item in commentReply" :key="item._id">
-        <span class="user-name">{{ item.user_info.user_nickname }}:</span>
+      <span class="item" v-for="item in commentReply" :key="item._id">
+        <span class="user-name">{{ item.user_info.user_nickname }}&#xFF1A;</span>
         <span class="reply-user" v-if="userid !== item.reply_user">
           回复
-          <span class="reply-user-name">{{ item.reply_user_nickname }} </span>:
+          <span class="reply-user-name">{{ item.reply_user_nickname }}&#xFF1A;</span>：
         </span>
         <span>{{ item.content }}</span>
-      </div>
+      </span>
     </div>
-    <div class="bottom">共{{ commentReply.length }}条回复</div>
+    <div class="bottom" v-if="commentReply.length > 3">共{{ commentReply.length }}条回复</div>
   </div>
 </template>
 
@@ -42,6 +42,7 @@ defineProps({
       -webkit-line-clamp: 2;
       overflow: hidden;
       line-height: 1.6;
+      overflow-wrap: break-word;
       .user-name,
       .reply-user-name {
         color: var(--main-color-blue-2);

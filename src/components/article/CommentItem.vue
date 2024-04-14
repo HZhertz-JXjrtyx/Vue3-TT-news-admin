@@ -1,5 +1,6 @@
 <script setup>
-import { computed, ref, inject } from 'vue'
+import { computed, ref, inject, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { debounce } from 'lodash'
 import { showConfirmDialog } from 'vant'
 import 'vant/es/dialog/style'
@@ -16,9 +17,37 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['updCommentlist'])
+const commentUserId = inject('commentUserId') || ref('')
 
+// 展开折叠
+const contentRef = ref(null)
+// 内容是否被展开
+const isOpen = ref(false)
+// 内容是否溢出
+const isOverflow = ref(false)
+const contentSty = computed(() => {
+  const sty = {}
+  if (isOpen.value) {
+    sty['max-height'] = 'none'
+    sty['display'] = 'block'
+  }
+
+  return sty
+})
+onMounted(() => {
+  isOverflow.value = contentRef.value.scrollHeight > contentRef.value.clientHeight
+})
+// watch(isOpen, (newValue) => {
+//   if (newValue) {
+//     isOverflow.value = false
+//   } else {
+//     isOverflow.value = contentRef.value.scrollHeight > contentRef.value.clientHeight
+//   }
+// })
+
+// 是否显示回复区域
 const isShowCommentReply = computed(() => {
-  return props.comment.replies.length !== 0
+  return props.comment.replies?.length !== 0
 })
 
 // 点赞评论
@@ -47,7 +76,8 @@ const handleReplyCommentClick = () => {
 
 // 删除评论
 const userStore = useUserStore()
-const commentCount = inject('commentCount')
+const commentCount = commentStore.commentCount
+// const commentCount = inject('commentCount')
 const isShowDelIcon = computed(() => {
   return userStore.userInfo.user_id === props.comment.user_info.user_id
 })
@@ -71,6 +101,17 @@ const handleDelCommentClick = () => {
       console.log('取消')
     })
 }
+
+//  跳转评论详情
+const router = useRouter()
+const goToCommentDetail = () => {
+  router.push({
+    name: 'commentdetail',
+    params: {
+      commentId: props.comment.comment_id,
+    },
+  })
+}
 </script>
 
 <template>
@@ -80,14 +121,28 @@ const handleDelCommentClick = () => {
         <van-image width="50px" height="50px" round lazy-load :src="comment.user_info.user_avatar" />
       </div>
       <div class="info">
-        <div class="name">
-          {{ comment.user_info.user_nickname }}
+        <div class="name-reply">
+          <span class="name">
+            {{ comment.user_info.user_nickname }}
+          </span>
+          <div class="reply" v-if="comment.type === 3 && commentUserId !== comment.reply_user">
+            <span class="reply_user">
+              回复
+              <span class="reply-user-name">{{ comment.reply_user_nickname }} </span>:
+            </span>
+          </div>
         </div>
+
         <div class="pub-time">{{ convertToMMDDHHmm(comment.publish_time) }}</div>
       </div>
     </div>
 
-    <div class="content" v-login="handleReplyCommentClick">{{ comment.content }}</div>
+    <div ref="contentRef" class="content" v-login="handleReplyCommentClick" :style="contentSty">
+      {{ comment.content }}
+    </div>
+    <div v-if="isOverflow" class="open" @click="isOpen = !isOpen">
+      {{ isOpen ? '收起' : '展开' }}
+    </div>
     <div class="operation">
       <div class="base">
         <div class="like-count">
@@ -106,7 +161,7 @@ const handleDelCommentClick = () => {
       </div>
     </div>
 
-    <div class="comment_reply" v-if="isShowCommentReply">
+    <div class="comment_reply" v-if="isShowCommentReply && comment.type !== 3" @click="goToCommentDetail">
       <CommentReply :commentReply="comment.replies" :userid="comment.user_info.user_id" />
     </div>
   </div>
@@ -125,6 +180,9 @@ const handleDelCommentClick = () => {
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      .name-reply {
+        display: flex;
+      }
       .name {
         color: var(--main-color-red-3);
       }
@@ -138,11 +196,18 @@ const handleDelCommentClick = () => {
     width: 720px;
     max-height: 280px;
     padding-left: 100px;
+    padding-right: 20px;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 6;
     overflow: hidden;
     line-height: 1.6;
+    word-wrap: break-word;
+  }
+  .open {
+    padding-left: 100px;
+    font-size: 25px;
+    color: var(--main-color-blue-2);
   }
   .operation {
     display: flex;

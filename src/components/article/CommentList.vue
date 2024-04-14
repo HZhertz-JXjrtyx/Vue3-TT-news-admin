@@ -4,6 +4,10 @@ import { getComment } from '@/api'
 import CommentItem from './CommentItem.vue'
 
 const props = defineProps({
+  type: {
+    type: Number,
+    required: true,
+  },
   sourceId: {
     type: String,
     required: true,
@@ -18,7 +22,7 @@ const hasMore = ref(true)
 
 const commentList = ref([])
 const getCommentList = async () => {
-  const res = await getComment(1, props.sourceId, page.value, pageSize.value)
+  const res = await getComment(props.type, props.sourceId, page.value, pageSize.value)
   console.log(res)
   if (res.data.length < pageSize.value) {
     hasMore.value = false

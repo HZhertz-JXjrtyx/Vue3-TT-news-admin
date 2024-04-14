@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed, provide } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { debounce } from 'lodash'
 import '@/styles/github-markdown-light.css'
@@ -16,6 +16,7 @@ const props = defineProps({
   },
 })
 const router = useRouter()
+const commentStore = useCommentStore()
 
 // 获取文章详情
 const articleInfo = ref({})
@@ -23,8 +24,8 @@ const pubtime = ref('')
 const isFollow = ref(false)
 const isCollected = ref(false)
 const isLike = ref(false)
-const commentCount = ref(0)
-provide('commentCount', commentCount)
+// const commentCount = commentStore.commentCount
+// provide('commentCount', commentCount)
 const getArticleInfo = async () => {
   const res = await getArticle({ article_id: props.articleId })
   console.log(res)
@@ -33,7 +34,7 @@ const getArticleInfo = async () => {
   isFollow.value = res.data.is_followed
   isCollected.value = res.data.is_collected
   isLike.value = res.data.is_liked
-  commentCount.value = res.data.comment_count
+  commentStore.commentCount = res.data.comment_count
 }
 
 onMounted(() => {
@@ -50,7 +51,6 @@ const handleFollowClick = () => {
 }
 
 // 评论
-const commentStore = useCommentStore()
 
 const commentList = ref(null)
 
@@ -75,7 +75,7 @@ const submitComment = async () => {
   console.log(res)
   if (res.status === 200) {
     commentContent.value = ''
-    commentCount.value++
+    commentStore.commentCount++
     commentStore.isShowTextarea = false
     if (res.data.type === 3) {
       const replyIndex = commentList.value.commentList.findIndex((item) => {
@@ -164,9 +164,9 @@ const scrollToComment = () => {
     <div class="divider"></div>
     <div class="comment" ref="commentSection">
       <div class="comment-header">
-        <div class="title">评论{{ commentCount }}</div>
+        <div class="title">评论{{ commentStore.commentCount }}</div>
       </div>
-      <CommentList ref="commentList" :sourceId="articleId" />
+      <CommentList ref="commentList" :type="1" :sourceId="articleId" />
     </div>
 
     <div class="bottom">
