@@ -1,6 +1,6 @@
 import instance from '@/utils/request'
 
-// 获取评论
+// 获取评论列表
 // type:评论类型 1：文章评论 2：视频评论 3：评论回复
 // id：根据类型不同表示不同的id
 export const getComment = (type, id, page, pageSize) => {
@@ -53,6 +53,17 @@ export const deleteCommentApi = (commentId, type, sourceId) => {
       commentId,
       type,
       sourceId,
+    },
+  })
+}
+
+// 获取评论详情
+export const getCommentDetailApi = (commentId) => {
+  return instance({
+    method: 'GET',
+    url: '/comment/detail',
+    params: {
+      commentId,
     },
   })
 }

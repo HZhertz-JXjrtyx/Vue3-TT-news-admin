@@ -42,6 +42,16 @@ export const getUserInfo = () => {
   })
 }
 
+// 是否关注
+export const isFollowUserApi = (userId) => {
+  return instance({
+    method: 'GET',
+    url: '/user/isfollow',
+    params: {
+      userId,
+    },
+  })
+}
 // 关注、取消关注 用户
 export const followUserApi = (userId, type) => {
   return instance({

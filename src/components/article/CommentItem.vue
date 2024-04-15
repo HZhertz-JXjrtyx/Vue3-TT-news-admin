@@ -1,5 +1,6 @@
 <script setup>
-import { computed, ref, inject } from 'vue'
+import { computed, ref, inject, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { debounce } from 'lodash'
 import { showConfirmDialog } from 'vant'
 import 'vant/es/dialog/style'
@@ -16,9 +17,34 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['updCommentlist'])
+// let commentUserId
+// if (props.comment.type === 3) {
+//   commentUserId = inject('commentUserId')
+// }
+const commentCount = inject('commentCount')
 
+// 展开折叠
+const contentRef = ref(null)
+// 内容是否被展开
+const isOpen = ref(false)
+// 内容是否溢出
+const isOverflow = ref(false)
+const contentSty = computed(() => {
+  const sty = {}
+  if (isOpen.value) {
+    sty['max-height'] = 'none'
+    sty['display'] = 'block'
+  }
+
+  return sty
+})
+onMounted(() => {
+  isOverflow.value = contentRef.value.scrollHeight > contentRef.value.clientHeight
+})
+
+// 是否显示回复区域
 const isShowCommentReply = computed(() => {
-  return props.comment.replies.length !== 0
+  return props.comment.replies?.length !== 0
 })
 
 // 点赞评论
@@ -37,17 +63,23 @@ const handleLikeCommentClick = () => {
 // 回复评论
 const commentStore = useCommentStore()
 
+const isShowTextarea = inject('isShowTextarea')
 const handleReplyCommentClick = () => {
   commentStore.textareaPlaceholder = `回复 ${props.comment.user_info.user_nickname}:`
-  commentStore.isShowTextarea = true
+  isShowTextarea.value = true
   commentStore.typeParam = 3
-  commentStore.sourceidParam = props.comment.comment_id
-  commentStore.replyUseridParam = props.comment.user_info.user_id
+  if (props.comment.type === 3) {
+    commentStore.sourceidParam = props.comment.source_id
+    commentStore.replyUseridParam = props.comment.user_info.user_id
+  } else {
+    commentStore.sourceidParam = props.comment.comment_id
+  }
 }
 
 // 删除评论
 const userStore = useUserStore()
-const commentCount = inject('commentCount')
+// const commentCount = commentStore.commentCount
+// const commentCount = inject('commentCount')
 const isShowDelIcon = computed(() => {
   return userStore.userInfo.user_id === props.comment.user_info.user_id
 })
@@ -67,9 +99,20 @@ const handleDelCommentClick = () => {
         emit('updCommentlist', props.comment.comment_id)
       }
     })
-    .catch(() => {
-      console.log('取消')
+    .catch((error) => {
+      console.log(error)
     })
+}
+
+//  跳转评论详情
+const router = useRouter()
+const goToCommentDetail = () => {
+  router.push({
+    name: 'commentdetail',
+    params: {
+      commentId: props.comment.comment_id,
+    },
+  })
 }
 </script>
 
@@ -80,14 +123,29 @@ const handleDelCommentClick = () => {
         <van-image width="50px" height="50px" round lazy-load :src="comment.user_info.user_avatar" />
       </div>
       <div class="info">
-        <div class="name">
-          {{ comment.user_info.user_nickname }}
+        <div class="name-reply">
+          <span class="name">
+            {{ comment.user_info.user_nickname }}
+          </span>
+          <div class="reply" v-if="comment.type === 3 && comment.reply_user !== 0">
+            <span class="reply_user">
+              &nbsp;回复&nbsp;
+              <span class="reply-user-name">{{ comment.reply_user_nickname }}</span
+              >&#xFF1A;
+            </span>
+          </div>
         </div>
+
         <div class="pub-time">{{ convertToMMDDHHmm(comment.publish_time) }}</div>
       </div>
     </div>
 
-    <div class="content" v-login="handleReplyCommentClick">{{ comment.content }}</div>
+    <div ref="contentRef" class="content" v-login="handleReplyCommentClick" :style="contentSty">
+      {{ comment.content }}
+    </div>
+    <div v-if="isOverflow" class="open" @click="isOpen = !isOpen">
+      {{ isOpen ? '收起' : '展开' }}
+    </div>
     <div class="operation">
       <div class="base">
         <div class="like-count">
@@ -106,8 +164,8 @@ const handleDelCommentClick = () => {
       </div>
     </div>
 
-    <div class="comment_reply" v-if="isShowCommentReply">
-      <CommentReply :commentReply="comment.replies" :userid="comment.user_info.user_id" />
+    <div class="comment_reply" v-if="isShowCommentReply && comment.type !== 3" @click="goToCommentDetail">
+      <CommentReply :commentReply="comment.replies" :replyCount="comment.reply_count" />
     </div>
   </div>
 </template>
@@ -125,8 +183,16 @@ const handleDelCommentClick = () => {
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      .name-reply {
+        display: flex;
+      }
       .name {
         color: var(--main-color-red-3);
+      }
+      .reply {
+        .reply-user-name {
+          color: var(--main-color-blue-2);
+        }
       }
       .pub-time {
         font-size: 24px;
@@ -138,11 +204,18 @@ const handleDelCommentClick = () => {
     width: 720px;
     max-height: 280px;
     padding-left: 100px;
+    padding-right: 20px;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 6;
     overflow: hidden;
     line-height: 1.6;
+    word-wrap: break-word;
+  }
+  .open {
+    padding-left: 100px;
+    font-size: 25px;
+    color: var(--main-color-blue-2);
   }
   .operation {
     display: flex;

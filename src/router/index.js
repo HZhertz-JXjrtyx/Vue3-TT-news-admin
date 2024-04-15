@@ -9,6 +9,7 @@ import MessageTab from '@/views/message/MessageTab.vue'
 import UserTab from '@/views/user/UserTab.vue'
 import SearchPage from '@/views/search/SearchPage.vue'
 import ArticlePage from '@/views/article/ArticlePage.vue'
+import CommentPage from '@/views/comment/CommentPage.vue'
 import VideoPage from '@/views/video/VideoPage.vue'
 import MessagePage from '@/views/message/MessagePage.vue'
 import UserLogin from '@/views/user/UserLogin.vue'
@@ -60,7 +61,7 @@ const router = createRouter({
     {
       path: '/comment/detail/:commentId',
       name: 'commentdetail',
-      component: ArticlePage,
+      component: CommentPage,
       props: true,
     },
     {
