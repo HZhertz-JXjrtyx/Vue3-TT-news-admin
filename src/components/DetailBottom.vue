@@ -16,25 +16,29 @@ const props = defineProps({
     required: false,
   },
 })
-const emit = defineEmits(['clickInput', 'clickComment', 'clickCollect', 'clickLike'])
+const emit = defineEmits(['clickComment', 'clickCollect', 'clickLike'])
 
 let isCollected
 const isLike = inject('isLike')
 if (props.sourceType !== 3) {
   isCollected = inject('isCollected')
 }
-// 发起评论
-const commentStore = useCommentStore()
 // 评论popup显示隐藏
-const isShowTextarea = ref(false)
+const isShowTextarea = inject('isShowTextarea')
+const commentCount = inject('commentCount')
+// commentList 用来提交评论后更新评论列表
+const commentList = inject('commentList')
+
+const commentStore = useCommentStore()
+
+/* 发起评论 */
+
 // 评论内容
 const commentContent = ref('')
 // 内容为空时，发送按钮不可用
 const isSubmitDisabled = computed(() => {
   return !commentContent.value
 })
-// type===3时，对评论进行回复，需要评论用户的id
-const commentUserId = inject('commentUserId')
 // 点击 input 显示 popup , 更改 pinia 中数据
 const clickInput = () => {
   // 更改 placeholder
@@ -45,13 +49,12 @@ const clickInput = () => {
   commentStore.typeParam = props.sourceType
   // 页面id
   commentStore.sourceidParam = props.sourceId
-  // type===3时，对评论进行回复，需要评论用户的id
-  if (props.sourceType === 3) {
-    commentStore.replyUseridParam = commentUserId.value
-  }
+  // // type===3时，对评论进行回复，需要评论用户的id
+  // if (props.sourceType === 3) {
+  //   commentStore.replyUseridParam = commentUserId.value
+  // }
 }
-// commentList 用来提交评论后更新评论列表
-const commentList = inject('commentList')
+
 // 提交
 const submit = async () => {
   // 提交评论后会返回评论数据
@@ -74,10 +77,12 @@ const submit = async () => {
           return item.comment_id === res.data.source_id
         })
         commentList.value[replyIndex].replies.unshift(res.data)
+        commentList.value[replyIndex].reply_count++
       }
     } else {
       // 如果是在评论详情页,将返回的数据添加在列表头部
       commentList.value.unshift(res.data)
+      commentCount.value++
     }
   }
 }
@@ -105,10 +110,6 @@ const clickComment = () => {
     emit('clickComment')
   }
 }
-// 点击点赞图标
-const clickLike = () => {
-  emit('clickLike')
-}
 </script>
 
 <template>
@@ -117,13 +118,21 @@ const clickLike = () => {
       <span
         class="iconfont"
         :class="isLike ? 'icon-a-44tubiao-188' : 'icon-a-44tubiao-21'"
-        v-login="clickLike"
+        v-login="
+          () => {
+            emit('clickLike')
+          }
+        "
       ></span>
       <span
         v-if="sourceType !== 3"
         class="iconfont"
         :class="isCollected ? 'icon-a-44tubiao-242' : 'icon-a-44tubiao-134'"
-        v-login="collectClick"
+        v-login="
+          () => {
+            emit('clickCollect')
+          }
+        "
       ></span>
       <span class="iconfont icon-a-44tubiao-112" v-login="clickComment"></span>
       <span class="iconfont icon-fenxiang" v-login="() => (isShowShare = true)"></span>

@@ -4,8 +4,7 @@ defineProps({
     type: Array,
     required: true,
   },
-
-  userid: {
+  replyCount: {
     type: Number,
     required: true,
   },
@@ -16,15 +15,17 @@ defineProps({
   <div class="comment-reply">
     <div class="list">
       <span class="item" v-for="item in commentReply" :key="item._id">
-        <span class="user-name">{{ item.user_info.user_nickname }}&#xFF1A;</span>
-        <span class="reply-user" v-if="userid !== item.reply_user">
+        <span class="user-name">{{ item.user_info.user_nickname }}</span
+        >&#xFF1A;
+        <span class="reply-user" v-if="item.reply_user !== 0">
           回复
-          <span class="reply-user-name">{{ item.reply_user_nickname }}&#xFF1A;</span>：
+          <span class="reply-user-name">{{ item.reply_user_nickname }}</span
+          >&#xFF1A;
         </span>
         <span>{{ item.content }}</span>
       </span>
     </div>
-    <div class="bottom" v-if="commentReply.length > 3">共{{ commentReply.length }}条回复</div>
+    <div class="bottom" v-if="replyCount > 3">共{{ replyCount }}条回复</div>
   </div>
 </template>
 

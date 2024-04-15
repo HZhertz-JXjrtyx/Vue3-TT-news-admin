@@ -19,11 +19,15 @@ const commentUserId = ref('')
 provide('commentUserId', commentUserId)
 const commentList = ref([])
 provide('commentList', commentList)
+const commentCount = ref(0)
+provide('commentCount', commentCount)
+const isShowTextarea = ref(false)
+provide('isShowTextarea', isShowTextarea)
 const isLike = ref(false)
 provide('isLike', isLike)
 // 获取评论详情
 const commentDetail = ref({})
-const commentReplyCount = ref(0)
+
 const isLoading = ref(true)
 
 const getCommentDetail = async () => {
@@ -31,7 +35,7 @@ const getCommentDetail = async () => {
   console.log(res)
   commentUserId.value = res.data.user_id
   commentDetail.value = res.data
-  commentReplyCount.value = res.data.reply_count
+  commentCount.value = res.data.reply_count
   isLike.value = res.data.is_like
   isLoading.value = false
 }
@@ -45,7 +49,6 @@ const likeComment = async () => {
 }
 const debouncedLikeComment = debounce(likeComment, 500)
 const handleClickLike = () => {
-  console.log('>>>')
   isLike.value = !isLike.value
   debouncedLikeComment()
 }
@@ -66,15 +69,16 @@ const handleClickLike = () => {
     <div class="divider"></div>
     <div class="reply">
       <div class="reply-header">
-        <div class="title">评论回复 {{ commentReplyCount }}</div>
+        <div class="title">评论回复 {{ commentCount }}</div>
       </div>
-      <CommentList :type="3" :sourceId="commentId" @clickLike="handleClickLike" />
+      <CommentList :type="3" :sourceId="commentId" />
     </div>
     <DetailBottom
       v-if="!isLoading"
       :sourceType="3"
       :sourceId="props.commentId"
       :replyName="commentDetail.user_info.user_nickname"
+      @clickLike="handleClickLike"
     />
   </div>
 </template>

@@ -17,10 +17,11 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['updCommentlist'])
-let commentUserId
-if (props.comment.type === 3) {
-  commentUserId = inject('commentUserId')
-}
+// let commentUserId
+// if (props.comment.type === 3) {
+//   commentUserId = inject('commentUserId')
+// }
+const commentCount = inject('commentCount')
 
 // 展开折叠
 const contentRef = ref(null)
@@ -40,13 +41,6 @@ const contentSty = computed(() => {
 onMounted(() => {
   isOverflow.value = contentRef.value.scrollHeight > contentRef.value.clientHeight
 })
-// watch(isOpen, (newValue) => {
-//   if (newValue) {
-//     isOverflow.value = false
-//   } else {
-//     isOverflow.value = contentRef.value.scrollHeight > contentRef.value.clientHeight
-//   }
-// })
 
 // 是否显示回复区域
 const isShowCommentReply = computed(() => {
@@ -69,12 +63,17 @@ const handleLikeCommentClick = () => {
 // 回复评论
 const commentStore = useCommentStore()
 
+const isShowTextarea = inject('isShowTextarea')
 const handleReplyCommentClick = () => {
   commentStore.textareaPlaceholder = `回复 ${props.comment.user_info.user_nickname}:`
-  commentStore.isShowTextarea = true
+  isShowTextarea.value = true
   commentStore.typeParam = 3
-  commentStore.sourceidParam = props.comment.comment_id
-  commentStore.replyUseridParam = props.comment.user_info.user_id
+  if (props.comment.type === 3) {
+    commentStore.sourceidParam = props.comment.source_id
+    commentStore.replyUseridParam = props.comment.user_info.user_id
+  } else {
+    commentStore.sourceidParam = props.comment.comment_id
+  }
 }
 
 // 删除评论
@@ -96,7 +95,7 @@ const handleDelCommentClick = () => {
       )
       console.log(res)
       if (res.status === 200) {
-        commentStore.commentCount--
+        commentCount.value--
         emit('updCommentlist', props.comment.comment_id)
       }
     })
@@ -128,10 +127,11 @@ const goToCommentDetail = () => {
           <span class="name">
             {{ comment.user_info.user_nickname }}
           </span>
-          <div class="reply" v-if="comment.type === 3 && commentUserId !== comment.reply_user">
+          <div class="reply" v-if="comment.type === 3 && comment.reply_user !== 0">
             <span class="reply_user">
-              回复
-              <span class="reply-user-name">{{ comment.reply_user_nickname }} </span>:
+              &nbsp;回复&nbsp;
+              <span class="reply-user-name">{{ comment.reply_user_nickname }}</span
+              >&#xFF1A;
             </span>
           </div>
         </div>
@@ -165,7 +165,7 @@ const goToCommentDetail = () => {
     </div>
 
     <div class="comment_reply" v-if="isShowCommentReply && comment.type !== 3" @click="goToCommentDetail">
-      <CommentReply :commentReply="comment.replies" :userid="comment.user_info.user_id" />
+      <CommentReply :commentReply="comment.replies" :replyCount="comment.reply_count" />
     </div>
   </div>
 </template>
@@ -188,6 +188,11 @@ const goToCommentDetail = () => {
       }
       .name {
         color: var(--main-color-red-3);
+      }
+      .reply {
+        .reply-user-name {
+          color: var(--main-color-blue-2);
+        }
       }
       .pub-time {
         font-size: 24px;

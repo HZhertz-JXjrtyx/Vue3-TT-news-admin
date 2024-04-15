@@ -15,6 +15,9 @@ const props = defineProps({
     required: true,
   },
 })
+const isShowTextarea = ref(false)
+provide('isShowTextarea', isShowTextarea)
+
 const router = useRouter()
 const commentStore = useCommentStore()
 
@@ -63,7 +66,7 @@ const isSubmitDisabled = computed(() => {
 })
 const handleClickInput = () => {
   commentStore.textareaPlaceholder = '请输入评论'
-  commentStore.isShowTextarea = true
+  isShowTextarea.value = true
   commentStore.typeParam = 1
   commentStore.sourceidParam = articleInfo.value.article_id
 }
@@ -78,17 +81,17 @@ const submitComment = async () => {
   if (res.status === 200) {
     commentContent.value = ''
     commentStore.commentCount++
-    commentStore.isShowTextarea = false
+    isShowTextarea.value = false
     if (res.data.type === 3) {
       const replyIndex = commentList.value.findIndex((item) => {
         return item.comment_id === res.data.source_id
       })
       commentList.value[replyIndex].replies.unshift(res.data)
+      commentList.value[replyIndex].reply_count++
     } else {
       commentList.value.unshift(res.data)
+      scrollToComment()
     }
-
-    scrollToComment()
   }
 }
 // 分享面板
@@ -196,7 +199,7 @@ const scrollToComment = () => {
 
     <van-popup
       class="commentPopup"
-      v-model:show="commentStore.isShowTextarea"
+      v-model:show="isShowTextarea"
       round
       position="bottom"
       :style="{ height: '30%' }"
