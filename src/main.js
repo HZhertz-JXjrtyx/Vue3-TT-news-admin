@@ -22,6 +22,7 @@ app.directive('login', {
       if (!userStore.token) {
         showToast('请登录后进行操作')
       } else {
+        console.log(binding.value)
         binding.value()
       }
     })

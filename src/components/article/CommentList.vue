@@ -1,24 +1,29 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, inject } from 'vue'
 import { getComment } from '@/api'
 import CommentItem from './CommentItem.vue'
 
 const props = defineProps({
+  type: {
+    type: Number,
+    required: true,
+  },
   sourceId: {
     type: String,
     required: true,
   },
 })
 
+const commentList = inject('commentList')
+
 const page = ref(1)
 const pageSize = ref(10)
 const loading = ref(false)
-
 const hasMore = ref(true)
+// const commentList = ref([])
 
-const commentList = ref([])
 const getCommentList = async () => {
-  const res = await getComment(1, props.sourceId, page.value, pageSize.value)
+  const res = await getComment(props.type, props.sourceId, page.value, pageSize.value)
   console.log(res)
   if (res.data.length < pageSize.value) {
     hasMore.value = false
@@ -45,9 +50,9 @@ const updCommentlist = (commentId) => {
   })
 }
 
-defineExpose({
-  commentList,
-})
+// defineExpose({
+//   commentList,
+// })
 </script>
 
 <template>

@@ -1,0 +1,26 @@
+<script setup>
+import { useRouter } from 'vue-router'
+
+defineProps({
+  title: {
+    type: String,
+    required: true,
+  },
+})
+
+const router = useRouter()
+</script>
+
+<template>
+  <div class="nav-bar">
+    <van-sticky>
+      <van-nav-bar :title="title" class="app-nav-bar">
+        <template #left>
+          <span class="iconfont icon-a-44tubiao-14" @click="router.back()"></span>
+        </template>
+      </van-nav-bar>
+    </van-sticky>
+  </div>
+</template>
+
+<style lang="less" scoped></style>

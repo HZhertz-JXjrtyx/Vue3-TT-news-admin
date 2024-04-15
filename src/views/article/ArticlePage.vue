@@ -15,7 +15,11 @@ const props = defineProps({
     required: true,
   },
 })
+const isShowTextarea = ref(false)
+provide('isShowTextarea', isShowTextarea)
+
 const router = useRouter()
+const commentStore = useCommentStore()
 
 // 获取文章详情
 const articleInfo = ref({})
@@ -23,8 +27,8 @@ const pubtime = ref('')
 const isFollow = ref(false)
 const isCollected = ref(false)
 const isLike = ref(false)
-const commentCount = ref(0)
-provide('commentCount', commentCount)
+// const commentCount = commentStore.commentCount
+// provide('commentCount', commentCount)
 const getArticleInfo = async () => {
   const res = await getArticle({ article_id: props.articleId })
   console.log(res)
@@ -33,7 +37,7 @@ const getArticleInfo = async () => {
   isFollow.value = res.data.is_followed
   isCollected.value = res.data.is_collected
   isLike.value = res.data.is_liked
-  commentCount.value = res.data.comment_count
+  commentStore.commentCount = res.data.comment_count
 }
 
 onMounted(() => {
@@ -50,9 +54,10 @@ const handleFollowClick = () => {
 }
 
 // 评论
-const commentStore = useCommentStore()
 
-const commentList = ref(null)
+// const commentList = ref(null)
+const commentList = ref([])
+provide('commentList', commentList)
 
 const commentContent = ref('')
 
@@ -61,7 +66,7 @@ const isSubmitDisabled = computed(() => {
 })
 const handleClickInput = () => {
   commentStore.textareaPlaceholder = '请输入评论'
-  commentStore.isShowTextarea = true
+  isShowTextarea.value = true
   commentStore.typeParam = 1
   commentStore.sourceidParam = articleInfo.value.article_id
 }
@@ -75,18 +80,18 @@ const submitComment = async () => {
   console.log(res)
   if (res.status === 200) {
     commentContent.value = ''
-    commentCount.value++
-    commentStore.isShowTextarea = false
+    commentStore.commentCount++
+    isShowTextarea.value = false
     if (res.data.type === 3) {
-      const replyIndex = commentList.value.commentList.findIndex((item) => {
+      const replyIndex = commentList.value.findIndex((item) => {
         return item.comment_id === res.data.source_id
       })
-      commentList.value.commentList[replyIndex].replies.unshift(res.data)
+      commentList.value[replyIndex].replies.unshift(res.data)
+      commentList.value[replyIndex].reply_count++
     } else {
-      commentList.value.commentList.unshift(res.data)
+      commentList.value.unshift(res.data)
+      scrollToComment()
     }
-
-    scrollToComment()
   }
 }
 // 分享面板
@@ -164,9 +169,9 @@ const scrollToComment = () => {
     <div class="divider"></div>
     <div class="comment" ref="commentSection">
       <div class="comment-header">
-        <div class="title">评论{{ commentCount }}</div>
+        <div class="title">评论{{ commentStore.commentCount }}</div>
       </div>
-      <CommentList ref="commentList" :sourceId="articleId" />
+      <CommentList :type="1" :sourceId="articleId" />
     </div>
 
     <div class="bottom">
@@ -194,7 +199,7 @@ const scrollToComment = () => {
 
     <van-popup
       class="commentPopup"
-      v-model:show="commentStore.isShowTextarea"
+      v-model:show="isShowTextarea"
       round
       position="bottom"
       :style="{ height: '30%' }"
