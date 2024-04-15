@@ -15,25 +15,21 @@ const props = defineProps({
   },
 })
 
-const commentUserId = ref('')
-provide('commentUserId', commentUserId)
-const commentList = ref([])
-provide('commentList', commentList)
 const commentCount = ref(0)
 provide('commentCount', commentCount)
+const commentList = ref([])
+provide('commentList', commentList)
 const isShowTextarea = ref(false)
 provide('isShowTextarea', isShowTextarea)
 const isLike = ref(false)
 provide('isLike', isLike)
-// 获取评论详情
+
+/* 获取评论详情 */
 const commentDetail = ref({})
-
 const isLoading = ref(true)
-
 const getCommentDetail = async () => {
   const res = await getCommentDetailApi(props.commentId)
   console.log(res)
-  commentUserId.value = res.data.user_id
   commentDetail.value = res.data
   commentCount.value = res.data.reply_count
   isLike.value = res.data.is_like
@@ -43,7 +39,7 @@ onMounted(() => {
   getCommentDetail()
 })
 
-// 点赞
+/* 点赞 */
 const likeComment = async () => {
   await likeCommentApi(commentDetail.value.comment_id, isLike.value)
 }

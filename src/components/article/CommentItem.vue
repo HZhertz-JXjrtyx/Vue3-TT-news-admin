@@ -17,11 +17,12 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['updCommentlist'])
-// let commentUserId
-// if (props.comment.type === 3) {
-//   commentUserId = inject('commentUserId')
-// }
+
 const commentCount = inject('commentCount')
+const isShowTextarea = inject('isShowTextarea')
+
+const userStore = useUserStore()
+const commentStore = useCommentStore()
 
 // 展开折叠
 const contentRef = ref(null)
@@ -35,7 +36,6 @@ const contentSty = computed(() => {
     sty['max-height'] = 'none'
     sty['display'] = 'block'
   }
-
   return sty
 })
 onMounted(() => {
@@ -61,9 +61,6 @@ const handleLikeCommentClick = () => {
 }
 
 // 回复评论
-const commentStore = useCommentStore()
-
-const isShowTextarea = inject('isShowTextarea')
 const handleReplyCommentClick = () => {
   commentStore.textareaPlaceholder = `回复 ${props.comment.user_info.user_nickname}:`
   isShowTextarea.value = true
@@ -77,9 +74,6 @@ const handleReplyCommentClick = () => {
 }
 
 // 删除评论
-const userStore = useUserStore()
-// const commentCount = commentStore.commentCount
-// const commentCount = inject('commentCount')
 const isShowDelIcon = computed(() => {
   return userStore.userInfo.user_id === props.comment.user_info.user_id
 })
