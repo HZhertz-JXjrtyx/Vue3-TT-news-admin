@@ -20,7 +20,6 @@ const page = ref(1)
 const pageSize = ref(10)
 const loading = ref(false)
 const hasMore = ref(true)
-// const commentList = ref([])
 
 const getCommentList = async () => {
   const res = await getComment(props.type, props.sourceId, page.value, pageSize.value)
@@ -49,10 +48,6 @@ const updCommentlist = (commentId) => {
     return item.comment_id !== commentId
   })
 }
-
-// defineExpose({
-//   commentList,
-// })
 </script>
 
 <template>

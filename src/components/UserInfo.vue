@@ -26,6 +26,7 @@ const isShowFollowBtn = computed(() => {
 const isFollow = ref(false)
 const getIsFollow = async () => {
   const res = await isFollowUserApi(props.userInfo.user_id)
+  isFollow.value = res.result
   console.log(res)
 }
 onMounted(() => {

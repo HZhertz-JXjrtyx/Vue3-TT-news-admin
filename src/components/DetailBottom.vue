@@ -16,15 +16,16 @@ const props = defineProps({
     required: false,
   },
 })
-const emit = defineEmits(['clickComment', 'clickCollect', 'clickLike'])
+const emit = defineEmits(['scrollTo', 'clickCollect', 'clickLike'])
 
 let isCollected
-const isLike = inject('isLike')
 if (props.sourceType !== 3) {
   isCollected = inject('isCollected')
 }
+const isLike = inject('isLike')
 // 评论popup显示隐藏
 const isShowTextarea = inject('isShowTextarea')
+// 评论数量
 const commentCount = inject('commentCount')
 // commentList 用来提交评论后更新评论列表
 const commentList = inject('commentList')
@@ -32,7 +33,6 @@ const commentList = inject('commentList')
 const commentStore = useCommentStore()
 
 /* 发起评论 */
-
 // 评论内容
 const commentContent = ref('')
 // 内容为空时，发送按钮不可用
@@ -49,12 +49,7 @@ const clickInput = () => {
   commentStore.typeParam = props.sourceType
   // 页面id
   commentStore.sourceidParam = props.sourceId
-  // // type===3时，对评论进行回复，需要评论用户的id
-  // if (props.sourceType === 3) {
-  //   commentStore.replyUseridParam = commentUserId.value
-  // }
 }
-
 // 提交
 const submit = async () => {
   // 提交评论后会返回评论数据
@@ -71,6 +66,9 @@ const submit = async () => {
       if (res.data.type !== 3) {
         // 将返回的数据添加在列表头部
         commentList.value.unshift(res.data)
+        // 更新数量
+        commentCount.value++
+        emit('scrollTo')
       } else {
         // 如果是对评论回复,找到回复项,添加在回复项 replies 头部
         const replyIndex = commentList.value.findIndex((item) => {
@@ -78,6 +76,7 @@ const submit = async () => {
         })
         commentList.value[replyIndex].replies.unshift(res.data)
         commentList.value[replyIndex].reply_count++
+        commentCount.value++
       }
     } else {
       // 如果是在评论详情页,将返回的数据添加在列表头部
@@ -86,7 +85,7 @@ const submit = async () => {
     }
   }
 }
-// 分享面板
+/* 分享面板 */
 const isShowShare = ref(false)
 const options = [
   [
@@ -102,12 +101,12 @@ const options = [
     { name: '小程序码', icon: 'weapp-qrcode' },
   ],
 ]
-// 点击评论图标
+/* 点击评论 */
 const clickComment = () => {
   if (props.sourceType === 3) {
     clickInput()
   } else {
-    emit('clickComment')
+    emit('scrollTo')
   }
 }
 </script>
