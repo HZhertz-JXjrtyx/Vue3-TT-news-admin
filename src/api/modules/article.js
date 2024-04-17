@@ -1,12 +1,13 @@
 import instance from '@/utils/request'
 
 // 获取文章信息
-export const getArticle = (params) => {
-  console.log(params)
+export const getArticleInfoApi = (articleId) => {
   return instance({
     method: 'GET',
     url: '/article/info',
-    params,
+    params: {
+      articleId,
+    },
   })
 }
 // 收藏、取消收藏文章
