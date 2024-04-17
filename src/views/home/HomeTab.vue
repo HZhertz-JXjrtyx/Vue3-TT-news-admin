@@ -82,7 +82,6 @@ onMounted(() => {
   list.value.forEach((item) => {
     scrollContainers.value[item.id] = ref(null)
   })
-  console.log(scrollContainers.value)
 })
 const handleChange = (name, title) => {
   console.log(name, title)
