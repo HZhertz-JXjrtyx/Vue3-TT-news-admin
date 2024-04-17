@@ -58,8 +58,7 @@ if (props.news.type === 'video') {
       </div>
     </div>
     <div class="image-large-video" v-if="uiStyle === 'image_large|video'">
-      <div class="play">
-        <img class="img" :src="news.image_src" alt="" />
+      <div class="play" :style="{ backgroundImage: `url(${news.image_src})` }">
         <span class="iconfont icon-play1"></span>
         <div class="info">
           <div class="left">
@@ -200,12 +199,14 @@ if (props.news.type === 'video') {
 .image-large-video {
   .play {
     position: relative;
-    width: 680px;
     margin: 30px auto;
-    .img {
-      width: 100%;
-      border-radius: 12px;
-    }
+    border-radius: 12px;
+    height: 400px;
+    background-position: center;
+    background-size: auto 100%;
+    background-color: black;
+    background-repeat: no-repeat;
+
     .icon-play1 {
       position: absolute;
       left: 50%;

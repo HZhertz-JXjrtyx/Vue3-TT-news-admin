@@ -2,7 +2,7 @@
 import { ref, onMounted, provide } from 'vue'
 import { debounce } from 'lodash'
 import '@/styles/github-markdown-light.css'
-import { getArticle, collectArticleApi, likeArticleApi } from '@/api'
+import { getArticleInfoApi, collectArticleApi, likeArticleApi } from '@/api'
 import NavBar from '@/components/NavBar.vue'
 import UserInfo from '@/components/UserInfo.vue'
 import UserInfoSkt from '@/components/UserInfoSkt.vue'
@@ -30,9 +30,8 @@ provide('isCollected', isCollected)
 /* 获取文章详情 */
 const articleInfo = ref({})
 const isLoading = ref(true)
-
 const getArticleInfo = async () => {
-  const res = await getArticle({ article_id: props.articleId })
+  const res = await getArticleInfoApi(props.articleId)
   console.log(res)
   articleInfo.value = res.data
   commentCount.value = res.data.comment_count
