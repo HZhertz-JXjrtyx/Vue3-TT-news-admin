@@ -8,3 +8,10 @@ export const getNews = (params) => {
     params,
   })
 }
+//获取热点列表数据
+export const getHotListApi = () => {
+  return instance({
+    method: 'GET',
+    url: '/news/hotlist',
+  })
+}
