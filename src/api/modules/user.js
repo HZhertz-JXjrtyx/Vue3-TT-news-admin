@@ -1,5 +1,6 @@
 import instance from '@/utils/request'
 
+// 登录
 export const login = (data) => {
   return instance({
     method: 'POST',
@@ -7,12 +8,16 @@ export const login = (data) => {
     data,
   })
 }
+
+// 登出
 export const logout = () => {
   return instance({
     method: 'POST',
     url: '/user/logout',
   })
 }
+
+// 用户名是否可用
 export const isOnlyName = (data) => {
   return instance({
     method: 'POST',
@@ -20,6 +25,8 @@ export const isOnlyName = (data) => {
     data,
   })
 }
+
+// 发送验证码
 export const sendCode = (params) => {
   console.log(params)
   return instance({
@@ -28,6 +35,8 @@ export const sendCode = (params) => {
     params,
   })
 }
+
+// 注册
 export const register = (data) => {
   return instance({
     method: 'POST',
@@ -35,6 +44,8 @@ export const register = (data) => {
     data,
   })
 }
+
+// 获取用户信息
 export const getUserInfo = () => {
   return instance({
     method: 'GET',
@@ -70,5 +81,14 @@ export const uploadUserAvatarApi = (formData) => {
     method: 'POST',
     url: '/user/upload/avatar',
     data: formData,
+  })
+}
+
+// 更新资料
+export const updateUserProfileApi = (data) => {
+  return instance({
+    method: 'PATCH',
+    url: '/user/profile',
+    data,
   })
 }

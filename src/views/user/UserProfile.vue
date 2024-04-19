@@ -1,7 +1,7 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useUserStore } from '@/stores'
-import { uploadUserAvatarApi } from '@/api'
+import { uploadUserAvatarApi, updateUserProfileApi } from '@/api'
 import NavBar from '@/components/NavBar.vue'
 
 const userStore = useUserStore()
@@ -22,6 +22,22 @@ const afterRead = async (file) => {
   console.log(res)
   userAvatar.value = res.newUrl
 }
+
+const isBtnDisabled = ref(true)
+watch(
+  profileInfo,
+  () => {
+    isBtnDisabled.value = false
+  },
+  { deep: true }
+)
+
+const onSubmit = async () => {
+  const res = await updateUserProfileApi(profileInfo.value)
+  console.log(res)
+  isBtnDisabled.value = true
+  await userStore.fetchUserInfo()
+}
 </script>
 
 <template>
@@ -41,7 +57,10 @@ const afterRead = async (file) => {
             name="昵称"
             label="昵称"
             placeholder="请输入昵称"
-            :rules="[{ required: true, message: '请填写昵称' }]"
+            :rules="[
+              { required: true, message: '请填写昵称', trigger: 'onChange' },
+              { pattern: /^.{1,20}$/, message: '请输入1-20位的昵称', trigger: 'onChange' },
+            ]"
           />
           <van-field name="gender" label="性别">
             <template #input>
@@ -64,11 +83,12 @@ const afterRead = async (file) => {
             maxlength="30"
             show-word-limit
             placeholder="请输入简介"
-            :rules="[{ required: true, message: '请填写密码' }]"
           />
         </van-cell-group>
         <div class="sub-btn">
-          <van-button round block size="small" type="primary" native-type="submit"> 保存 </van-button>
+          <van-button :disabled="isBtnDisabled" round block size="small" type="primary" native-type="submit">
+            保存
+          </van-button>
         </div>
       </van-form>
     </div>
