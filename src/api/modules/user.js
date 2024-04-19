@@ -92,3 +92,15 @@ export const updateUserProfileApi = (data) => {
     data,
   })
 }
+// 获取用户作品
+// type: all article video
+export const getUserWorksApi = (userId, type) => {
+  return instance({
+    method: 'GET',
+    url: '/user/works',
+    params: {
+      userId,
+      type,
+    },
+  })
+}

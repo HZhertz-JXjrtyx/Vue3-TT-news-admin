@@ -24,23 +24,31 @@ watchEffect(() => {
             <span class="iconfont icon-a-44tubiao-17" @click="router.push('/user/profile')"></span>
           </span>
           <span class="user-id">UID:{{ userStore.userInfo.user_id }}</span>
-          <div class="space-btn" @click="router.push('/user/space')">空间<van-icon name="arrow" /></div>
+          <div
+            class="space-btn"
+            @click="router.push({ name: 'userspace', params: { userId: userStore.userInfo.user_id } })"
+          >
+            空间<van-icon name="arrow" />
+          </div>
         </div>
         <div class="data-status">
-          <div class="data-item" @click="router.push('/user/space')">
-            <span class="count">{{ 0 }}</span>
+          <div
+            class="data-item"
+            @click="router.push({ name: 'userspace', params: { userId: userStore.userInfo.user_id } })"
+          >
+            <span class="count">{{ 10 }}</span>
             <span class="text">作品</span>
           </div>
-          <div class="data-item" @click="router.push({ name: 'userlist', params: { type: 'follow' } })">
-            <span class="count">{{ 6 }}</span>
-            <span class="text">关注</span>
-          </div>
-          <div class="data-item" @click="router.push({ name: 'userlist', params: { type: 'fans' } })">
-            <span class="count">{{ 0 }}</span>
+          <div class="data-item" @click="router.push('/user/fans')">
+            <span class="count">{{ 11 }}</span>
             <span class="text">粉丝</span>
           </div>
+          <div class="data-item" @click="router.push('/user/followers')">
+            <span class="count">{{ 11 }}</span>
+            <span class="text">关注</span>
+          </div>
           <div class="data-item" @click="router.push('/user')">
-            <span class="count">{{ 6 }}</span>
+            <span class="count">{{ 11 }}</span>
             <span class="text">评论</span>
           </div>
         </div>
@@ -60,7 +68,7 @@ watchEffect(() => {
         <span class="iconfont icon-a-44tubiao-134"></span>
         <span class="text">收藏</span>
       </van-grid-item>
-      <van-grid-item class="grid-item" to="/user/browsinghistory">
+      <van-grid-item class="grid-item" to="/user/history">
         <span class="iconfont icon-a-44tubiao-74"></span>
         <span class="text">历史</span>
       </van-grid-item>

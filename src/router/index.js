@@ -15,9 +15,8 @@ import MessagePage from '@/views/message/MessagePage.vue'
 import UserLogin from '@/views/user/UserLogin.vue'
 import UserSpace from '@/views/user/UserSpace.vue'
 import UserProfile from '@/views/user/UserProfile.vue'
-import UserList from '@/views/user/UserList.vue'
-import UserFavorites from '@/views/user/UserFavorites.vue'
-import UserBrowsingHistory from '@/views/user/UserBrowsingHistory.vue'
+import UserFollows from '@/views/user/UserFollows.vue'
+import UserFavoritesHistory from '@/views/user/UserFavoritesHistory.vue'
 import AccountSecurity from '@/views/security/AccountSecurity.vue'
 import ChangePassword from '@/views/security/ChangePassword.vue'
 
@@ -58,16 +57,17 @@ const router = createRouter({
       component: ArticlePage,
       props: true,
     },
-    {
-      path: '/comment/detail/:commentId',
-      name: 'commentdetail',
-      component: CommentPage,
-      props: true,
-    },
+
     {
       path: '/video/detail/:videoId',
       name: 'videodetail',
       component: VideoPage,
+      props: true,
+    },
+    {
+      path: '/comment/detail/:commentId',
+      name: 'commentdetail',
+      component: CommentPage,
       props: true,
     },
     {
@@ -82,33 +82,48 @@ const router = createRouter({
       component: UserLogin,
     },
     {
-      path: '/user/space',
+      path: '/user/space:/userId',
       name: 'userspace',
       component: UserSpace,
+      props: true,
     },
     {
       path: '/user/profile',
       name: 'userprofile',
       component: UserProfile,
-    },
-    {
-      path: '/user/list/:type',
-      name: 'userlist',
-      component: UserList,
-      props: true,
-    },
-    {
-      path: '/user/favorites',
-      name: 'userfavorites',
-      component: UserFavorites,
       meta: {
         requiresAuth: true,
       },
     },
     {
-      path: '/user/browsinghistory',
-      name: 'userbrowsinghistory',
-      component: UserBrowsingHistory,
+      path: '/user/fans',
+      name: 'userfans',
+      component: UserFollows,
+      meta: {
+        requiresAuth: true,
+      },
+    },
+    {
+      path: '/user/followers',
+      name: 'userfollowers',
+      component: UserFollows,
+      meta: {
+        requiresAuth: true,
+      },
+    },
+
+    {
+      path: '/user/favorites',
+      name: 'userfavorites',
+      component: UserFavoritesHistory,
+      meta: {
+        requiresAuth: true,
+      },
+    },
+    {
+      path: '/user/history',
+      name: 'userhistory',
+      component: UserFavoritesHistory,
       meta: {
         requiresAuth: true,
       },

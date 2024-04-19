@@ -1,6 +1,7 @@
+<script setup></script>
+
 <template>
-  <div>UserBrowsingHistory</div>
+  <div>UserFollows</div>
 </template>
 
-<script setup></script>
 <style lang="less" scoped></style>
