@@ -137,11 +137,11 @@ router.beforeEach((to, from, next) => {
   const userStore = useUserStore()
   // 检查该路由是否需要登录
   if (to.meta.requiresAuth && !userStore.token) {
-    // 如果用户未登录，提示并取消导航
+    // 如果用户未登录，提示并取消跳转
     showToast('登录后查看更多')
     next(false)
   } else {
-    // 如果用户已登录，或者该路由不需要登录，那么继续导航
+    // 如果用户已登录，或者该路由不需要登录，继续跳转
     next()
   }
 })

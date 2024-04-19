@@ -63,3 +63,12 @@ export const followUserApi = (userId, type) => {
     },
   })
 }
+
+// 上传头像
+export const uploadUserAvatarApi = (formData) => {
+  return instance({
+    method: 'POST',
+    url: '/user/upload/avatar',
+    data: formData,
+  })
+}

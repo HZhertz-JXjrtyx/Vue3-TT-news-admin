@@ -1,6 +1,9 @@
 <script setup>
 import { watchEffect } from 'vue'
+import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores'
+
+const router = useRouter()
 
 const userStore = useUserStore()
 watchEffect(() => {
@@ -11,32 +14,32 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div class="user-tab-container">
+  <div class="user-tab">
     <div v-if="userStore.token" class="login">
       <div class="top">
         <div class="base-info">
           <img :src="userStore.userInfo.user_avatar" alt="" class="avatar" />
           <span class="nickname">
             {{ userStore.userInfo.user_nickname }}
-            <span class="iconfont icon-a-44tubiao-17" @click="$router.push('/user/profile')"></span>
+            <span class="iconfont icon-a-44tubiao-17" @click="router.push('/user/profile')"></span>
           </span>
           <span class="user-id">UID:{{ userStore.userInfo.user_id }}</span>
-          <div class="space-btn" @click="$router.push('/user/space')">空间<van-icon name="arrow" /></div>
+          <div class="space-btn" @click="router.push('/user/space')">空间<van-icon name="arrow" /></div>
         </div>
         <div class="data-status">
-          <div class="data-item" @click="$router.push('/user')">
+          <div class="data-item" @click="router.push('/user/space')">
             <span class="count">{{ 0 }}</span>
-            <span class="text">动态</span>
+            <span class="text">作品</span>
           </div>
-          <div class="data-item" @click="$router.push({ name: 'userlist', params: { type: 'follow' } })">
+          <div class="data-item" @click="router.push({ name: 'userlist', params: { type: 'follow' } })">
             <span class="count">{{ 6 }}</span>
             <span class="text">关注</span>
           </div>
-          <div class="data-item" @click="$router.push({ name: 'userlist', params: { type: 'fans' } })">
+          <div class="data-item" @click="router.push({ name: 'userlist', params: { type: 'fans' } })">
             <span class="count">{{ 0 }}</span>
             <span class="text">粉丝</span>
           </div>
-          <div class="data-item" @click="$router.push('/user')">
+          <div class="data-item" @click="router.push('/user')">
             <span class="count">{{ 6 }}</span>
             <span class="text">评论</span>
           </div>
@@ -49,7 +52,7 @@ watchEffect(() => {
           <span class="iconfont icon-a-44tubiao-57"></span>
         </div>
 
-        <div class="text" @click="$router.push('/user/login')">点击登录</div>
+        <div class="text" @click="router.push('/user/login')">点击登录</div>
       </div>
     </div>
     <van-grid clickable :column-num="2" class="grid-nav">
@@ -131,6 +134,7 @@ watchEffect(() => {
       border-radius: 50%;
       width: 140px;
       height: 140px;
+      object-fit: cover;
     }
     .nickname {
       position: absolute;
