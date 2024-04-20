@@ -6,46 +6,32 @@
 </script>
 <template>
   <div class="work-list">
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list work-list work-list work-list work-list work-list
-    work-list work-list work-list work-list work-list
+    <ol>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+    </ol>
   </div>
 </template>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+li {
+  height: 200px;
+  margin: 20px 0;
+  background-color: aqua;
+}
+</style>

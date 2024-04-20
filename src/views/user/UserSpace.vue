@@ -1,6 +1,7 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import ScrollContainer from '@/components/ScrollContainer.vue'
 
 const router = useRouter()
 
@@ -11,19 +12,7 @@ defineProps({
   },
 })
 
-const scrollTop = ref(0)
-const handleScroll = (e) => {
-  console.log(e)
-  scrollTop.value = e.scrollTop
-}
-// const vanTabsRef = ref(null)
-const overflowSty = computed(() => {
-  if (scrollTop.value < 380) {
-    return { overflow: 'hidden' }
-  } else {
-    return { overflow: 'auto' }
-  }
-})
+const active = ref(0)
 </script>
 
 <template>
@@ -61,11 +50,11 @@ const overflowSty = computed(() => {
       <div class="uid">UID:101111111</div>
     </div>
     <div class="work">
-      <van-tabs ref="vanTabsRef" v-model:active="active" shrink sticky @scroll="handleScroll">
+      <van-tabs v-model:active="active" shrink sticky>
         <van-tab title="全部">
-          <div class="scroll-container" :style="overflowSty">
+          <ScrollContainer>
             <WorkList></WorkList>
-          </div>
+          </ScrollContainer>
         </van-tab>
         <van-tab title="文章">
           <div class="scroll-container">
