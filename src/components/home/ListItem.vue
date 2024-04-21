@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { formatCount, convertToMMSS, convertToMMDDHHmm } from '@/utils/convert'
+import { formatCount, formatVideoDuration, convertToMMDDHHmm } from '@/utils/convert'
 
 const props = defineProps({
   news: {
@@ -19,7 +19,7 @@ pubtime.value = convertToMMDDHHmm(props.news.publish_time)
 if (props.news.type === 'video') {
   playCount.value = formatCount(props.news.play_count)
   commentCount.value = formatCount(props.news.comment_count)
-  duraction.value = convertToMMSS(props.news.video_info.duration)
+  duraction.value = formatVideoDuration(props.news.video_info.duration)
 }
 </script>
 
@@ -77,10 +77,14 @@ if (props.news.type === 'video') {
       <div class="title">{{ news.title }}</div>
     </div>
     <div class="bottom">
-      <div class="user">
+      <router-link
+        class="user"
+        :to="{ name: 'userspace', params: { userId: news.user_info.user_id } }"
+        @click.stop
+      >
         <van-image class="user-avatar" round width="30px" height="30px" :src="news.user_info.user_avatar" />
         <span class="user-name">{{ news.user_info.user_nickname }}</span>
-      </div>
+      </router-link>
       <div class="pub-time">{{ pubtime }}</div>
     </div>
     <van-divider :style="{ color: '#ccc', borderColor: '#ccc' }"> </van-divider>

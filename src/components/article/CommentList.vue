@@ -23,7 +23,7 @@ const hasMore = ref(true)
 
 const getCommentList = async () => {
   const res = await getComment(props.type, props.sourceId, page.value, pageSize.value)
-  console.log(res)
+  console.log('评论列表', res)
   if (res.data.length < pageSize.value) {
     hasMore.value = false
   }

@@ -105,13 +105,15 @@ export const getUserDetailApi = (userId) => {
 
 // 获取用户作品
 // type: all article video
-export const getUserWorksApi = (userId, type) => {
+export const getUserWorksApi = (userId, type, page = 1, size = 10) => {
   return instance({
     method: 'GET',
     url: '/user/works',
     params: {
       userId,
       type,
+      page,
+      size,
     },
   })
 }

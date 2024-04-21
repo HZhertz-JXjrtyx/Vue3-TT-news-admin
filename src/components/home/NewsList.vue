@@ -15,6 +15,8 @@ const props = defineProps({
   },
 })
 
+const router = useRouter()
+
 const page = ref(1)
 const pageSize = ref(10)
 const newsList = ref([])
@@ -55,7 +57,6 @@ onMounted(() => {
   onLoad()
 })
 
-const router = useRouter()
 const goDetail = (item) => {
   console.log(item)
   if (item.type === 'article') {

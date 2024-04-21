@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getUserDetailApi } from '@/api'
 import ScrollContainer from '@/components/ScrollContainer.vue'
+import WorkList from '@/components/WorkList.vue'
 
 const router = useRouter()
 
@@ -23,6 +24,12 @@ const getUserDetail = async () => {
 onMounted(() => {
   getUserDetail()
 })
+
+const tabData = [
+  { title: '全部', type: 'all' },
+  { title: '文章', type: 'article' },
+  { title: '视频', type: 'video' },
+]
 </script>
 
 <template>
@@ -61,20 +68,10 @@ onMounted(() => {
     </div>
     <div class="work">
       <van-tabs v-model:active="active" shrink sticky>
-        <van-tab title="全部">
+        <van-tab :title="item.title" v-for="item in tabData" :key="item.title">
           <ScrollContainer>
-            <WorkList></WorkList>
+            <WorkList :userId="props.userId" :worksType="item.type" />
           </ScrollContainer>
-        </van-tab>
-        <van-tab title="文章">
-          <div class="scroll-container">
-            <WorkList></WorkList>
-          </div>
-        </van-tab>
-        <van-tab title="视频">
-          <div class="scroll-container">
-            <WorkList></WorkList>
-          </div>
         </van-tab>
       </van-tabs>
     </div>
