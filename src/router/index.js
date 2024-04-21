@@ -82,7 +82,7 @@ const router = createRouter({
       component: UserLogin,
     },
     {
-      path: '/user/space:/userId',
+      path: '/user/space/:userId',
       name: 'userspace',
       component: UserSpace,
       props: true,

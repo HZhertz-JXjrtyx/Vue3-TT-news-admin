@@ -1,11 +1,12 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { getUserDetailApi } from '@/api'
 import ScrollContainer from '@/components/ScrollContainer.vue'
 
 const router = useRouter()
 
-defineProps({
+const props = defineProps({
   userId: {
     type: Number,
     required: true,
@@ -13,6 +14,15 @@ defineProps({
 })
 
 const active = ref(0)
+const userDetail = ref({})
+const getUserDetail = async () => {
+  const res = await getUserDetailApi(props.userId)
+  console.log(res)
+  userDetail.value = res.data
+}
+onMounted(() => {
+  getUserDetail()
+})
 </script>
 
 <template>
@@ -20,21 +30,21 @@ const active = ref(0)
     <div class="nav-icon" @click="router.back()"><span class="iconfont icon-a-44tubiao-14"></span></div>
     <div class="bg-img"><img src="@/assets/image/OIG.jpg" alt="" /></div>
     <div class="show-case">
-      <div class="user-avatar"><img src="@/assets/image/OIG.jpg" alt="" /></div>
+      <div class="user-avatar"><img :src="userDetail.user_avatar" alt="" /></div>
       <div class="right-info">
         <div class="user-data">
           <div class="fans item">
-            <span>222</span>
+            <span>{{ userDetail.fans_count }}</span>
             <span>粉丝</span>
           </div>
           <van-divider vertical />
           <div class="followers item">
-            <span>222</span>
+            <span>{{ userDetail.followers_count }}</span>
             <span>关注</span>
           </div>
           <van-divider vertical />
           <div class="likes item">
-            <span>222</span>
+            <span>{{ userDetail.likes_count }}</span>
             <span>获赞</span>
           </div>
         </div>
@@ -44,10 +54,10 @@ const active = ref(0)
       </div>
     </div>
     <div class="user-info">
-      <div class="nickname">HZhertz</div>
-      <div v-if="true" class="verified">认证：保定电视台新媒体官方账号</div>
-      <div class="intro">fly me to the moon</div>
-      <div class="uid">UID:101111111</div>
+      <div class="nickname">{{ userDetail.user_nickname }}</div>
+      <div v-if="userDetail.user_verified" class="verified">认证: {{ userDetail.verified_content }}</div>
+      <div class="intro">{{ userDetail.user_intro }}</div>
+      <div class="uid">UID: {{ userDetail.user_id }}</div>
     </div>
     <div class="work">
       <van-tabs v-model:active="active" shrink sticky>

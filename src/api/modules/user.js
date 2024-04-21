@@ -45,7 +45,7 @@ export const register = (data) => {
   })
 }
 
-// 获取用户信息
+// 获取登录用户信息
 export const getUserInfo = () => {
   return instance({
     method: 'GET',
@@ -67,7 +67,7 @@ export const isFollowUserApi = (userId) => {
 export const followUserApi = (userId, type) => {
   return instance({
     method: 'POST',
-    url: '/user/followings',
+    url: '/user/follow',
     data: {
       userId,
       type,
@@ -92,6 +92,17 @@ export const updateUserProfileApi = (data) => {
     data,
   })
 }
+// 获取用户信息
+export const getUserDetailApi = (userId) => {
+  return instance({
+    method: 'GET',
+    url: '/user/detail',
+    params: {
+      userId,
+    },
+  })
+}
+
 // 获取用户作品
 // type: all article video
 export const getUserWorksApi = (userId, type) => {

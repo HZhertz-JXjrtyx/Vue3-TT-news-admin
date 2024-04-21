@@ -36,19 +36,19 @@ watchEffect(() => {
             class="data-item"
             @click="router.push({ name: 'userspace', params: { userId: userStore.userInfo.user_id } })"
           >
-            <span class="count">{{ 10 }}</span>
+            <span class="count">{{ userStore.userInfo.works_count }}</span>
             <span class="text">作品</span>
           </div>
           <div class="data-item" @click="router.push('/user/fans')">
-            <span class="count">{{ 11 }}</span>
+            <span class="count">{{ userStore.userInfo.fans_count }}</span>
             <span class="text">粉丝</span>
           </div>
           <div class="data-item" @click="router.push('/user/followers')">
-            <span class="count">{{ 11 }}</span>
+            <span class="count">{{ userStore.userInfo.followers_count }}</span>
             <span class="text">关注</span>
           </div>
           <div class="data-item" @click="router.push('/user')">
-            <span class="count">{{ 11 }}</span>
+            <span class="count">{{ userStore.userInfo.comment_count }}</span>
             <span class="text">评论</span>
           </div>
         </div>
