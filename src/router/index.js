@@ -15,9 +15,8 @@ import MessagePage from '@/views/message/MessagePage.vue'
 import UserLogin from '@/views/user/UserLogin.vue'
 import UserSpace from '@/views/user/UserSpace.vue'
 import UserProfile from '@/views/user/UserProfile.vue'
-import UserList from '@/views/user/UserList.vue'
-import UserFavorites from '@/views/user/UserFavorites.vue'
-import UserBrowsingHistory from '@/views/user/UserBrowsingHistory.vue'
+import UserFollows from '@/views/user/UserFollows.vue'
+import UserFavoritesHistory from '@/views/user/UserFavoritesHistory.vue'
 import AccountSecurity from '@/views/security/AccountSecurity.vue'
 import ChangePassword from '@/views/security/ChangePassword.vue'
 
@@ -58,16 +57,17 @@ const router = createRouter({
       component: ArticlePage,
       props: true,
     },
-    {
-      path: '/comment/detail/:commentId',
-      name: 'commentdetail',
-      component: CommentPage,
-      props: true,
-    },
+
     {
       path: '/video/detail/:videoId',
       name: 'videodetail',
       component: VideoPage,
+      props: true,
+    },
+    {
+      path: '/comment/detail/:commentId',
+      name: 'commentdetail',
+      component: CommentPage,
       props: true,
     },
     {
@@ -82,33 +82,48 @@ const router = createRouter({
       component: UserLogin,
     },
     {
-      path: '/user/space',
+      path: '/user/space/:userId',
       name: 'userspace',
       component: UserSpace,
+      props: true,
     },
     {
       path: '/user/profile',
       name: 'userprofile',
       component: UserProfile,
-    },
-    {
-      path: '/user/list/:type',
-      name: 'userlist',
-      component: UserList,
-      props: true,
-    },
-    {
-      path: '/user/favorites',
-      name: 'userfavorites',
-      component: UserFavorites,
       meta: {
         requiresAuth: true,
       },
     },
     {
-      path: '/user/browsinghistory',
-      name: 'userbrowsinghistory',
-      component: UserBrowsingHistory,
+      path: '/user/fans',
+      name: 'userfans',
+      component: UserFollows,
+      meta: {
+        requiresAuth: true,
+      },
+    },
+    {
+      path: '/user/followers',
+      name: 'userfollowers',
+      component: UserFollows,
+      meta: {
+        requiresAuth: true,
+      },
+    },
+
+    {
+      path: '/user/favorites',
+      name: 'userfavorites',
+      component: UserFavoritesHistory,
+      meta: {
+        requiresAuth: true,
+      },
+    },
+    {
+      path: '/user/history',
+      name: 'userhistory',
+      component: UserFavoritesHistory,
       meta: {
         requiresAuth: true,
       },
@@ -137,11 +152,15 @@ router.beforeEach((to, from, next) => {
   const userStore = useUserStore()
   // 检查该路由是否需要登录
   if (to.meta.requiresAuth && !userStore.token) {
-    // 如果用户未登录，提示并取消导航
+    // 如果用户未登录，提示并取消跳转
     showToast('登录后查看更多')
     next(false)
   } else {
-    // 如果用户已登录，或者该路由不需要登录，那么继续导航
+    // 如果用户已登录，或者该路由不需要登录，继续跳转
+    // 如果存在 userId 参数，将其转换为 Number 类型
+    if (to.params.userId) {
+      to.params.userId = Number(to.params.userId)
+    }
     next()
   }
 })

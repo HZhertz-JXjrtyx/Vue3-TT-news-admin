@@ -1,5 +1,6 @@
 import instance from '@/utils/request'
 
+// 登录
 export const login = (data) => {
   return instance({
     method: 'POST',
@@ -7,12 +8,16 @@ export const login = (data) => {
     data,
   })
 }
+
+// 登出
 export const logout = () => {
   return instance({
     method: 'POST',
     url: '/user/logout',
   })
 }
+
+// 用户名是否可用
 export const isOnlyName = (data) => {
   return instance({
     method: 'POST',
@@ -20,6 +25,8 @@ export const isOnlyName = (data) => {
     data,
   })
 }
+
+// 发送验证码
 export const sendCode = (params) => {
   console.log(params)
   return instance({
@@ -28,6 +35,8 @@ export const sendCode = (params) => {
     params,
   })
 }
+
+// 注册
 export const register = (data) => {
   return instance({
     method: 'POST',
@@ -35,6 +44,8 @@ export const register = (data) => {
     data,
   })
 }
+
+// 获取登录用户信息
 export const getUserInfo = () => {
   return instance({
     method: 'GET',
@@ -56,10 +67,53 @@ export const isFollowUserApi = (userId) => {
 export const followUserApi = (userId, type) => {
   return instance({
     method: 'POST',
-    url: '/user/followings',
+    url: '/user/follow',
     data: {
       userId,
       type,
+    },
+  })
+}
+
+// 上传头像
+export const uploadUserAvatarApi = (formData) => {
+  return instance({
+    method: 'POST',
+    url: '/user/upload/avatar',
+    data: formData,
+  })
+}
+
+// 更新资料
+export const updateUserProfileApi = (data) => {
+  return instance({
+    method: 'PATCH',
+    url: '/user/profile',
+    data,
+  })
+}
+// 获取用户信息
+export const getUserDetailApi = (userId) => {
+  return instance({
+    method: 'GET',
+    url: '/user/detail',
+    params: {
+      userId,
+    },
+  })
+}
+
+// 获取用户作品
+// type: all article video
+export const getUserWorksApi = (userId, type, page = 1, size = 10) => {
+  return instance({
+    method: 'GET',
+    url: '/user/works',
+    params: {
+      userId,
+      type,
+      page,
+      size,
     },
   })
 }

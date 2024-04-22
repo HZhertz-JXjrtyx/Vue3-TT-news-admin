@@ -1,5 +1,5 @@
 <template>
-  <div>UserFavorites</div>
+  <div>UserHistoryFavorites</div>
 </template>
 
 <script setup></script>
