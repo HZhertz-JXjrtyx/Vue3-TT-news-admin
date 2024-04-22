@@ -1,11 +1,15 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { getUserDetailApi } from '@/api'
+import { debounce } from 'lodash'
+import { showDialog } from 'vant'
+import { useUserStore } from '@/stores'
+import { getUserDetailApi, isFollowUserApi, followUserApi } from '@/api'
 import ScrollContainer from '@/components/ScrollContainer.vue'
 import WorkList from '@/components/WorkList.vue'
 
 const router = useRouter()
+const userStore = useUserStore()
 
 const props = defineProps({
   userId: {
@@ -14,6 +18,7 @@ const props = defineProps({
   },
 })
 
+// 获取用户信息
 const active = ref(0)
 const userDetail = ref({})
 const getUserDetail = async () => {
@@ -25,6 +30,48 @@ onMounted(() => {
   getUserDetail()
 })
 
+// 是否是个人空间
+const isSelf = computed(() => {
+  return props.userId === userStore.userInfo.user_id
+})
+
+// 是否关注用户
+const isFollow = ref(false)
+const getIsFollow = async () => {
+  const res = await isFollowUserApi(props.userId)
+  console.log(res)
+  isFollow.value = res.result
+}
+onMounted(() => {
+  getIsFollow()
+})
+
+// 关注用户
+const followUser = async () => {
+  const res = await followUserApi(props.userId, isFollow.value)
+  console.log(res)
+  if (res.status === 200) {
+    isFollow.value ? userDetail.value.fans_count++ : userDetail.value.fans_count--
+  }
+}
+const debouncedFollowUser = debounce(followUser, 500)
+const handleClickFollow = async () => {
+  isFollow.value = !isFollow.value
+  debouncedFollowUser()
+}
+
+const handleClickLikes = () => {
+  showDialog({
+    title: userDetail.value.user_nickname,
+    message: `文章视频累计获赞\n${userDetail.value.likes_count}`,
+    confirmButtonText: '知道了',
+    confirmButtonColor: '#000',
+  }).then(() => {
+    // on close
+  })
+}
+
+// 作品列表
 const tabData = [
   { title: '全部', type: 'all' },
   { title: '文章', type: 'article' },
@@ -40,23 +87,34 @@ const tabData = [
       <div class="user-avatar"><img :src="userDetail.user_avatar" alt="" /></div>
       <div class="right-info">
         <div class="user-data">
-          <div class="fans item">
+          <router-link to="/user/fans" class="fans item">
             <span>{{ userDetail.fans_count }}</span>
             <span>粉丝</span>
-          </div>
+          </router-link>
           <van-divider vertical />
-          <div class="followers item">
+          <router-link to="/user/followers" class="followers item">
             <span>{{ userDetail.followers_count }}</span>
             <span>关注</span>
-          </div>
+          </router-link>
           <van-divider vertical />
-          <div class="likes item">
+          <div class="likes item" @click="handleClickLikes">
             <span>{{ userDetail.likes_count }}</span>
             <span>获赞</span>
           </div>
         </div>
         <div class="btn">
-          <van-button plain block color="#f04142">编辑资料</van-button>
+          <router-link v-if="isSelf" to="/user/profile"
+            ><van-button block color="#f04142">编辑资料</van-button></router-link
+          >
+
+          <van-button
+            v-else
+            :class="{ follow: isFollow }"
+            block
+            :color="isFollow ? '#bebebe' : '#f04142'"
+            v-login="handleClickFollow"
+            >{{ isFollow ? '已关注' : ' 关注' }}
+          </van-button>
         </div>
       </div>
     </div>
@@ -136,6 +194,9 @@ const tabData = [
       .btn {
         .van-button {
           height: 60px;
+        }
+        .follow {
+          color: #616161 !important;
         }
       }
     }
