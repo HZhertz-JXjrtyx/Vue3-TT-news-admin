@@ -1,9 +1,9 @@
-import instance from '@/utils/request'
+import instance from '../request'
 
 // 获取评论列表
 // type:评论类型 1：文章评论 2：视频评论 3：评论回复
 // id：根据类型不同表示不同的id
-export const getComment = (type, id, page, pageSize) => {
+export const getCommentListApi = (type, id, page, size) => {
   return instance({
     method: 'GET',
     url: '/comment/list',
@@ -11,7 +11,7 @@ export const getComment = (type, id, page, pageSize) => {
       type,
       id,
       page,
-      pageSize,
+      size,
     },
   })
 }

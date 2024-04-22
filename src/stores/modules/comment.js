@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import storeNames from '@/stores/storeNames'
+import storeNames from '../storeNames'
 import { addCommentApi } from '@/api'
 
 export const useCommentStore = defineStore(storeNames.COMMENT, () => {

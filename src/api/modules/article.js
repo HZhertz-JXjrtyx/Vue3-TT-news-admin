@@ -1,4 +1,4 @@
-import instance from '@/utils/request'
+import instance from '../request'
 
 // 获取文章信息
 export const getArticleInfoApi = (articleId) => {

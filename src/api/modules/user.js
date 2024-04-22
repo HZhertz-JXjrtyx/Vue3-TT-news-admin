@@ -1,4 +1,4 @@
-import instance from '@/utils/request'
+import instance from '../request'
 
 // 登录
 export const login = (data) => {
