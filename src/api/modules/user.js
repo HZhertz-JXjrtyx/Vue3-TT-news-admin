@@ -141,3 +141,15 @@ export const getUserfollowersApi = (userId, page = 1, size = 10) => {
     },
   })
 }
+// 获取用户收藏列表
+export const getUserFavoriteApi = (type, page = 1, size = 10) => {
+  return instance({
+    method: 'GET',
+    url: '/user/favorite',
+    params: {
+      type,
+      page,
+      size,
+    },
+  })
+}

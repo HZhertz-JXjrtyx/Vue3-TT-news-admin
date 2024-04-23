@@ -36,7 +36,7 @@ defineProps({
 <style lang="less" scoped>
 .work-item {
   display: flex;
-  margin: 20px 0;
+  margin: 20px;
   .left {
     flex: 1;
     margin-right: 20px;
