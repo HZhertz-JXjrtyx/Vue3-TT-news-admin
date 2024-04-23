@@ -153,3 +153,27 @@ export const getUserFavoriteApi = (type, page = 1, size = 10) => {
     },
   })
 }
+// 新增浏览历史
+export const addUserBrowseApi = (id, type) => {
+  return instance({
+    method: 'POST',
+    url: '/user/browse',
+    data: {
+      id,
+      type,
+    },
+  })
+}
+
+// 获取用户浏览历史
+export const getUserBrowseApi = (type, page = 1, size = 10) => {
+  return instance({
+    method: 'GET',
+    url: '/user/browse',
+    params: {
+      type,
+      page,
+      size,
+    },
+  })
+}

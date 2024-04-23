@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, provide } from 'vue'
 import { debounce } from 'lodash'
-import { getArticleInfoApi, collectArticleApi, likeArticleApi } from '@/api'
+import { getArticleInfoApi, collectArticleApi, likeArticleApi, addUserBrowseApi } from '@/api'
 import '@/styles/github-markdown-light.css'
 import NavBar from '@/components/NavBar.vue'
 import UserInfo from '@/components/user/UserInfo.vue'
@@ -27,6 +27,11 @@ provide('isLike', isLike)
 const isCollected = ref(false)
 provide('isCollected', isCollected)
 
+/* 新增浏览历史 */
+const addUserBrowse = async () => {
+  await addUserBrowseApi(props.articleId, 'article')
+}
+
 /* 获取文章详情 */
 const articleInfo = ref({})
 const isLoading = ref(true)
@@ -42,6 +47,7 @@ const getArticleInfo = async () => {
 
 onMounted(() => {
   getArticleInfo()
+  addUserBrowse()
 })
 
 /* 收藏文章 */

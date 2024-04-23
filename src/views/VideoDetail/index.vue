@@ -4,7 +4,7 @@ import { debounce } from 'lodash'
 // 使用 Plyr 视频组件
 import Plyr from 'plyr'
 import 'plyr/dist/plyr.css'
-import { getVideoInfoApi, collectVideoApi, likeVideoApi } from '@/api'
+import { getVideoInfoApi, collectVideoApi, likeVideoApi, addUserBrowseApi } from '@/api'
 import NavBar from '@/components/NavBar.vue'
 import UserInfo from '@/components/user/UserInfo.vue'
 import UserInfoSkt from '@/components/user/UserInfoSkt.vue'
@@ -44,6 +44,11 @@ onMounted(() => {
   })
 })
 
+/* 新增浏览历史 */
+const addUserBrowse = async () => {
+  await addUserBrowseApi(props.videoId, 'video')
+}
+
 /* 获取视频详情 */
 const videoInfo = ref({})
 const isLoading = ref(true)
@@ -61,6 +66,7 @@ const getVideoInfo = async () => {
 
 onMounted(() => {
   getVideoInfo()
+  addUserBrowse()
 })
 
 /* 收藏视频 */
