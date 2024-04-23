@@ -1,12 +1,14 @@
-import instance from '@/utils/request'
+import instance from '../request'
 
-export const getUserChannels = () => {
+// 获取用户频道列表
+export const getUserChannelsApi = () => {
   return instance({
     method: 'GET',
     url: '/channel/user',
   })
 }
-export const updateUserChannels = (data) => {
+// 更新用户频道列表
+export const updateUserChannelsApi = (data) => {
   return instance({
     method: 'PATCH',
     url: '/channel/user',

@@ -1,0 +1,32 @@
+<script setup>
+import { useRouter } from 'vue-router'
+import { showConfirmDialog } from 'vant'
+import 'vant/es/dialog/style'
+import { useUserStore } from '@/stores'
+import { logout } from '@/api'
+
+const userStore = useUserStore()
+const router = useRouter()
+
+const onLogout = () => {
+  showConfirmDialog({
+    title: '确认退出吗？',
+  })
+    .then(async () => {
+      await logout()
+      userStore.token = ''
+      userStore.userInfo = {}
+      router.push('/user')
+    })
+    .catch(() => {
+      console.log('取消')
+    })
+}
+</script>
+
+<template>
+  <div>AccountSecurity</div>
+  <van-button type="danger" @click="onLogout">退出登录</van-button>
+</template>
+
+<style lang="less" scoped></style>

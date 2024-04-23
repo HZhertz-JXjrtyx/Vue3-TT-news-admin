@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import storeNames from '@/stores/storeNames'
-// import { getLocal, setLocal, removeLocal } from '@/utils/storage'
+import storeNames from '../storeNames'
 import { getUserInfo } from '@/api'
 
 export const useUserStore = defineStore(
@@ -9,6 +8,7 @@ export const useUserStore = defineStore(
   () => {
     const token = ref('')
     const userInfo = ref({})
+    const userFollowActiveTab = ref(0)
 
     const fetchUserInfo = async () => {
       const response = await getUserInfo()
@@ -18,6 +18,7 @@ export const useUserStore = defineStore(
     return {
       token,
       userInfo,
+      userFollowActiveTab,
       fetchUserInfo,
     }
   },
