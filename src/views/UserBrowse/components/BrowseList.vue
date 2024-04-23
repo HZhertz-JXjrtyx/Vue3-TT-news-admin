@@ -1,15 +1,11 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getUserWorksApi } from '@/api'
-import WorkItem from './WorkItem.vue'
+import { getUserBrowseApi } from '@/api'
+import WorkItem from '@/components/work/WorkItem.vue'
 import { useRouter } from 'vue-router'
 
 const props = defineProps({
-  userId: {
-    type: Number,
-    required: true,
-  },
-  worksType: {
+  browseType: {
     type: String,
     required: true,
   },
@@ -19,16 +15,16 @@ const router = useRouter()
 
 const page = ref(1)
 const pageSize = ref(10)
-const workList = ref([])
+const browseList = ref([])
 const loading = ref(false)
 const hasMore = ref(true)
-const getWorkList = async () => {
-  const res = await getUserWorksApi(props.userId, props.worksType, page.value, pageSize.value)
+const getBrowseList = async () => {
+  const res = await getUserBrowseApi(props.browseType, page.value, pageSize.value)
   console.log(res)
   if (res.data.length < pageSize.value) {
     hasMore.value = false
   }
-  workList.value = workList.value.concat(res.data)
+  browseList.value = browseList.value.concat(res.data)
   loading.value = false
 }
 
@@ -37,7 +33,7 @@ const onLoad = async () => {
   // console.log('hasMore.value', hasMore.value)
   if (hasMore.value) {
     loading.value = true
-    getWorkList()
+    getBrowseList()
     page.value++
   } else {
     finished.value = true
@@ -69,11 +65,9 @@ const goDetail = (item) => {
 }
 </script>
 <template>
-  <div class="work-list">
-    <van-list v-model:loading="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-      <WorkItem v-for="item in workList" :key="item._id" :work="item" @click="goDetail(item)" />
-    </van-list>
-  </div>
+  <van-list v-model:loading="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+    <WorkItem v-for="item in browseList" :key="item._id" :work="item" @click="goDetail(item)" />
+  </van-list>
 </template>
 
 <style lang="less" scoped></style>

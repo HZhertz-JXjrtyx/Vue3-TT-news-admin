@@ -1,6 +1,5 @@
 <script setup>
 import { computed } from 'vue'
-import { useRoute } from 'vue-router'
 import { useUserStore } from '@/stores'
 import NavBar from '@/components/NavBar.vue'
 import UserList from './components/UserList.vue'
@@ -12,8 +11,6 @@ const props = defineProps({
   },
 })
 
-const route = useRoute()
-console.log(route)
 const userStore = useUserStore()
 
 // 是否是个人关注/粉丝

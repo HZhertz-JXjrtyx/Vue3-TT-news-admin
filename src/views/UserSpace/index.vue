@@ -221,10 +221,6 @@ const tabData = [
   }
   .work {
     border-top: 1px solid #dcdcdc;
-    .scroll-container {
-      height: calc(100vh - 80px);
-      overflow: auto;
-    }
   }
 }
 </style>

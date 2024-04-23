@@ -1,15 +1,11 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getUserWorksApi } from '@/api'
-import WorkItem from './WorkItem.vue'
+import { getUserFavoriteApi } from '@/api'
+import WorkItem from '@/components/work/WorkItem.vue'
 import { useRouter } from 'vue-router'
 
 const props = defineProps({
-  userId: {
-    type: Number,
-    required: true,
-  },
-  worksType: {
+  favoriteType: {
     type: String,
     required: true,
   },
@@ -19,16 +15,16 @@ const router = useRouter()
 
 const page = ref(1)
 const pageSize = ref(10)
-const workList = ref([])
+const favoriteList = ref([])
 const loading = ref(false)
 const hasMore = ref(true)
-const getWorkList = async () => {
-  const res = await getUserWorksApi(props.userId, props.worksType, page.value, pageSize.value)
+const getFavoriteList = async () => {
+  const res = await getUserFavoriteApi(props.favoriteType, page.value, pageSize.value)
   console.log(res)
   if (res.data.length < pageSize.value) {
     hasMore.value = false
   }
-  workList.value = workList.value.concat(res.data)
+  favoriteList.value = favoriteList.value.concat(res.data)
   loading.value = false
 }
 
@@ -37,7 +33,7 @@ const onLoad = async () => {
   // console.log('hasMore.value', hasMore.value)
   if (hasMore.value) {
     loading.value = true
-    getWorkList()
+    getFavoriteList()
     page.value++
   } else {
     finished.value = true
@@ -69,11 +65,9 @@ const goDetail = (item) => {
 }
 </script>
 <template>
-  <div class="work-list">
-    <van-list v-model:loading="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-      <WorkItem v-for="item in workList" :key="item._id" :work="item" @click="goDetail(item)" />
-    </van-list>
-  </div>
+  <van-list v-model:loading="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+    <WorkItem v-for="item in favoriteList" :key="item._id" :work="item" @click="goDetail(item)" />
+  </van-list>
 </template>
 
 <style lang="less" scoped></style>

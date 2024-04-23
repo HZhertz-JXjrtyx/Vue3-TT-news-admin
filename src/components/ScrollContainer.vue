@@ -52,6 +52,5 @@ const handleTouchend = () => {
 .scroll-container {
   height: calc(100vh - 100px);
   overflow: hidden;
-  padding: 10px 20px;
 }
 </style>
