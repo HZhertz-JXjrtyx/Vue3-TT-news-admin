@@ -147,10 +147,12 @@ router.beforeEach((to, from, next) => {
     next(false)
   } else {
     // 如果用户已登录，或者该路由不需要登录，继续跳转
-    // 如果存在 userId 参数，将其转换为 Number 类型
+    // 转换参数为 Number 类型
+
     if (to.params.userId) {
       to.params.userId = Number(to.params.userId)
     }
+
     next()
   }
 })

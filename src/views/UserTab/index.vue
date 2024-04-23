@@ -42,13 +42,18 @@ watchEffect(() => {
           <router-link
             class="data-item"
             :to="{ name: 'userfollows', params: { userId: userStore.userInfo.user_id } }"
+            @click="userStore.userFollowActiveTab = 1"
           >
             <span class="count">{{ userStore.userInfo.fans_count }}</span>
             <span class="text">粉丝</span>
           </router-link>
           <router-link
             class="data-item"
-            :to="{ name: 'userfollows', params: { userId: userStore.userInfo.user_id } }"
+            :to="{
+              name: 'userfollows',
+              params: { userId: userStore.userInfo.user_id },
+            }"
+            @click="userStore.userFollowActiveTab = 0"
           >
             <span class="count">{{ userStore.userInfo.followers_count }}</span>
             <span class="text">关注</span>

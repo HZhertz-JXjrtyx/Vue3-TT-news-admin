@@ -117,3 +117,27 @@ export const getUserWorksApi = (userId, type, page = 1, size = 10) => {
     },
   })
 }
+// 获取用户粉丝
+export const getUserfansApi = (userId, page = 1, size = 10) => {
+  return instance({
+    method: 'GET',
+    url: '/user/fans',
+    params: {
+      userId,
+      page,
+      size,
+    },
+  })
+}
+// 获取用户关注
+export const getUserfollowersApi = (userId, page = 1, size = 10) => {
+  return instance({
+    method: 'GET',
+    url: '/user/followers',
+    params: {
+      userId,
+      page,
+      size,
+    },
+  })
+}
