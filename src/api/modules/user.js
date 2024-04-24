@@ -8,34 +8,6 @@ export const login = (data) => {
     data,
   })
 }
-
-// 登出
-export const logout = () => {
-  return instance({
-    method: 'POST',
-    url: '/user/logout',
-  })
-}
-
-// 用户名是否可用
-export const isOnlyName = (data) => {
-  return instance({
-    method: 'POST',
-    url: '/user/checkname',
-    data,
-  })
-}
-
-// 发送验证码
-export const sendCode = (params) => {
-  console.log(params)
-  return instance({
-    method: 'GET',
-    url: '/user/codes',
-    params,
-  })
-}
-
 // 注册
 export const register = (data) => {
   return instance({
@@ -44,12 +16,81 @@ export const register = (data) => {
     data,
   })
 }
+// 用户名是否可用
+export const isOnlyName = (data) => {
+  return instance({
+    method: 'POST',
+    url: '/user/checkname',
+    data,
+  })
+}
+// 登出
+export const logout = () => {
+  return instance({
+    method: 'POST',
+    url: '/user/logout',
+  })
+}
+// 发送验证码
+export const sendCodeApi = (userName, userEmail, type) => {
+  return instance({
+    method: 'GET',
+    url: '/user/codes',
+    params: {
+      userName,
+      userEmail,
+      type,
+    },
+  })
+}
 
 // 获取登录用户信息
 export const getUserInfo = () => {
   return instance({
     method: 'GET',
     url: '/user/info',
+  })
+}
+// 获取用户信息
+export const getUserDetailApi = (userId) => {
+  return instance({
+    method: 'GET',
+    url: '/user/detail',
+    params: {
+      userId,
+    },
+  })
+}
+// 上传头像
+export const uploadUserAvatarApi = (formData) => {
+  return instance({
+    method: 'POST',
+    url: '/user/upload/avatar',
+    data: formData,
+  })
+}
+
+// 更新资料
+export const updateUserProfileApi = (data) => {
+  return instance({
+    method: 'PATCH',
+    url: '/user/profile',
+    data,
+  })
+}
+// 获取登录用户绑定信息
+export const getUserBindApi = () => {
+  return instance({
+    method: 'GET',
+    url: '/user/bind',
+  })
+}
+// 修改密码
+export const changeUserPwdApi = (oldPwd, newPwd, code) => {
+  return instance({
+    method: 'PATCH',
+    url: '/user/password',
+    data: { oldPwd, newPwd, code },
   })
 }
 
@@ -71,34 +112,6 @@ export const followUserApi = (userId, type) => {
     data: {
       userId,
       type,
-    },
-  })
-}
-
-// 上传头像
-export const uploadUserAvatarApi = (formData) => {
-  return instance({
-    method: 'POST',
-    url: '/user/upload/avatar',
-    data: formData,
-  })
-}
-
-// 更新资料
-export const updateUserProfileApi = (data) => {
-  return instance({
-    method: 'PATCH',
-    url: '/user/profile',
-    data,
-  })
-}
-// 获取用户信息
-export const getUserDetailApi = (userId) => {
-  return instance({
-    method: 'GET',
-    url: '/user/detail',
-    params: {
-      userId,
     },
   })
 }

@@ -4,12 +4,13 @@ import { useRouter } from 'vue-router'
 import { showToast } from 'vant'
 import 'vant/es/toast/style'
 import { debounce } from 'lodash'
-import { login, register, isOnlyName, sendCode } from '@/api'
 import { useUserStore, useChannelStore } from '@/stores'
+import { login, register, isOnlyName, sendCodeApi } from '@/api'
 
 const router = useRouter()
 const userStore = useUserStore()
 const channelStore = useChannelStore()
+
 const status = ref('登录')
 const errorMessage = ref('')
 const isCountDownShow = ref(false)
@@ -87,6 +88,7 @@ const checkUniqueUsername = async (name) => {
   }
 }
 watch(() => registerInfo.value.name, debounce(checkUniqueUsername, 500))
+
 const onSendCode = async () => {
   try {
     await registerForm.value.validate(['name', 'password', 'confirmPwd', 'email'])
@@ -97,7 +99,7 @@ const onSendCode = async () => {
       })
       return Promise.reject({ message: '密码不一致' })
     }
-    await sendCode({ name: registerInfo.value.name, email: registerInfo.value.email })
+    await sendCodeApi(registerInfo.value.name, 'register')
     showToast({
       message: '验证码已发送至邮箱',
       position: 'bottom',
