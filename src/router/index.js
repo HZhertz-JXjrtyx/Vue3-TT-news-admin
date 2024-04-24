@@ -3,23 +3,23 @@ import { showToast } from 'vant'
 import 'vant/es/toast/style'
 import { useUserStore } from '@/stores'
 
-import HomeTab from '@/views/home/HomeTab.vue'
-import HotTab from '@/views/hot/HotTab.vue'
-import MessageTab from '@/views/message/MessageTab.vue'
-import UserTab from '@/views/user/UserTab.vue'
-import SearchPage from '@/views/search/SearchPage.vue'
-import ArticlePage from '@/views/article/ArticlePage.vue'
-import CommentPage from '@/views/comment/CommentPage.vue'
-import VideoPage from '@/views/video/VideoPage.vue'
-import MessagePage from '@/views/message/MessagePage.vue'
-import UserLogin from '@/views/user/UserLogin.vue'
-import UserSpace from '@/views/user/UserSpace.vue'
-import UserProfile from '@/views/user/UserProfile.vue'
-import UserList from '@/views/user/UserList.vue'
-import UserFavorites from '@/views/user/UserFavorites.vue'
-import UserBrowsingHistory from '@/views/user/UserBrowsingHistory.vue'
-import AccountSecurity from '@/views/security/AccountSecurity.vue'
-import ChangePassword from '@/views/security/ChangePassword.vue'
+import HomeTab from '@/views/HomeTab'
+import HotTab from '@/views/HotTab'
+import MessageTab from '@/views/MessageTab'
+import UserTab from '@/views/UserTab'
+import SearchDetail from '@/views/SearchDetail'
+import ArticleDetail from '@/views/ArticleDetail'
+import VideoDetail from '@/views/VideoDetail'
+import CommentDetail from '@/views/CommentDetail'
+import MessageDetail from '@/views/MessageDetail'
+import UserLogin from '@/views/UserLogin'
+import UserSpace from '@/views/UserSpace'
+import UserFollows from '@/views/UserFollows'
+import UserFavorite from '@/views/UserFavorite'
+import UserBrowse from '@/views/UserBrowse'
+import UserProfile from '@/views/UserProfile'
+import AccountSecurity from '@/views/AccountSecurity'
+import ChangePassword from '@/views/ChangePassword'
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -50,30 +50,31 @@ const router = createRouter({
     {
       path: '/home/search',
       name: 'search',
-      component: SearchPage,
+      component: SearchDetail,
     },
     {
       path: '/article/detail/:articleId',
       name: 'articledetail',
-      component: ArticlePage,
+      component: ArticleDetail,
+      props: true,
+    },
+
+    {
+      path: '/video/detail/:videoId',
+      name: 'videodetail',
+      component: VideoDetail,
       props: true,
     },
     {
       path: '/comment/detail/:commentId',
       name: 'commentdetail',
-      component: CommentPage,
+      component: CommentDetail,
       props: true,
     },
     {
-      path: '/video/detail/:videoId',
-      name: 'videodetail',
-      component: VideoPage,
-      props: true,
-    },
-    {
-      path: '/message/detail/:authorId',
+      path: '/message/detail/:messageId',
       name: 'messagedetail',
-      component: MessagePage,
+      component: MessageDetail,
       props: true,
     },
     {
@@ -82,33 +83,37 @@ const router = createRouter({
       component: UserLogin,
     },
     {
-      path: '/user/space',
+      path: '/user/space/:userId',
       name: 'userspace',
       component: UserSpace,
+      props: true,
     },
     {
       path: '/user/profile',
       name: 'userprofile',
       component: UserProfile,
-    },
-    {
-      path: '/user/list/:type',
-      name: 'userlist',
-      component: UserList,
-      props: true,
-    },
-    {
-      path: '/user/favorites',
-      name: 'userfavorites',
-      component: UserFavorites,
       meta: {
         requiresAuth: true,
       },
     },
     {
-      path: '/user/browsinghistory',
-      name: 'userbrowsinghistory',
-      component: UserBrowsingHistory,
+      path: '/user/follows/:userId',
+      name: 'userfollows',
+      component: UserFollows,
+      props: true,
+    },
+    {
+      path: '/user/favorite',
+      name: 'userfavorite',
+      component: UserFavorite,
+      meta: {
+        requiresAuth: true,
+      },
+    },
+    {
+      path: '/user/browse',
+      name: 'userbrowse',
+      component: UserBrowse,
       meta: {
         requiresAuth: true,
       },
@@ -137,11 +142,17 @@ router.beforeEach((to, from, next) => {
   const userStore = useUserStore()
   // 检查该路由是否需要登录
   if (to.meta.requiresAuth && !userStore.token) {
-    // 如果用户未登录，提示并取消导航
+    // 如果用户未登录，提示并取消跳转
     showToast('登录后查看更多')
     next(false)
   } else {
-    // 如果用户已登录，或者该路由不需要登录，那么继续导航
+    // 如果用户已登录，或者该路由不需要登录，继续跳转
+    // 转换参数为 Number 类型
+
+    if (to.params.userId) {
+      to.params.userId = Number(to.params.userId)
+    }
+
     next()
   }
 })
