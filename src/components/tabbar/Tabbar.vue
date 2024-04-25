@@ -46,10 +46,14 @@ const showBottom = ref(false)
   </div>
   <van-popup v-model:show="showBottom" position="bottom" round :style="{ height: '40%' }">
     <van-cell-group inset>
-      <van-cell title="发布文章" size="large"> <img src="@/assets/image/edit.png" alt="" /></van-cell>
+      <van-cell title="发布文章" size="large" to="/publish/article">
+        <img src="@/assets/image/edit.png" alt=""
+      /></van-cell>
     </van-cell-group>
     <van-cell-group inset>
-      <van-cell title="发布视频" size="large"> <img src="@/assets/image/camera.png" alt="" /></van-cell>
+      <van-cell title="发布视频" size="large" to="/publish/video">
+        <img src="@/assets/image/camera.png" alt=""
+      /></van-cell>
     </van-cell-group>
   </van-popup>
 </template>
@@ -88,6 +92,7 @@ const showBottom = ref(false)
     }
     img {
       width: 120px;
+      margin-right: 40px;
     }
   }
 }
