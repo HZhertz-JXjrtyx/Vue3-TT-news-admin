@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import Quill from 'quill'
 import 'quill/dist/quill.snow.css'
+import { uploadArticleImgApi } from '@/api'
 
 const router = useRouter()
 
@@ -16,7 +17,7 @@ const options = {
   theme: 'snow',
 }
 let quill
-const fileArr = ref([])
+const imageMap = ref(new Map())
 onMounted(() => {
   quill = new Quill(editor.value, options)
   // 自定义图片按钮的行为
@@ -29,7 +30,6 @@ onMounted(() => {
 
     fileInput.addEventListener('change', () => {
       let file = fileInput.files[0]
-      fileArr.value.push(file)
 
       let reader = new FileReader()
       reader.onloadend = () => {
@@ -38,6 +38,8 @@ onMounted(() => {
         // 在 Quill 编辑器中插入图片
         let range = quill.getSelection()
         quill.insertEmbed(range.index, 'image', imageUrl)
+        // 将图片的 dataUrl 和对应的 File 对象保存到 Map 中
+        imageMap.value.set(imageUrl, file)
       }
       if (file) {
         // 如果用户选择了文件，开始读取文件
@@ -58,6 +60,8 @@ onMounted(() => {
         if (index !== -1) {
           let imageUrl = oldDelta.ops[index].insert.image
           console.log('Image deleted:', imageUrl)
+          // 如果图片已经被删除，从 Map 中移除它
+          imageMap.value.delete(imageUrl)
         }
       }
     })
@@ -66,8 +70,44 @@ onMounted(() => {
 
 const title = ref('')
 
-const handleNext = () => {
-  console.log(fileArr.value)
+const handleNext = async () => {
+  console.log(imageMap.value)
+  console.log(quill.root.innerHTML)
+  // 创建一个 FormData 对象
+  let formData = new FormData()
+  formData.append('folder', 'article_images')
+  // 将所有图片添加到 FormData 对象中
+  imageMap.value.forEach((file) => {
+    console.log(file)
+    formData.append('article_img', file)
+  })
+  const res = await uploadArticleImgApi(formData)
+  if (res.status === 200) {
+    console.log(res.fileMapObj)
+    console.log(imageMap.value.values().next().value)
+    // 获取服务器返回的映射（新 URL 对应原始名称）
+    const newUrlMap = res.fileMapObj
+
+    // 获取编辑器中的所有内容
+    let contents = quill.getContents()
+
+    // 遍历所有的操作
+    contents.ops.forEach((op, index) => {
+      if (op.insert && op.insert.image) {
+        // 这是一个图片
+        let oldUrl = op.insert.image
+        // 在 newUrlMap 中找到对应的新 URL
+        console.log(imageMap.value.get(oldUrl).name)
+        let newUrl = newUrlMap[imageMap.value.get(oldUrl).name]
+        if (newUrl) {
+          // 如果找到了新 URL，使用它替换旧 URL
+          quill.updateContents({
+            ops: [{ retain: index }, { delete: 1 }, { insert: { image: newUrl } }],
+          })
+        }
+      }
+    })
+  }
   console.log(quill.root.innerHTML)
 }
 </script>
