@@ -32,3 +32,12 @@ export const likeArticleApi = (articleId, type) => {
     },
   })
 }
+
+// 上传文章图片
+export const uploadArticleImgApi = (formData) => {
+  return instance({
+    method: 'POST',
+    url: '/article/publish/image',
+    data: formData,
+  })
+}
