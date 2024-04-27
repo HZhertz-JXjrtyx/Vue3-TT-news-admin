@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { showToast } from 'vant'
 // 使用quill富文本编辑器
 import Quill from 'quill'
 import 'quill/dist/quill.snow.css'
@@ -8,8 +9,16 @@ import { uploadArticleImgApi } from '@/api'
 
 const router = useRouter()
 
-// 标题
-const title = ref('')
+// 文章标题
+const articleTitle = ref('')
+// 标题验证
+const validator = () => {
+  articleTitle.value = articleTitle.value.trim()
+  return /.{2,}/.test(articleTitle.value)
+}
+const titleFormRef = ref(null)
+// 文章内容
+// const articleContent = ref('')
 
 // 富文本编辑器容器
 const editor = ref(null)
@@ -112,6 +121,11 @@ const handleNext = async () => {
     quill.root.innerHTML = updatedContent
   }
   console.log(quill.root.innerHTML)
+  titleFormRef.value.validate('title')
+  // 正文验证
+  const editorContent = quill.root.textContent.trim()
+  console.log(editorContent)
+  !editorContent && showToast('请输入文章内容')
 }
 </script>
 <template>
@@ -119,14 +133,19 @@ const handleNext = async () => {
     <span class="back" @click="router.back()">取消</span>
     <span class="go" @click="handleNext">下一步</span>
   </div>
-  <van-field
-    v-model="title"
-    rows="1"
-    autosize
-    type="textarea"
-    placeholder="请输入标题(2-30字)"
-    maxlength="30"
-  />
+  <van-form ref="titleFormRef">
+    <van-field
+      v-model="articleTitle"
+      rows="1"
+      autosize
+      type="textarea"
+      placeholder="请输入标题(2-30字)"
+      maxlength="30"
+      name="title"
+      :rules="[{ validator, message: '请输入2-30字标题' }]"
+    />
+  </van-form>
+
   <div ref="editor"></div>
   <div id="toolbar">
     <!-- 字体大小 -->
@@ -202,5 +221,8 @@ const handleNext = async () => {
 #toolbar {
   position: absolute;
   bottom: 0;
+}
+:first(:deep(.van-toast)) {
+  bottom: 30px;
 }
 </style>
