@@ -1,13 +1,19 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+// 使用quill富文本编辑器
 import Quill from 'quill'
 import 'quill/dist/quill.snow.css'
 import { uploadArticleImgApi } from '@/api'
 
 const router = useRouter()
 
+// 标题
+const title = ref('')
+
+// 富文本编辑器容器
 const editor = ref(null)
+// 富文本编辑器配置
 const options = {
   debug: 'info',
   modules: {
@@ -16,8 +22,11 @@ const options = {
   placeholder: '请输入正文',
   theme: 'snow',
 }
-let quill
+
+// dataUrl 与文件信息的映射，文件上传后也会返回一个文件名与数据库 url 的映射
+// 文件上传成功后通过两个映射将富文本编辑器中的 dataUrl 替换为 数据库存储的 url
 const imageMap = ref(new Map())
+let quill
 onMounted(() => {
   quill = new Quill(editor.value, options)
   // 自定义图片按钮的行为
@@ -48,18 +57,24 @@ onMounted(() => {
     })
   })
 
+  // Quill 提供了一个名为 quill.on 的 API，它允许你监听编辑器的各种事件。
+  // 其中，'text-change' 事件在任何文本变化时都会被触发，包括插入、删除和格式更改。
+  // 这个事件的回调函数接收两个参数：delta 和 oldDelta。delta 是描述这次变化的 Delta 对象，oldDelta 是变化前的完整文档内容。
+  // 可以检查 delta 对象，看看这次变化是否涉及到图片。
+  // 如果 delta 对象中包含了 insert 操作，并且插入的内容是一个图片，那么就说明用户添加了一张图片。
+  // 同理，如果 delta 对象中包含了 delete 操作，并且删除的内容是一个图片，那么就说明用户删除了一张图片。
   quill.on('text-change', (delta, oldDelta) => {
     delta.ops.forEach((op) => {
       if (op.insert && op.insert.image) {
         // 用户添加了一张图片
-        let imageUrl = op.insert.image
-        console.log('Image added:', imageUrl)
+        // let imageUrl = op.insert.image
+        console.log('Image added')
       } else if (op.delete) {
         // 用户可能删除了一张图片，我们需要检查一下
         let index = oldDelta.ops.findIndex((oldOp) => oldOp.insert && oldOp.insert.image)
         if (index !== -1) {
           let imageUrl = oldDelta.ops[index].insert.image
-          console.log('Image deleted:', imageUrl)
+          console.log('Image deleted')
           // 如果图片已经被删除，从 Map 中移除它
           imageMap.value.delete(imageUrl)
         }
@@ -68,45 +83,33 @@ onMounted(() => {
   })
 })
 
-const title = ref('')
-
 const handleNext = async () => {
-  console.log(imageMap.value)
+  // console.log(imageMap.value)
   console.log(quill.root.innerHTML)
   // 创建一个 FormData 对象
   let formData = new FormData()
   formData.append('folder', 'article_images')
   // 将所有图片添加到 FormData 对象中
   imageMap.value.forEach((file) => {
-    console.log(file)
     formData.append('article_img', file)
   })
   const res = await uploadArticleImgApi(formData)
   if (res.status === 200) {
-    console.log(res.fileMapObj)
-    console.log(imageMap.value.values().next().value)
+    // console.log(res.fileMapObj)
+    // console.log(imageMap.value )
     // 获取服务器返回的映射（新 URL 对应原始名称）
     const newUrlMap = res.fileMapObj
-
-    // 获取编辑器中的所有内容
-    let contents = quill.getContents()
-
-    // 遍历所有的操作
-    contents.ops.forEach((op, index) => {
-      if (op.insert && op.insert.image) {
-        // 这是一个图片
-        let oldUrl = op.insert.image
-        // 在 newUrlMap 中找到对应的新 URL
-        console.log(imageMap.value.get(oldUrl).name)
-        let newUrl = newUrlMap[imageMap.value.get(oldUrl).name]
-        if (newUrl) {
-          // 如果找到了新 URL，使用它替换旧 URL
-          quill.updateContents({
-            ops: [{ retain: index }, { delete: 1 }, { insert: { image: newUrl } }],
-          })
-        }
+    // 遍历富文本编辑器中的内容
+    let updatedContent = quill.root.innerHTML // 创建临时变量来存储替换后的内容
+    for (const [dataUrl, file] of imageMap.value) {
+      const imageUrl = newUrlMap[file.name] // 获取对应的数据库存储的图片地址
+      if (imageUrl) {
+        updatedContent = updatedContent.replace(dataUrl, imageUrl)
       }
-    })
+    }
+
+    // 更新富文本编辑器的内容
+    quill.root.innerHTML = updatedContent
   }
   console.log(quill.root.innerHTML)
 }
