@@ -6,19 +6,9 @@ import { showToast } from 'vant'
 import Quill from 'quill'
 import 'quill/dist/quill.snow.css'
 import { uploadArticleImgApi } from '@/api'
+import PublishInfo from '@/components/publish/PublishInfo.vue'
 
 const router = useRouter()
-
-// 文章标题
-const articleTitle = ref('')
-// 标题验证
-const validator = () => {
-  articleTitle.value = articleTitle.value.trim()
-  return /.{2,}/.test(articleTitle.value)
-}
-const titleFormRef = ref(null)
-// 文章内容
-// const articleContent = ref('')
 
 // 富文本编辑器容器
 const editor = ref(null)
@@ -92,7 +82,29 @@ onMounted(() => {
   })
 })
 
+// 文章标题
+const articleTitle = ref('')
+// 标题验证
+const validator = () => {
+  articleTitle.value = articleTitle.value.trim()
+  return /.{2,}/.test(articleTitle.value)
+}
+const titleFormRef = ref(null)
+// 文章内容
+const articleContent = ref('')
+
+const showPopup = ref(false)
+
 const handleNext = async () => {
+  await titleFormRef.value.validate('title')
+  // 正文验证
+  const editorContent = quill.root.textContent.trim()
+  console.log(editorContent)
+  if (!editorContent) {
+    showToast('请输入文章内容')
+    return
+  }
+
   // console.log(imageMap.value)
   console.log(quill.root.innerHTML)
   // 创建一个 FormData 对象
@@ -121,11 +133,8 @@ const handleNext = async () => {
     quill.root.innerHTML = updatedContent
   }
   console.log(quill.root.innerHTML)
-  titleFormRef.value.validate('title')
-  // 正文验证
-  const editorContent = quill.root.textContent.trim()
-  console.log(editorContent)
-  !editorContent && showToast('请输入文章内容')
+  articleContent.value = quill.root.innerHTML
+  showPopup.value = true
 }
 </script>
 <template>
@@ -197,6 +206,17 @@ const handleNext = async () => {
     <!-- 清除格式 -->
     <button class="ql-clean">清除格式</button>
   </div>
+
+  <!-- 右侧弹出 -->
+  <van-popup
+    v-model:show="showPopup"
+    closeable
+    close-icon-position="top-left"
+    position="right"
+    :style="{ width: '100%', height: '100%' }"
+  >
+    <PublishInfo publishType="article" :title="articleTitle" />
+  </van-popup>
 </template>
 
 <style lang="less" scoped>
@@ -208,7 +228,7 @@ const handleNext = async () => {
     color: var(--main-color-red-1);
   }
 }
-:deep(#van-field-1-input) {
+:deep(textarea) {
   font-size: 40px;
   font-weight: 600;
 }
