@@ -21,7 +21,7 @@ defineProps({
       <div
         v-if="work.type === 'article'"
         class="article-img"
-        :style="{ backgroundImage: `url(${work.image_list[0]})` }"
+        :style="{ backgroundImage: `url(${work.cover_image[0]})` }"
       ></div>
       <div v-if="work.type === 'video'" class="video-img">
         <i :style="{ backgroundImage: `url(${work.image_src})` }"></i>

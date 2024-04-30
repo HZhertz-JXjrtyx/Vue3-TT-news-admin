@@ -9,7 +9,7 @@ const props = defineProps({
   },
 })
 const uiStyle = props.news.ui_style
-const imgList = props.news.image_list ? props.news.image_list.slice(0, 4) : []
+const imgList = props.news.cover_image ? props.news.cover_image.slice(0, 4) : []
 const playCount = ref('')
 const commentCount = ref('')
 const duraction = ref('')
@@ -33,7 +33,7 @@ if (props.news.type === 'video') {
       <div class="title">{{ news.title }}</div>
       <div class="middle">
         <div class="description">{{ news.article_info.description }}</div>
-        <img class="img" :src="news.image_list[0]" alt="" />
+        <img class="img" :src="news.cover_image[0]" alt="" />
       </div>
     </div>
     <div class="image-list" v-if="uiStyle === 'image_list'">
@@ -41,8 +41,8 @@ if (props.news.type === 'video') {
       <div class="img-wrap">
         <div v-for="(img, index) in imgList" :key="index" class="img-wrap-item">
           <img class="img-item" :src="img" alt="" />
-          <div v-if="news.image_list.length > 4 && index === 3" class="overlay">
-            <div class="overlay-text">+{{ news.image_list.length }}</div>
+          <div v-if="news.cover_image.length > 4 && index === 3" class="overlay">
+            <div class="overlay-text">+{{ news.cover_image.length }}</div>
           </div>
         </div>
       </div>
