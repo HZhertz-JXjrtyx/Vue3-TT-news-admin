@@ -5,7 +5,7 @@ import LoadIcon from './LoadIcon.vue'
 
 const userStore = useUserStore()
 
-const showBottom = ref(false)
+const showPublishType = ref(false)
 </script>
 <template>
   <div class="tabbar">
@@ -26,7 +26,7 @@ const showBottom = ref(false)
         热点
       </van-tabbar-item>
       <van-tabbar-item>
-        <div class="publish" @click="showBottom = true">
+        <div class="publish" v-login="() => (showPublishType = true)">
           <span class="iconfont icon-cc-plus-crude"></span>
         </div>
       </van-tabbar-item>
@@ -44,7 +44,7 @@ const showBottom = ref(false)
       </van-tabbar-item>
     </van-tabbar>
   </div>
-  <van-popup v-model:show="showBottom" position="bottom" round :style="{ height: '40%' }">
+  <van-popup v-model:show="showPublishType" position="bottom" round :style="{ height: '40%' }">
     <van-cell-group inset>
       <van-cell title="发布文章" size="large" to="/publish/article">
         <img src="@/assets/image/edit.png" alt=""

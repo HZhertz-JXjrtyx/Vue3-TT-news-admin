@@ -21,6 +21,7 @@ const afterRead = async (file) => {
   const res = await uploadUserAvatarApi(formData)
   console.log(res)
   userAvatar.value = res.newUrl
+  userStore.userInfo.user_avatar = res.newUrl
 }
 
 const isBtnDisabled = ref(true)

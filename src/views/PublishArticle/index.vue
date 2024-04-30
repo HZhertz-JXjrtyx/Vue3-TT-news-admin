@@ -5,10 +5,12 @@ import { showToast } from 'vant'
 // 使用quill富文本编辑器
 import Quill from 'quill'
 import 'quill/dist/quill.snow.css'
-import { uploadArticleImgApi } from '@/api'
-import PublishInfo from '@/components/publish/PublishInfo.vue'
+import { usePublishStore } from '@/stores'
+import { base64ToFile } from '@/utils'
+import PublishSetting from '@/components/publish/PublishSetting.vue'
 
 const router = useRouter()
+const publishStore = usePublishStore()
 
 // 富文本编辑器容器
 const editor = ref(null)
@@ -22,9 +24,6 @@ const options = {
   theme: 'snow',
 }
 
-// dataUrl 与文件信息的映射，文件上传后也会返回一个文件名与数据库 url 的映射
-// 文件上传成功后通过两个映射将富文本编辑器中的 dataUrl 替换为 数据库存储的 url
-const imageMap = ref(new Map())
 let quill
 onMounted(() => {
   quill = new Quill(editor.value, options)
@@ -40,18 +39,16 @@ onMounted(() => {
       let file = fileInput.files[0]
 
       let reader = new FileReader()
+      // 读取文件
+      reader.readAsDataURL(file)
       reader.onloadend = () => {
         // reader.result 包含了一个可以在浏览器中显示的图片 URL
-        let imageUrl = reader.result
+        let imageDataUrl = reader.result
         // 在 Quill 编辑器中插入图片
         let range = quill.getSelection()
-        quill.insertEmbed(range.index, 'image', imageUrl)
+        quill.insertEmbed(range.index, 'image', imageDataUrl)
         // 将图片的 dataUrl 和对应的 File 对象保存到 Map 中
-        imageMap.value.set(imageUrl, file)
-      }
-      if (file) {
-        // 如果用户选择了文件，开始读取文件
-        reader.readAsDataURL(file)
+        // imageFileList.value.push({ imageDataUrl, file })
       }
     })
   })
@@ -66,16 +63,22 @@ onMounted(() => {
     delta.ops.forEach((op) => {
       if (op.insert && op.insert.image) {
         // 用户添加了一张图片
-        // let imageUrl = op.insert.image
+        let imageDataUrl = op.insert.image
         console.log('Image added')
+        const file = base64ToFile(imageDataUrl, 'quill_image')
+        console.log(file)
+
+        publishStore.articleImageFileList.push({ imageDataUrl, file })
       } else if (op.delete) {
         // 用户可能删除了一张图片，我们需要检查一下
         let index = oldDelta.ops.findIndex((oldOp) => oldOp.insert && oldOp.insert.image)
         if (index !== -1) {
-          let imageUrl = oldDelta.ops[index].insert.image
+          let dataUrl = oldDelta.ops[index].insert.image
           console.log('Image deleted')
-          // 如果图片已经被删除，从 Map 中移除它
-          imageMap.value.delete(imageUrl)
+          // 如果图片已经被删除，从 imageFileList 中移除它
+          publishStore.articleImageFileList = publishStore.articleImageFileList.filter((item) => {
+            item.imageDataUrl !== dataUrl
+          })
         }
       }
     })
@@ -83,15 +86,16 @@ onMounted(() => {
 })
 
 // 文章标题
-const articleTitle = ref('')
+// const articleTitle = ref('')
 // 标题验证
 const validator = () => {
-  articleTitle.value = articleTitle.value.trim()
-  return /.{2,}/.test(articleTitle.value)
+  publishStore.title = publishStore.title.trim()
+  return /.{2,}/.test(publishStore.title)
 }
 const titleFormRef = ref(null)
 // 文章内容
-const articleContent = ref('')
+// const quillContent = ref('')
+// provide('quillContent', quillContent)
 
 const showPopup = ref(false)
 
@@ -105,35 +109,12 @@ const handleNext = async () => {
     return
   }
 
-  // console.log(imageMap.value)
-  console.log(quill.root.innerHTML)
-  // 创建一个 FormData 对象
-  let formData = new FormData()
-  formData.append('folder', 'article_images')
-  // 将所有图片添加到 FormData 对象中
-  imageMap.value.forEach((file) => {
-    formData.append('article_img', file)
-  })
-  const res = await uploadArticleImgApi(formData)
-  if (res.status === 200) {
-    // console.log(res.fileMapObj)
-    // console.log(imageMap.value )
-    // 获取服务器返回的映射（新 URL 对应原始名称）
-    const newUrlMap = res.fileMapObj
-    // 遍历富文本编辑器中的内容
-    let updatedContent = quill.root.innerHTML // 创建临时变量来存储替换后的内容
-    for (const [dataUrl, file] of imageMap.value) {
-      const imageUrl = newUrlMap[file.name] // 获取对应的数据库存储的图片地址
-      if (imageUrl) {
-        updatedContent = updatedContent.replace(dataUrl, imageUrl)
-      }
-    }
-
-    // 更新富文本编辑器的内容
-    quill.root.innerHTML = updatedContent
-  }
-  console.log(quill.root.innerHTML)
-  articleContent.value = quill.root.innerHTML
+  //   // 更新富文本编辑器的内容
+  //   quill.root.innerHTML = updatedContent
+  // }
+  // console.log(quill.root.innerHTML)
+  publishStore.quillContent = quill.root.innerHTML
+  console.log('publishStore.quillContent', publishStore.quillContent)
   showPopup.value = true
 }
 </script>
@@ -144,7 +125,7 @@ const handleNext = async () => {
   </div>
   <van-form ref="titleFormRef">
     <van-field
-      v-model="articleTitle"
+      v-model="publishStore.title"
       rows="1"
       autosize
       type="textarea"
@@ -215,7 +196,7 @@ const handleNext = async () => {
     position="right"
     :style="{ width: '100%', height: '100%' }"
   >
-    <PublishInfo publishType="article" :title="articleTitle" />
+    <PublishSetting publishType="article" />
   </van-popup>
 </template>
 
