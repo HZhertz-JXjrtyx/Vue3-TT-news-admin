@@ -49,6 +49,8 @@ onMounted(() => {
         quill.insertEmbed(range.index, 'image', imageDataUrl)
         // 将图片的 dataUrl 和对应的 File 对象保存到 Map 中
         // imageFileList.value.push({ imageDataUrl, file })
+        // 在图片后面设置光标
+        quill.setSelection(range.index + 1)
       }
     })
   })

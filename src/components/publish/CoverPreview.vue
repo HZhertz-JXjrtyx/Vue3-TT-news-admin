@@ -58,8 +58,6 @@ const handleSelectImage = () => {
 .preview--has-img {
   width: 220px;
   height: 180px;
-  border-radius: 10px;
-  overflow: hidden;
 }
 .preview--no-img {
   display: flex;
@@ -78,7 +76,10 @@ const handleSelectImage = () => {
   img {
     position: absolute;
     transform: translate(-50%);
+    width: 100%;
     height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
   }
   span {
     position: absolute;

@@ -2,7 +2,7 @@
 import { ref, onMounted, provide } from 'vue'
 import { debounce } from 'lodash'
 import { getArticleInfoApi, collectArticleApi, likeArticleApi, addUserBrowseApi } from '@/api'
-import '@/styles/github-markdown-light.css'
+import '@/styles/github-markdown-light.less'
 import NavBar from '@/components/NavBar.vue'
 import UserInfo from '@/components/user/UserInfo.vue'
 import UserInfoSkt from '@/components/user/UserInfoSkt.vue'

@@ -112,6 +112,7 @@ const handlePublish = async () => {
   console.log(res)
   if (res.status === 200) {
     router.go(-1)
+    publishStore.initialize()
   }
 }
 </script>
@@ -193,12 +194,6 @@ const handlePublish = async () => {
       display: flex;
       justify-content: space-between;
       padding: 20px 40px 0 40px;
-      .cover-preview {
-        width: 220px;
-        height: 180px;
-        border-radius: 10px;
-        background-color: #01a6ff;
-      }
     }
     .content__user-info {
       margin: 10px 0 40px 40px;

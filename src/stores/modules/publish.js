@@ -34,6 +34,17 @@ export const usePublishStore = defineStore(storeNames.PUBLISH, () => {
       coverType.value
     )
   }
+  const initialize = () => {
+    title.value = ''
+    quillContent.value = ''
+    articleContent.value = ''
+    articleImageFileList.value = []
+    articleImageList.value = []
+    articleCoverFileList.value = new Array(3)
+    articleCoverList.value = []
+    coverType.value = ''
+    channelId.value = ''
+  }
 
   return {
     title,
@@ -46,5 +57,6 @@ export const usePublishStore = defineStore(storeNames.PUBLISH, () => {
     coverType,
     channelId,
     publishArticle,
+    initialize,
   }
 })
