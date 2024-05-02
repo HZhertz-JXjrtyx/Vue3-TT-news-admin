@@ -118,10 +118,10 @@ const handlePublish = async () => {
 </script>
 <template>
   <div class="publish-setting">
-    <div class="publish-info">
-      <div class="info__content">
+    <div class="publish-preview">
+      <div class="preview__content">
         <div class="content__title">{{ publishStore.title }}</div>
-        <div v-if="publishStore.coverType === 'image_list'" class="content__cover">
+        <div v-if="publishStore.coverType === 'image_list'" class="content__cover--list">
           <CoverPreview
             v-for="(item, index) in publishStore.articleCoverFileList"
             :key="index"
@@ -131,7 +131,7 @@ const handlePublish = async () => {
         </div>
         <div class="content__user-info">用户{{ userStore.userInfo.user_id }}</div>
       </div>
-      <div v-if="publishStore.coverType === 'image_right'" class="info__cover">
+      <div v-if="publishStore.coverType === 'image_right'" class="preview__cover--right">
         <CoverPreview
           :file="publishStore.articleCoverFileList[0]"
           @after-read="(file) => afterRead(file, 0)"
@@ -174,12 +174,12 @@ const handlePublish = async () => {
 .publish-setting {
   margin: 100px 0;
 }
-.publish-info {
+.publish-preview {
   display: flex;
   position: relative;
   border-top: 1px solid var(--bg-color-3);
   border-bottom: 1px solid var(--bg-color-3);
-  .info__content {
+  .preview__content {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -190,7 +190,7 @@ const handlePublish = async () => {
       font-weight: 600;
       word-break: break-all;
     }
-    .content__cover {
+    .content__cover--list {
       display: flex;
       justify-content: space-between;
       padding: 20px 40px 0 40px;
@@ -201,7 +201,7 @@ const handlePublish = async () => {
       color: var(--text-color-3);
     }
   }
-  .info__cover {
+  .preview__cover--right {
     .cover-preview {
       margin: 40px 30px 40px 0;
     }
