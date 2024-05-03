@@ -1,6 +1,5 @@
 <script setup>
-import { ref } from 'vue'
-import { formatCount, formatVideoDuration, convertToMMDDHHmm, formatPublishTime } from '@/utils'
+import { formatCount, formatVideoDuration, formatPublishTime } from '@/utils'
 
 const props = defineProps({
   news: {
@@ -11,17 +10,6 @@ const props = defineProps({
 console.log(props.news)
 const uiStyle = props.news.ui_style
 const imgList = props.news.cover_image ? props.news.cover_image.slice(0, 3) : []
-const playCount = ref('')
-const commentCount = ref('')
-const duraction = ref('')
-const pubtime = ref('')
-
-pubtime.value = convertToMMDDHHmm(props.news.publish_time)
-if (props.news.type === 'video') {
-  playCount.value = formatCount(props.news.play_count)
-  commentCount.value = formatCount(props.news.comment_count)
-  duraction.value = formatVideoDuration(props.news.video_info.duration)
-}
 </script>
 
 <template>
@@ -51,17 +39,18 @@ if (props.news.type === 'video') {
     <div class="video-item" v-if="props.news.type === 'video'">
       <div class="item__title news-title">{{ props.news.title }}</div>
       <div class="item__content">
+        <i class="content__bg" :style="{ backgroundImage: `url(${props.news.cover_src})` }"></i>
         <div class="content__cover">
-          <van-image fit="contain" position="center" :src="props.news.image_src" />
+          <van-image fit="contain" position="center" :src="props.news.cover_src" />
         </div>
         <i class="content__playicon">
-          <span class="iconfont icon-play1"></span>
+          <span class="iconfont icon-playfill"></span>
         </i>
         <span class="content__duration">{{ formatVideoDuration(props.news.video_info.duration) }}</span>
       </div>
       <div class="item__publish-info news-publish-info">
         <span class="publish-info__user-nickname">{{ props.news.user_info.user_nickname }}</span>
-        <span class="publish-info__comment-count">{{ props.news.comment_count }}评论</span>
+        <span class="publish-info__comment-count">{{ formatCount(props.news.comment_count) }}评论</span>
         <span class="publish-info__publish-time">{{ formatPublishTime(props.news.publish_time) }}</span>
       </div>
     </div>
@@ -98,22 +87,41 @@ if (props.news.type === 'video') {
   }
 }
 .video-item {
+  border-bottom: 1px solid var(--bg-color-3);
   .item__content {
     position: relative;
     margin: 10px 30px;
-    :deep(.van-image) {
+    border-radius: 10px;
+    overflow: hidden;
+    .content__bg {
+      display: block;
       width: 100%;
       height: 388px;
-      border-radius: 10px;
-      overflow: hidden;
+      filter: blur(10px);
+      transform: scale(1.7);
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
     }
+    .content__cover {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      height: 388px;
+      overflow: hidden;
+      :deep(.van-image) {
+        width: 100%;
+        height: 388px;
+      }
+    }
+
     .content__playicon {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       .iconfont {
-        font-size: 60px;
+        font-size: 80px;
         color: rgb(255, 255, 255);
       }
     }

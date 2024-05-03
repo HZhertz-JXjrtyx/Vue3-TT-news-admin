@@ -26,7 +26,7 @@ defineProps({
       <div v-if="work.type === 'video'" class="video-img">
         <i :style="{ backgroundImage: `url(${work.image_src})` }"></i>
         <img :src="work.image_src" alt="" />
-        <div class="play"><span class="iconfont icon-play1"></span></div>
+        <div class="play"><span class="iconfont icon-playfill"></span></div>
         <div class="duration">{{ formatVideoDuration(work.video_info.duration) }}</div>
       </div>
     </div>
