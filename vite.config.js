@@ -10,13 +10,18 @@ import pxtovw from 'postcss-px-to-viewport'
 const loder_pxtovw = pxtovw({
   viewportWidth: 750,
   viewportUnit: 'vw',
-  exclude: [/node_modules\/vant/],
+  exclude: [/node_modules\/vant/, /node_modules\/quill/],
 })
 
 const vant_pxtovw = pxtovw({
   viewportWidth: 375,
   viewportUnit: 'vw',
   exclude: [/^(?!.*node_modules\/vant).*/],
+})
+const quill_pxtovw = pxtovw({
+  viewportWidth: 375,
+  viewportUnit: 'vw',
+  exclude: [/^(?!.*node_modules\/quill).*/],
 })
 
 export default defineConfig({
@@ -38,7 +43,7 @@ export default defineConfig({
   ],
   css: {
     postcss: {
-      plugins: [loder_pxtovw, vant_pxtovw],
+      plugins: [loder_pxtovw, vant_pxtovw, quill_pxtovw],
     },
   },
   base: '/',

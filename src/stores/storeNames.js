@@ -3,4 +3,5 @@ export default {
   CHANNEL: 'CHANNEL',
   NEWS: 'NEWS',
   COMMENT: 'COMMENT',
+  PUBLISH: 'PUBLISH',
 }
