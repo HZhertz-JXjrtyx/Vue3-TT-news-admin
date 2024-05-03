@@ -3,6 +3,7 @@ import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore, usePublishStore } from '@/stores'
 import { uploadArticleImgApi, uploadArticleCoverApi } from '@/api'
+import { formatVideoDuration } from '@/utils'
 import { CTV } from '@/assets/js'
 import CoverPreview from './CoverPreview.vue'
 
@@ -17,7 +18,7 @@ const userStore = useUserStore()
 const publishStore = usePublishStore()
 
 // 选择封面类型
-publishStore.coverType = 'image_none'
+publishStore.coverType = props.publishType === 'article' ? 'image_none' : 'image_large|video'
 const changeCoverType = (e) => {
   console.dir(e.target, e.target.innerText)
   if (props.publishType === 'article') {
@@ -32,6 +33,24 @@ const changeCoverType = (e) => {
 const afterRead = (file, index) => {
   console.log(file, index)
   publishStore.articleCoverFileList[index] = file
+}
+
+// 选择视频封面
+const handleSelectVideoCover = () => {
+  let fileInput = document.createElement('input')
+  fileInput.setAttribute('type', 'file')
+  fileInput.setAttribute('accept', 'image/*')
+  fileInput.click()
+
+  fileInput.addEventListener('change', () => {
+    const file = fileInput.files[0]
+    publishStore.videoFile = file
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onloadend = () => {
+      publishStore.videoCoverDataurl = reader.result
+    }
+  })
 }
 
 // 选择频道分区
@@ -50,13 +69,17 @@ watch(
   [() => publishStore.coverType, () => publishStore.articleCoverFileList, () => publishStore.channelId],
   () => {
     if (publishStore.channelId) {
-      if (publishStore.coverType === 'image_none') {
+      if (props.publishType === 'video') {
         publishBtnDisabled.value = false
-      } else if (publishStore.coverType === 'image_right') {
-        publishBtnDisabled.value = !publishStore.articleCoverFileList[0]
-      } else if (publishStore.coverType === 'image_list') {
-        console.log(Object.keys(publishStore.articleCoverFileList).length !== 3)
-        publishBtnDisabled.value = Object.keys(publishStore.articleCoverFileList).length !== 3
+      } else {
+        if (publishStore.coverType === 'image_none') {
+          publishBtnDisabled.value = false
+        } else if (publishStore.coverType === 'image_right') {
+          publishBtnDisabled.value = !publishStore.articleCoverFileList[0]
+        } else if (publishStore.coverType === 'image_list') {
+          console.log(Object.keys(publishStore.articleCoverFileList).length !== 3)
+          publishBtnDisabled.value = Object.keys(publishStore.articleCoverFileList).length !== 3
+        }
       }
     }
   },
@@ -72,7 +95,15 @@ watch(
 )
 
 // 发布
-const handlePublish = async () => {
+const handlePublish = () => {
+  if (props.publishType === 'article') {
+    handlePublishArticle()
+  } else {
+    handlePublishVideo()
+  }
+}
+// 发布文章
+const handlePublishArticle = async () => {
   // 上传封面
   if (publishStore.coverType !== 'image_none') {
     const formData = new FormData()
@@ -82,7 +113,7 @@ const handlePublish = async () => {
     })
     const res = await uploadArticleCoverApi(formData)
     console.log(res)
-    publishStore.articleCoverList = res.coverList
+    publishStore.articleCoverSrcList = res.coverList
   }
   // 上传图片
   if (publishStore.articleImageFileList.length > 0) {
@@ -95,14 +126,14 @@ const handlePublish = async () => {
     })
     const res = await uploadArticleImgApi(formData)
     console.log(res)
-    publishStore.articleImageList = res.imageList
+    publishStore.articleImageSrcList = res.imageList
   }
 
   // 替换富文本图片url
   publishStore.articleImageFileList.forEach((fileObj, index) => {
     publishStore.articleContent = publishStore.articleContent.replace(
       fileObj.imageDataUrl,
-      publishStore.articleImageList[index]
+      publishStore.articleImageSrcList[index]
     )
   })
   console.log(publishStore.articleContent)
@@ -115,13 +146,25 @@ const handlePublish = async () => {
     publishStore.initialize()
   }
 }
+// 发布视频
+const handlePublishVideo = async () => {}
 </script>
 <template>
   <div class="publish-setting">
-    <div class="publish-preview">
+    <div class="publish-preview--video" v-if="props.publishType === 'video'">
+      <div class="preview__content">
+        <i class="content__bg" :style="{ backgroundImage: `url(${publishStore.videoCoverDataurl})` }"></i>
+        <div class="content__cover">
+          <van-image fit="cover" position="center" :src="publishStore.videoCoverDataurl" />
+        </div>
+        <span class="content__playicon iconfont icon-playfill"></span>
+        <span class="content__duration">{{ formatVideoDuration(publishStore.videoDuration) }}</span>
+      </div>
+    </div>
+    <div class="publish-preview--article">
       <div class="preview__content">
         <div class="content__title">{{ publishStore.title }}</div>
-        <div v-if="publishStore.coverType === 'image_list'" class="content__cover--list">
+        <div class="content__cover--list" v-if="publishStore.coverType === 'image_list'">
           <CoverPreview
             v-for="(item, index) in publishStore.articleCoverFileList"
             :key="index"
@@ -131,14 +174,15 @@ const handlePublish = async () => {
         </div>
         <div class="content__user-info">用户{{ userStore.userInfo.user_id }}</div>
       </div>
-      <div v-if="publishStore.coverType === 'image_right'" class="preview__cover--right">
+      <div class="preview__cover--right" v-if="publishStore.coverType === 'image_right'">
         <CoverPreview
           :file="publishStore.articleCoverFileList[0]"
           @after-read="(file) => afterRead(file, 0)"
         />
       </div>
     </div>
-    <div class="cover-setting">
+
+    <div class="cover-setting" v-if="props.publishType === 'article'">
       <span class="setting__title">封面设置</span>
 
       <div class="setting__type" @click="changeCoverType">
@@ -149,6 +193,7 @@ const handlePublish = async () => {
         <span :class="{ selected: publishStore.coverType === 'image_list' }" data-ui="image_list">三图</span>
       </div>
     </div>
+    <van-cell v-else title="封面替换" is-link @click="handleSelectVideoCover" />
     <div class="select-channel">
       <van-field
         v-model="result"
@@ -174,7 +219,7 @@ const handlePublish = async () => {
 .publish-setting {
   margin: 100px 0;
 }
-.publish-preview {
+.publish-preview--article {
   display: flex;
   position: relative;
   border-top: 1px solid var(--bg-color-3);
@@ -187,7 +232,7 @@ const handlePublish = async () => {
     .content__title {
       margin: 40px 40px 0;
       font-size: 34px;
-      font-weight: 600;
+      font-weight: 500;
       word-break: break-all;
     }
     .content__cover--list {
@@ -204,6 +249,49 @@ const handlePublish = async () => {
   .preview__cover--right {
     .cover-preview {
       margin: 40px 30px 40px 0;
+    }
+  }
+}
+.publish-preview--video {
+  .preview__content {
+    position: relative;
+    margin: 10px 30px 0 30px;
+    border-radius: 10px;
+    overflow: hidden;
+    .content__bg {
+      display: block;
+      width: 100%;
+      height: 388px;
+      filter: blur(10px);
+      transform: scale(1.7);
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+    .content__cover {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      height: 388px;
+      overflow: hidden;
+      :deep(.van-image) {
+        width: 100%;
+        height: 388px;
+      }
+    }
+    .content__playicon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 80px;
+      color: rgb(255, 255, 255);
+    }
+    .content__duration {
+      position: absolute;
+      right: 30px;
+      bottom: 20px;
+      color: rgb(255, 255, 255);
     }
   }
 }

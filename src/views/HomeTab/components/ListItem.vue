@@ -7,7 +7,6 @@ const props = defineProps({
     required: true,
   },
 })
-console.log(props.news)
 const uiStyle = props.news.ui_style
 const imgList = props.news.cover_image ? props.news.cover_image.slice(0, 3) : []
 </script>
