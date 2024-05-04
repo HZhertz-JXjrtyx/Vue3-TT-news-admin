@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import storeNames from '../storeNames'
-import { publishArticleApi } from '@/api'
+import { publishArticleApi, publishVideoApi } from '@/api'
 
 export const usePublishStore = defineStore(storeNames.PUBLISH, () => {
   // 标题
@@ -19,7 +19,7 @@ export const usePublishStore = defineStore(storeNames.PUBLISH, () => {
   const articleCoverFileList = ref(new Array(3))
   // 封面列表
   const articleCoverSrcList = ref([])
-  // 封面图片数量
+  // 封面类型
   const coverType = ref('')
   // 频道
   const channelId = ref('')
@@ -49,6 +49,17 @@ export const usePublishStore = defineStore(storeNames.PUBLISH, () => {
       coverType.value
     )
   }
+  const publishVideo = async () => {
+    return await publishVideoApi(
+      channelId.value,
+      title.value,
+      videoIntro.value,
+      videoSrc.value,
+      videoCoverSrc.value,
+      videoDuration.value,
+      coverType.value
+    )
+  }
   const initialize = () => {
     title.value = ''
     quillContent.value = ''
@@ -59,6 +70,14 @@ export const usePublishStore = defineStore(storeNames.PUBLISH, () => {
     articleCoverSrcList.value = []
     coverType.value = ''
     channelId.value = ''
+
+    videoIntro.value = ''
+    videoDuration.value = 0
+    videoFile.value = null
+    videoSrc.value = ''
+    videoCoverDataurl.value = ''
+    videoCoverFile.value = null
+    videoCoverSrc.value = ''
   }
 
   return {
@@ -79,6 +98,7 @@ export const usePublishStore = defineStore(storeNames.PUBLISH, () => {
     videoCoverFile,
     videoCoverSrc,
     publishArticle,
+    publishVideo,
     initialize,
   }
 })

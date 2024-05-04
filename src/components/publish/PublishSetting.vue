@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import { useUserStore, usePublishStore } from '@/stores'
 import { uploadArticleImgApi, uploadArticleCoverApi, uploadVideoApi, uploadVideoCoverApi } from '@/api'
 import { formatVideoDuration } from '@/utils'
@@ -44,7 +44,7 @@ const handleSelectVideoCover = () => {
 
   fileInput.addEventListener('change', () => {
     const file = fileInput.files[0]
-    publishStore.videoFile = file
+    publishStore.videoCoverFile = file
     const reader = new FileReader()
     reader.readAsDataURL(file)
     reader.onloadend = () => {
@@ -138,12 +138,11 @@ const handlePublishArticle = async () => {
   })
   console.log(publishStore.articleContent)
 
-  // 上传文章
+  // 发布文章
   const res = await publishStore.publishArticle()
   console.log(res)
   if (res.status === 200) {
     router.go(-1)
-    publishStore.initialize()
   }
 }
 // 发布视频
@@ -164,7 +163,16 @@ const handlePublishVideo = async () => {
   console.log(updVideoCoverRes)
   publishStore.videoCoverSrc = updVideoCoverRes.videoCoverSrc
   // 发布视频
+  const res = await publishStore.publishVideo()
+  console.log(res)
+  if (res.status === 200) {
+    router.go(-1)
+  }
 }
+
+onBeforeRouteLeave(() => {
+  publishStore.initialize()
+})
 </script>
 <template>
   <div class="publish-setting">
