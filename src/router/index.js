@@ -7,6 +7,8 @@ import HomeTab from '@/views/HomeTab'
 import HotTab from '@/views/HotTab'
 import MessageTab from '@/views/MessageTab'
 import UserTab from '@/views/UserTab'
+import PublishArticle from '@/views/PublishArticle'
+import PublishVideo from '@/views/PublishVideo'
 import SearchDetail from '@/views/SearchDetail'
 import ArticleDetail from '@/views/ArticleDetail'
 import VideoDetail from '@/views/VideoDetail'
@@ -46,6 +48,16 @@ const router = createRouter({
       path: '/user',
       name: 'user',
       component: UserTab,
+    },
+    {
+      path: '/publish/article',
+      name: 'publisharticle',
+      component: PublishArticle,
+    },
+    {
+      path: '/publish/video',
+      name: 'publishvideo',
+      component: PublishVideo,
     },
     {
       path: '/home/search',

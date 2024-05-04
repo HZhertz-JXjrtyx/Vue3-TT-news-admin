@@ -21,13 +21,13 @@ defineProps({
       <div
         v-if="work.type === 'article'"
         class="article-img"
-        :style="{ backgroundImage: `url(${work.image_list[0]})` }"
+        :style="{ backgroundImage: `url(${work.cover_list[0]})` }"
       ></div>
       <div v-if="work.type === 'video'" class="video-img">
-        <i :style="{ backgroundImage: `url(${work.image_src})` }"></i>
-        <img :src="work.image_src" alt="" />
-        <div class="play"><span class="iconfont icon-play1"></span></div>
-        <div class="duration">{{ formatVideoDuration(work.video_info.duration) }}</div>
+        <i :style="{ backgroundImage: `url(${work.cover_src})` }"></i>
+        <img :src="work.cover_src" alt="" />
+        <div class="play"><span class="iconfont icon-playfill"></span></div>
+        <div class="duration">{{ formatVideoDuration(work.duration) }}</div>
       </div>
     </div>
   </div>

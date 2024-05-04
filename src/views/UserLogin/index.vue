@@ -6,6 +6,7 @@ import 'vant/es/toast/style'
 import { debounce } from 'lodash'
 import { useUserStore, useChannelStore } from '@/stores'
 import { login, register, isOnlyName, sendCodeApi } from '@/api'
+import NavBar from '@/components/NavBar.vue'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -15,6 +16,7 @@ const status = ref('登录')
 const errorMessage = ref('')
 const isCountDownShow = ref(false)
 const time = ref(1000 * 60)
+
 const loginInfo = ref({
   name: '',
   password: '',
@@ -56,9 +58,7 @@ const userFormRules = {
 const loginForm = ref(null)
 const registerForm = ref(null)
 
-const goBack = () => {
-  history.back()
-}
+// 登录
 const loginSubmit = async () => {
   const res = await login(loginInfo.value)
   console.log(res)
@@ -69,9 +69,12 @@ const loginSubmit = async () => {
       message: '登录成功',
       position: 'bottom',
     })
+    await userStore.fetchUserInfo()
     router.push('/user')
   }
 }
+
+// 注册时检查用户名唯一
 const checkUniqueUsername = async (name) => {
   console.log(name)
   errorMessage.value = ''
@@ -89,6 +92,7 @@ const checkUniqueUsername = async (name) => {
 }
 watch(() => registerInfo.value.name, debounce(checkUniqueUsername, 500))
 
+// 发送注册验证码
 const onSendCode = async () => {
   try {
     await registerForm.value.validate(['name', 'password', 'confirmPwd', 'email'])
@@ -99,16 +103,19 @@ const onSendCode = async () => {
       })
       return Promise.reject({ message: '密码不一致' })
     }
-    await sendCodeApi(registerInfo.value.name, 'register')
-    showToast({
-      message: '验证码已发送至邮箱',
-      position: 'bottom',
-    })
+    const res = await sendCodeApi(registerInfo.value.name, registerInfo.value.email, 'register')
+    res.status === 200 &&
+      showToast({
+        message: '验证码已发送至邮箱',
+        position: 'bottom',
+      })
     isCountDownShow.value = true
   } catch (error) {
     console.log(error)
   }
 }
+
+// 注册
 const registerSubmit = async () => {
   const res = await register(registerInfo.value)
   console.log(res)
@@ -122,15 +129,23 @@ const registerSubmit = async () => {
     loginInfo.value.password = registerInfo.value.password
   }
 }
+
+// 切换到注册
+const switchRegister = () => {
+  registerInfo.value = {
+    name: '',
+    password: '',
+    confirmPwd: '',
+    email: '',
+    code: '',
+  }
+  status.value = '注册'
+}
 </script>
 
 <template>
   <div class="user-login-container">
-    <van-nav-bar :title="status" class="app-nav-bar">
-      <template #left>
-        <span class="iconfont icon-a-44tubiao-14" @click="goBack"></span>
-      </template>
-    </van-nav-bar>
+    <NavBar :title="status" />
     <div v-if="status === '登录'" class="login-form">
       <van-form ref="loginForm" @submit="loginSubmit">
         <van-field
@@ -157,7 +172,7 @@ const registerSubmit = async () => {
         </van-field>
         <div class="submit-btn-wrap">
           <van-button type="info" native-type="submit" block class="submit-btn">登录</van-button>
-          <div class="prompt" @click="status = '注册'">没有账户？去注册</div>
+          <div class="prompt" @click="switchRegister">没有账户？去注册</div>
         </div>
       </van-form>
     </div>

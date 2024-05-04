@@ -4,6 +4,7 @@ import { debounce } from 'lodash'
 // 使用 Plyr 视频组件
 import Plyr from 'plyr'
 import 'plyr/dist/plyr.css'
+import { useUserStore } from '@/stores'
 import { getVideoInfoApi, collectVideoApi, likeVideoApi, addUserBrowseApi } from '@/api'
 import NavBar from '@/components/NavBar.vue'
 import UserInfo from '@/components/user/UserInfo.vue'
@@ -17,6 +18,8 @@ const props = defineProps({
     required: true,
   },
 })
+
+const userStore = useUserStore()
 
 const commentCount = ref(0)
 provide('commentCount', commentCount)
@@ -57,7 +60,7 @@ const getVideoInfo = async () => {
   console.log(res)
   videoInfo.value = res.data
   // 视频封面
-  player.poster = res.data.video_info.image_url
+  player.poster = res.data.cover_src
   commentCount.value = res.data.comment_count
   isCollected.value = res.data.is_collected
   isLike.value = res.data.is_liked
@@ -66,7 +69,7 @@ const getVideoInfo = async () => {
 
 onMounted(() => {
   getVideoInfo()
-  addUserBrowse()
+  userStore.token && addUserBrowse()
 })
 
 /* 收藏视频 */
@@ -105,9 +108,9 @@ const scrollToComment = () => {
       <UserInfo v-if="!isLoading" :userInfo="videoInfo.user_info" :publishTime="videoInfo.publish_time" />
       <UserInfoSkt v-if="isLoading" />
       <h1 class="title">{{ videoInfo.title }}</h1>
-      <p class="description">{{ videoInfo.video_info?.description }}</p>
+      <p class="description">{{ videoInfo.description }}</p>
       <video ref="videoPlayer">
-        <source v-if="videoInfo.video_info" :src="videoInfo.video_info?.src.src" type="video/mp4" />
+        <source v-if="videoInfo.video_src" :src="videoInfo.video_src" type="video/mp4" />
       </video>
     </div>
     <div class="divider"></div>

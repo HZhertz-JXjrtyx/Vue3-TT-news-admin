@@ -1,14 +1,14 @@
 <script setup>
-import { watchEffect } from 'vue'
+import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores'
 
 const router = useRouter()
 
 const userStore = useUserStore()
-watchEffect(() => {
+onMounted(async () => {
   if (userStore.token) {
-    userStore.fetchUserInfo()
+    await userStore.fetchUserInfo()
   }
 })
 </script>
@@ -26,7 +26,7 @@ watchEffect(() => {
           <span class="user-id">UID:{{ userStore.userInfo.user_id }}</span>
           <div
             class="space-btn"
-            @click="router.push({ name: 'userspace', params: { userId: userStore.userInfo.user_id } })"
+            @click="router.push({ name: 'userspace', params: { userId: userStore.userInfo?.user_id } })"
           >
             空间<van-icon name="arrow" />
           </div>
@@ -34,7 +34,7 @@ watchEffect(() => {
         <div class="data-status">
           <router-link
             class="data-item"
-            :to="{ name: 'userspace', params: { userId: userStore.userInfo.user_id } }"
+            :to="{ name: 'userspace', params: { userId: userStore.userInfo?.user_id } }"
           >
             <span class="count">{{ userStore.userInfo.works_count }}</span>
             <span class="text">作品</span>

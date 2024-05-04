@@ -32,3 +32,46 @@ export const likeArticleApi = (articleId, type) => {
     },
   })
 }
+
+// 上传文章图片
+export const uploadArticleImgApi = (formData) => {
+  return instance({
+    method: 'POST',
+    url: '/article/publish/image',
+    data: formData,
+  })
+}
+
+// 上传文章封面
+export const uploadArticleCoverApi = (formData) => {
+  return instance({
+    method: 'POST',
+    url: '/article/publish/cover',
+    data: formData,
+  })
+}
+// 发布文章
+export const publishArticleApi = (
+  channelId,
+  title,
+  content,
+  coverImage,
+  articleImage,
+  uiStyle,
+  publishTime = ~~(Date.now() / 1000)
+) => {
+  console.log(channelId, title, content, coverImage, articleImage, uiStyle, publishTime)
+  return instance({
+    method: 'POST',
+    url: '/article/publish',
+    data: {
+      channelId,
+      title,
+      content,
+      coverImage,
+      articleImage,
+      uiStyle,
+      publishTime,
+    },
+  })
+}

@@ -32,3 +32,48 @@ export const likeVideoApi = (videoId, type) => {
     },
   })
 }
+
+// 上传视频
+export const uploadVideoApi = (formData) => {
+  return instance({
+    method: 'POST',
+    url: '/video/publish/video',
+    data: formData,
+  })
+}
+
+// 上传视频封面
+export const uploadVideoCoverApi = (formData) => {
+  return instance({
+    method: 'POST',
+    url: '/video/publish/cover',
+    data: formData,
+  })
+}
+// 发布视频
+export const publishVideoApi = (
+  channelId,
+  title,
+  intro,
+  video,
+  coverImage,
+  duration,
+  uiStyle,
+  publishTime = ~~(Date.now() / 1000)
+) => {
+  console.log(channelId, title, intro, video, coverImage, duration, uiStyle, publishTime)
+  return instance({
+    method: 'POST',
+    url: '/video/publish',
+    data: {
+      channelId,
+      title,
+      intro,
+      video,
+      coverImage,
+      duration,
+      uiStyle,
+      publishTime,
+    },
+  })
+}
