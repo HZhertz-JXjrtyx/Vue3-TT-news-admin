@@ -7,8 +7,9 @@ const props = defineProps({
     required: true,
   },
 })
+// console.log(props.news)
 const uiStyle = props.news.ui_style
-const imgList = props.news.cover_image ? props.news.cover_image.slice(0, 3) : []
+const imgList = props.news.cover_list ? props.news.cover_list.slice(0, 3) : []
 </script>
 
 <template>
@@ -45,7 +46,7 @@ const imgList = props.news.cover_image ? props.news.cover_image.slice(0, 3) : []
         <i class="content__playicon">
           <span class="iconfont icon-playfill"></span>
         </i>
-        <span class="content__duration">{{ formatVideoDuration(props.news.video_info.duration) }}</span>
+        <span class="content__duration">{{ formatVideoDuration(props.news.duration) }}</span>
       </div>
       <div class="item__publish-info news-publish-info">
         <span class="publish-info__user-nickname">{{ props.news.user_info.user_nickname }}</span>

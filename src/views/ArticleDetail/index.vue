@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, provide } from 'vue'
 import { debounce } from 'lodash'
+import { useUserStore } from '@/stores'
 import { getArticleInfoApi, collectArticleApi, likeArticleApi, addUserBrowseApi } from '@/api'
 import '@/styles/github-markdown-light.less'
 import NavBar from '@/components/NavBar.vue'
@@ -15,6 +16,8 @@ const props = defineProps({
     required: true,
   },
 })
+
+const userStore = useUserStore()
 
 const commentCount = ref(0)
 provide('commentCount', commentCount)
@@ -47,7 +50,7 @@ const getArticleInfo = async () => {
 
 onMounted(() => {
   getArticleInfo()
-  addUserBrowse()
+  userStore.token && addUserBrowse()
 })
 
 /* 收藏文章 */
@@ -86,7 +89,7 @@ const scrollToComment = () => {
       <h1 class="title">{{ articleInfo.title }}</h1>
       <UserInfo v-if="!isLoading" :userInfo="articleInfo.user_info" :publishTime="articleInfo.publish_time" />
       <UserInfoSkt v-if="isLoading" />
-      <div class="article-content markdown-body" v-html="articleInfo.article_info?.content || ''"></div>
+      <div class="article-content markdown-body" v-html="articleInfo.content || ''"></div>
     </div>
     <div class="divider"></div>
     <div class="comment" ref="commentSection">

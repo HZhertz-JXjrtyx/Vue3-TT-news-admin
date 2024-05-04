@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore, usePublishStore } from '@/stores'
-import { uploadArticleImgApi, uploadArticleCoverApi } from '@/api'
+import { uploadArticleImgApi, uploadArticleCoverApi, uploadVideoApi, uploadVideoCoverApi } from '@/api'
 import { formatVideoDuration } from '@/utils'
 import { CTV } from '@/assets/js'
 import CoverPreview from './CoverPreview.vue'
@@ -147,7 +147,24 @@ const handlePublishArticle = async () => {
   }
 }
 // 发布视频
-const handlePublishVideo = async () => {}
+const handlePublishVideo = async () => {
+  console.log('handlePublishVideo')
+  // 上传视频
+  const videoFormData = new FormData()
+  videoFormData.append('folder', 'videos')
+  videoFormData.append('video', publishStore.videoFile)
+  const updVideoRes = await uploadVideoApi(videoFormData)
+  console.log(updVideoRes)
+  publishStore.videoSrc = updVideoRes.videoSrc
+  // 上传视频封面
+  const videoCoverFormData = new FormData()
+  videoCoverFormData.append('folder', 'video_images')
+  videoCoverFormData.append('video_cover', publishStore.videoCoverFile)
+  const updVideoCoverRes = await uploadVideoCoverApi(videoCoverFormData)
+  console.log(updVideoCoverRes)
+  publishStore.videoCoverSrc = updVideoCoverRes.videoCoverSrc
+  // 发布视频
+}
 </script>
 <template>
   <div class="publish-setting">
