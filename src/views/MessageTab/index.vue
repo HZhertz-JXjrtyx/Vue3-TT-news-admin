@@ -1,3 +1,45 @@
+<script setup>
+import { ref, onMounted } from 'vue'
+import { useUserStore } from '@/stores'
+import { getChatListApi, getNotifyListApi } from '@/api'
+import { formatPublishTime } from '@/utils'
+
+const userStore = useUserStore()
+
+const chatList = ref([])
+onMounted(async () => {
+  const res = await getChatListApi(userStore.userInfo._id)
+  chatList.value = res.data
+  console.log(res)
+})
+
+const commentNotify = ref({})
+const likeNotify = ref({})
+const followNotify = ref({})
+onMounted(async () => {
+  // const res = await getNotifyListApi(userStore.userInfo._id, 'comment')
+  const [commentNotifyRes, likeNotifyRes, followNotifyRes] = await Promise.all([
+    getNotifyListApi(userStore.userInfo._id, 'comment'),
+    getNotifyListApi(userStore.userInfo._id, 'like'),
+    getNotifyListApi(userStore.userInfo._id, 'follow'),
+  ])
+  console.log(commentNotifyRes, likeNotifyRes, followNotifyRes)
+  commentNotify.value = {
+    notifications: commentNotifyRes.data.notifications.at(-1),
+    unReadCount: commentNotifyRes.data.unReadCount,
+  }
+  likeNotify.value = {
+    notifications: likeNotifyRes.data.notifications.at(-1),
+    unReadCount: likeNotifyRes.data.unReadCount,
+  }
+  followNotify.value = {
+    notifications: followNotifyRes.data.notifications.at(-1),
+    unReadCount: followNotifyRes.data.unReadCount,
+  }
+  console.log(commentNotify.value, likeNotify.value, followNotify.value)
+})
+</script>
+
 <template>
   <div class="tab-title">消息私信</div>
   <div class="inform">
@@ -10,12 +52,12 @@
       <template #title>
         <div class="inform-content">
           <span class="content__type-text">评论</span>
-          <span class="content__latest-word">xxx评论了你的评论</span>
+          <span class="content__latest-word">{{ commentNotify.notifications?.content }}</span>
         </div>
       </template>
       <template #value>
         <div class="inform-badge">
-          <van-badge :content="100" max="99" />
+          <van-badge v-if="commentNotify.unReadCount > 0" :content="commentNotify.unReadCount" max="99" />
         </div>
       </template>
     </van-cell>
@@ -28,12 +70,12 @@
       <template #title>
         <div class="inform-content">
           <span class="content__type-text">点赞</span>
-          <span class="content__latest-word">xxx点赞了你的xx</span>
+          <span class="content__latest-word">{{ likeNotify.notifications?.content }}</span>
         </div>
       </template>
       <template #value>
         <div class="inform-badge">
-          <van-badge :content="100" max="99" />
+          <van-badge v-if="likeNotify.unReadCount > 0" :content="likeNotify.unReadCount" max="99" />
         </div>
       </template>
     </van-cell>
@@ -46,36 +88,33 @@
       <template #title>
         <div class="inform-content">
           <span class="content__type-text">粉丝</span>
-          <span class="content__latest-word">xxx关注了你</span>
+          <span class="content__latest-word">{{ followNotify.notifications?.content }}</span>
         </div>
       </template>
       <template #value>
         <div class="inform-badge">
-          <van-badge :content="100" max="99" />
+          <van-badge v-if="followNotify.unReadCount > 0" :content="followNotify.unReadCount" max="99" />
         </div>
       </template>
     </van-cell>
   </div>
   <div class="conversation-list">
-    <van-swipe-cell right-width="40">
+    <van-swipe-cell right-width="40" v-for="item in chatList" :key="item._id">
       <div class="conversation">
         <div class="conversation-left">
           <div class="left__user-avatar">
-            <van-image
-              round
-              fit="cover"
-              position="center"
-              src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg"
-            />
+            <van-image round fit="cover" position="center" :src="item.interlocutor.user_avatar" />
           </div>
         </div>
         <div class="conversation-center">
-          <span class="center__user-nickname">用户</span>
-          <span class="center__latest-word">eeadaffgagagagagagagafafafgageee</span>
+          <span class="center__user-nickname">{{ item.interlocutor.user_nickname }}</span>
+          <span class="center__latest-word">{{ item.last_message.content }}</span>
         </div>
         <div class="conversation-right">
-          <span class="right__latest-time">04-25</span>
-          <span class="right__badge"><van-badge :content="100" max="99" /></span>
+          <span class="right__latest-time">{{ formatPublishTime(item.last_message.created_at, true) }}</span>
+          <span class="right__badge">
+            <van-badge v-if="item.unread_count > 0" :content="item.unread_count" max="99" />
+          </span>
         </div>
       </div>
       <template #right>
@@ -85,7 +124,6 @@
   </div>
 </template>
 
-<script setup></script>
 <style lang="less" scoped>
 .tab-title {
   padding: 30px 30px;
@@ -143,7 +181,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
-    width: 100px;
+    width: 120px;
     text-align: right;
     .right__latest-time {
       font-size: 24px;
@@ -182,7 +220,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 460px;
+  width: 440px;
   font-size: 30px;
   font-weight: bolder;
 }
@@ -191,7 +229,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 460px;
+  width: 440px;
   font-size: 26px;
   color: #686868;
 }

@@ -22,9 +22,12 @@ export function convertToMMDDHHmm(value, hasY = false) {
   return date.format('MM-DD HH:mm')
 }
 
-export function formatPublishTime(publish_time) {
+export function formatPublishTime(publish_time, isMilli = false) {
+  if (!isMilli) {
+    publish_time = publish_time * 1000
+  }
   const now = new Date()
-  const publishDate = new Date(publish_time * 1000) // 将时间戳转换为毫秒
+  const publishDate = new Date(publish_time) // 将时间戳转换为毫秒
   const diffTime = Math.abs(now - publishDate)
   const diffMinutes = Math.floor(diffTime / (1000 * 60))
   const diffHours = Math.floor(diffTime / (1000 * 60 * 60))
