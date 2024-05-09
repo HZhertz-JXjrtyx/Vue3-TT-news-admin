@@ -6,44 +6,40 @@ import { formatPublishTime } from '@/utils'
 
 const userStore = useUserStore()
 
+const notifyList = ref({})
+const commentNotify = ref('')
+const likeNotify = ref('')
+const followNotify = ref('')
 const chatList = ref([])
 onMounted(async () => {
-  const res = await getChatListApi(userStore.userInfo._id)
-  chatList.value = res.data
-  console.log(res)
-})
-
-const commentNotify = ref({})
-const likeNotify = ref({})
-const followNotify = ref({})
-onMounted(async () => {
-  // const res = await getNotifyListApi(userStore.userInfo._id, 'comment')
-  const [commentNotifyRes, likeNotifyRes, followNotifyRes] = await Promise.all([
-    getNotifyListApi(userStore.userInfo._id, 'comment'),
-    getNotifyListApi(userStore.userInfo._id, 'like'),
-    getNotifyListApi(userStore.userInfo._id, 'follow'),
-  ])
-  console.log(commentNotifyRes, likeNotifyRes, followNotifyRes)
-  commentNotify.value = {
-    notifications: commentNotifyRes.data.notifications.at(-1),
-    unReadCount: commentNotifyRes.data.unReadCount,
-  }
-  likeNotify.value = {
-    notifications: likeNotifyRes.data.notifications.at(-1),
-    unReadCount: likeNotifyRes.data.unReadCount,
-  }
-  followNotify.value = {
-    notifications: followNotifyRes.data.notifications.at(-1),
-    unReadCount: followNotifyRes.data.unReadCount,
-  }
-  console.log(commentNotify.value, likeNotify.value, followNotify.value)
+  const notifyRes = await getNotifyListApi(userStore.userInfo._id)
+  const chatRes = await getChatListApi(userStore.userInfo._id)
+  console.log(notifyRes, chatRes)
+  notifyList.value = notifyRes.data
+  commentNotify.value =
+    notifyRes.data.comment.last_message?.sender.user_nickname +
+      notifyRes.data.comment.last_message?.content || ''
+  likeNotify.value =
+    notifyRes.data.like.last_message?.sender.user_nickname + notifyRes.data.like.last_message?.content || ''
+  followNotify.value =
+    notifyRes.data.follow.last_message?.sender.user_nickname + notifyRes.data.follow.last_message?.content ||
+    ''
+  chatList.value = chatRes.data
 })
 </script>
 
 <template>
   <div class="tab-title">消息私信</div>
   <div class="inform">
-    <van-cell is-link>
+    <van-cell
+      is-link
+      :to="{
+        name: 'noticedetail',
+        params: {
+          noticeType: 'comment',
+        },
+      }"
+    >
       <template #icon>
         <div class="inform-icon" :style="{ backgroundColor: '#00b2fd' }">
           <img src="@/assets/image/comment_icon.png" alt="" />
@@ -52,16 +48,28 @@ onMounted(async () => {
       <template #title>
         <div class="inform-content">
           <span class="content__type-text">评论</span>
-          <span class="content__latest-word">{{ commentNotify.notifications?.content }}</span>
+          <span class="content__latest-word" v-if="commentNotify">{{ commentNotify }}</span>
         </div>
       </template>
       <template #value>
         <div class="inform-badge">
-          <van-badge v-if="commentNotify.unReadCount > 0" :content="commentNotify.unReadCount" max="99" />
+          <van-badge
+            v-if="notifyList.comment?.unReadCount > 0"
+            :content="notifyList.comment.unReadCount"
+            max="99"
+          />
         </div>
       </template>
     </van-cell>
-    <van-cell is-link>
+    <van-cell
+      is-link
+      :to="{
+        name: 'noticedetail',
+        params: {
+          noticeType: 'like',
+        },
+      }"
+    >
       <template #icon>
         <div class="inform-icon" :style="{ backgroundColor: '#ff676c' }">
           <img src="@/assets/image/like_icon.png" alt="" />
@@ -70,16 +78,28 @@ onMounted(async () => {
       <template #title>
         <div class="inform-content">
           <span class="content__type-text">点赞</span>
-          <span class="content__latest-word">{{ likeNotify.notifications?.content }}</span>
+          <span class="content__latest-word" v-if="likeNotify">{{ likeNotify }}</span>
         </div>
       </template>
       <template #value>
         <div class="inform-badge">
-          <van-badge v-if="likeNotify.unReadCount > 0" :content="likeNotify.unReadCount" max="99" />
+          <van-badge
+            v-if="notifyList.like?.unReadCount > 0"
+            :content="notifyList.like.unReadCount"
+            max="99"
+          />
         </div>
       </template>
     </van-cell>
-    <van-cell is-link>
+    <van-cell
+      is-link
+      :to="{
+        name: 'noticedetail',
+        params: {
+          noticeType: 'follow',
+        },
+      }"
+    >
       <template #icon>
         <div class="inform-icon" :style="{ backgroundColor: '#ff7f21' }">
           <img src="@/assets/image/fans_icon.png" alt="" />
@@ -88,19 +108,31 @@ onMounted(async () => {
       <template #title>
         <div class="inform-content">
           <span class="content__type-text">粉丝</span>
-          <span class="content__latest-word">{{ followNotify.notifications?.content }}</span>
+          <span class="content__latest-word" v-if="followNotify">{{ followNotify }}</span>
         </div>
       </template>
       <template #value>
         <div class="inform-badge">
-          <van-badge v-if="followNotify.unReadCount > 0" :content="followNotify.unReadCount" max="99" />
+          <van-badge
+            v-if="notifyList.follow?.unReadCount > 0"
+            :content="notifyList.follow.unReadCount"
+            max="99"
+          />
         </div>
       </template>
     </van-cell>
   </div>
   <div class="conversation-list">
     <van-swipe-cell right-width="40" v-for="item in chatList" :key="item._id">
-      <div class="conversation">
+      <router-link
+        class="conversation"
+        :to="{
+          name: 'conversationdetail',
+          params: {
+            conversationId: item._id,
+          },
+        }"
+      >
         <div class="conversation-left">
           <div class="left__user-avatar">
             <van-image round fit="cover" position="center" :src="item.interlocutor.user_avatar" />
@@ -116,7 +148,7 @@ onMounted(async () => {
             <van-badge v-if="item.unread_count > 0" :content="item.unread_count" max="99" />
           </span>
         </div>
-      </div>
+      </router-link>
       <template #right>
         <van-button square type="danger" text="删除" />
       </template>

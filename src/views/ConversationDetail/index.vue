@@ -1,5 +1,5 @@
 <template>
-  <div>MessagePage</div>
+  <div>ConversationDetail</div>
 </template>
 
 <script setup></script>

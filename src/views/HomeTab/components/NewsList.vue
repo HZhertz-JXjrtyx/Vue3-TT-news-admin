@@ -89,8 +89,4 @@ const goDetail = (item) => {
   </div>
 </template>
 
-<style lang="less" scoped>
-// .news-list {
-//   margin: 20px 28px 100px;
-// }
-</style>
+<style lang="less" scoped></style>
