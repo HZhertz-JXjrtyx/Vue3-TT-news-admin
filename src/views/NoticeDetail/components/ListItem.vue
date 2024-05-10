@@ -31,7 +31,7 @@ const getIsFollow = async () => {
   isFollow.value = res.result
 }
 onMounted(() => {
-  getIsFollow()
+  props.notice.type === 'follow' && getIsFollow()
 })
 
 // 关注、取消关注

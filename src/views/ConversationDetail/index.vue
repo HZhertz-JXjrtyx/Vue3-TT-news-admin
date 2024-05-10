@@ -17,7 +17,7 @@ const userStore = useUserStore()
 const interlocutor = ref({})
 const messageList = ref([])
 const getChatDetail = async () => {
-  const res = await getChatDetailApi(userStore.userInfo._id, props.conversationId)
+  const res = await getChatDetailApi(props.conversationId)
   console.log(res)
   interlocutor.value = res.data.interlocutor
   messageList.value = addMessageTime(res.data.messages)

@@ -1,10 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useUserStore } from '@/stores'
 import { getChatListApi, getNotifyListApi } from '@/api'
 import { formatPublishTime } from '@/utils'
-
-const userStore = useUserStore()
 
 const notifyList = ref({})
 const commentNotify = ref('')
@@ -12,8 +9,8 @@ const likeNotify = ref('')
 const followNotify = ref('')
 const chatList = ref([])
 onMounted(async () => {
-  const notifyRes = await getNotifyListApi(userStore.userInfo._id)
-  const chatRes = await getChatListApi(userStore.userInfo._id)
+  const notifyRes = await getNotifyListApi()
+  const chatRes = await getChatListApi()
   console.log(notifyRes, chatRes)
   notifyList.value = notifyRes.data
   commentNotify.value =

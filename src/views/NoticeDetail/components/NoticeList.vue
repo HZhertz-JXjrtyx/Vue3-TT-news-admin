@@ -1,7 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { useUserStore } from '@/stores'
 import { getNotifyDetailApi } from '@/api'
 import ListItem from './ListItem.vue'
 
@@ -11,7 +10,6 @@ const props = defineProps({
     required: true,
   },
 })
-const userStore = useUserStore()
 const router = useRouter()
 
 const page = ref(1)
@@ -20,7 +18,7 @@ const noticeDetail = ref([])
 const loading = ref(false)
 const hasMore = ref(true)
 const getNotifyDetail = async () => {
-  const res = await getNotifyDetailApi(userStore.userInfo._id, props.noticeType)
+  const res = await getNotifyDetailApi(props.noticeType)
   console.log(res)
   if (res.data.length < pageSize.value) {
     hasMore.value = false
