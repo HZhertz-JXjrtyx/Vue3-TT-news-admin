@@ -69,12 +69,14 @@ const sendMessage = ref('')
   </div>
   <div class="bottom-send">
     <van-field v-model="sendMessage" rows="1" autosize type="textarea" placeholder="发消息..." />
+    <span class="iconfont icon-image"></span>
+    <span class="send-icon">发送</span>
   </div>
 </template>
 
 <style lang="less" scoped>
 .message-list {
-  height: calc(100vh - 200px);
+  height: calc(100vh - 300px);
   overflow: hidden;
 }
 .time-label {
@@ -111,10 +113,35 @@ const sendMessage = ref('')
   flex-direction: row-reverse;
 }
 .bottom-send {
+  display: flex;
+  align-items: flex-end;
   position: absolute;
   bottom: 0;
-  border: 1px solid #000;
-  // min-height: 100px;
+  border-top: 1px solid #e8e8e8;
   width: 100%;
+  .van-field {
+    background-color: #f3f3f3;
+    border-radius: 10px;
+    padding: 10px 20px;
+    margin: 10px;
+    // width: 200px;
+    :deep(.van-field__control) {
+      max-height: 126px;
+      line-height: 1.5;
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+  }
+  .iconfont {
+    font-size: 40px;
+    margin: 20px;
+  }
+  .send-icon {
+    width: 120px;
+    margin: 20px;
+    font-size: 34px;
+    color: rgb(91, 157, 255);
+  }
 }
 </style>
