@@ -79,7 +79,7 @@ const tabData = [
 
 <template>
   <div class="user-space">
-    <div class="nav-icon" @click="router.back()"><span class="iconfont icon-a-44tubiao-14"></span></div>
+    <div class="nav-icon" @click="router.back()"><span class="iconfont icon-arrow_left"></span></div>
     <div class="bg-img"><img src="@/assets/image/OIG.jpg" alt="" /></div>
     <div class="show-case">
       <div class="user-avatar"><img :src="userDetail.user_avatar" alt="" /></div>

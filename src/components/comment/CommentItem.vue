@@ -145,16 +145,16 @@ const goToCommentDetail = () => {
         <div class="like-count">
           <span
             class="iconfont"
-            :class="isLikeComment ? 'icon-a-44tubiao-188' : 'icon-a-44tubiao-21'"
+            :class="isLikeComment ? 'icon-like_fill' : 'icon-like'"
             v-login="handleLikeCommentClick"
           ></span>
           <span class="count">{{ formatCount(likeCount) }}</span>
         </div>
-        <span class="iconfont icon-fenxiang"></span>
-        <span class="iconfont icon-a-44tubiao-112" v-login="handleReplyCommentClick"></span>
+        <span class="iconfont icon-share"></span>
+        <span class="iconfont icon-message" v-login="handleReplyCommentClick"></span>
       </div>
       <div class="del" v-if="isShowDelIcon">
-        <span class="iconfont icon-a-44tubiao-46" @click="handleDelCommentClick"></span>
+        <span class="iconfont icon-delete" @click="handleDelCommentClick"></span>
       </div>
     </div>
 

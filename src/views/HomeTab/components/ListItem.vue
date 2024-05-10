@@ -44,7 +44,7 @@ const imgList = props.news.cover_list ? props.news.cover_list.slice(0, 3) : []
           <van-image fit="contain" position="center" :src="props.news.cover_src" />
         </div>
         <i class="content__playicon">
-          <span class="iconfont icon-playfill"></span>
+          <span class="iconfont icon-play_fill"></span>
         </i>
         <span class="content__duration">{{ formatVideoDuration(props.news.duration) }}</span>
       </div>

@@ -45,6 +45,8 @@ const addMessageTime = (messageList) => {
 onMounted(() => {
   getChatDetail()
 })
+
+const sendMessage = ref('')
 </script>
 <template>
   <NavBar :title="interlocutor.user_nickname || ''" />
@@ -64,6 +66,9 @@ onMounted(() => {
         </div>
       </li>
     </ul>
+  </div>
+  <div class="bottom-send">
+    <van-field v-model="sendMessage" rows="1" autosize type="textarea" placeholder="发消息..." />
   </div>
 </template>
 
@@ -104,5 +109,12 @@ onMounted(() => {
 }
 .send-itself {
   flex-direction: row-reverse;
+}
+.bottom-send {
+  position: absolute;
+  bottom: 0;
+  border: 1px solid #000;
+  // min-height: 100px;
+  width: 100%;
 }
 </style>

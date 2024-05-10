@@ -93,7 +93,7 @@ const handleNext = async () => {
   </van-form>
   <div class="video-preview">
     <div class="preview--no-video" v-if="!videoUrl" @click="selectVideoFile">
-      <span class="iconfont icon-cc-plus-crude"></span>
+      <span class="iconfont icon-plus"></span>
       <span class="preview__text">选择视频文件</span>
     </div>
     <div class="preview--has-video" v-else>

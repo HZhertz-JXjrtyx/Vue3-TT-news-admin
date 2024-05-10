@@ -27,7 +27,7 @@ const showPublishType = ref(false)
       </van-tabbar-item>
       <van-tabbar-item>
         <div class="publish" v-login="() => (showPublishType = true)">
-          <span class="iconfont icon-cc-plus-crude"></span>
+          <span class="iconfont icon-plus"></span>
         </div>
       </van-tabbar-item>
       <van-tabbar-item replace to="/message">
@@ -73,7 +73,7 @@ const showPublishType = ref(false)
   text-align: center;
   line-height: 100px;
   background-color: var(--main-color-red-2);
-  .icon-cc-plus-crude {
+  .icon-plus {
     color: var(--bg-color-1);
     font-size: 50px;
   }

@@ -47,7 +47,7 @@ const onSubmit = async () => {
     <div class="avatar">
       <van-uploader :after-read="afterRead">
         <img :src="userAvatar" alt="userAvatar" />
-        <div class="icon"><span class="iconfont icon-a-44tubiao-17"></span></div>
+        <div class="icon"><span class="iconfont icon-modify"></span></div>
       </van-uploader>
     </div>
     <div class="info">
@@ -66,12 +66,8 @@ const onSubmit = async () => {
           <van-field name="gender" label="性别">
             <template #input>
               <van-radio-group v-model="profileInfo.gender" direction="horizontal">
-                <van-radio :name="1" icon-size="14px"
-                  ><span class="iconfont icon-a-44tubiao-161"></span
-                ></van-radio>
-                <van-radio :name="0" icon-size="14px"
-                  ><span class="iconfont icon-a-44tubiao-162"></span
-                ></van-radio>
+                <van-radio :name="1" icon-size="14px"><span class="iconfont icon-man"></span></van-radio>
+                <van-radio :name="0" icon-size="14px"><span class="iconfont icon-woman"></span></van-radio>
               </van-radio-group>
             </template>
           </van-field>

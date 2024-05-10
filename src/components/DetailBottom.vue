@@ -116,7 +116,7 @@ const clickComment = () => {
     <div class="bottom">
       <span
         class="iconfont"
-        :class="isLike ? 'icon-a-44tubiao-188' : 'icon-a-44tubiao-21'"
+        :class="isLike ? 'icon-like_fill' : 'icon-like'"
         v-login="
           () => {
             emit('clickLike')
@@ -126,15 +126,15 @@ const clickComment = () => {
       <span
         v-if="sourceType !== 3"
         class="iconfont"
-        :class="isCollected ? 'icon-a-44tubiao-242' : 'icon-a-44tubiao-134'"
+        :class="isCollected ? 'icon-favorite_fill' : 'icon-favorite'"
         v-login="
           () => {
             emit('clickCollect')
           }
         "
       ></span>
-      <span class="iconfont icon-a-44tubiao-112" v-login="clickComment"></span>
-      <span class="iconfont icon-fenxiang" v-login="() => (isShowShare = true)"></span>
+      <span class="iconfont icon-message" v-login="clickComment"></span>
+      <span class="iconfont icon-share" v-login="() => (isShowShare = true)"></span>
       <input
         class="bottom-comment"
         v-model="commentContent"

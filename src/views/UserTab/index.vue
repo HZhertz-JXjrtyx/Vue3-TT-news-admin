@@ -21,7 +21,7 @@ onMounted(async () => {
           <img :src="userStore.userInfo.user_avatar" alt="" class="avatar" />
           <span class="nickname">
             {{ userStore.userInfo.user_nickname }}
-            <span class="iconfont icon-a-44tubiao-17" @click="router.push('/user/profile')"></span>
+            <span class="iconfont icon-modify" @click="router.push('/user/profile')"></span>
           </span>
           <span class="user-id">UID:{{ userStore.userInfo.user_id }}</span>
           <div
@@ -68,7 +68,7 @@ onMounted(async () => {
     <div v-else class="not-login">
       <div class="top login-btn">
         <div class="img">
-          <span class="iconfont icon-a-44tubiao-57"></span>
+          <span class="iconfont icon-mobile"></span>
         </div>
 
         <div class="text" @click="router.push('/user/login')">点击登录</div>
@@ -76,33 +76,33 @@ onMounted(async () => {
     </div>
     <van-grid clickable :column-num="2" class="grid-nav">
       <van-grid-item class="grid-item" to="/user/favorite">
-        <span class="iconfont icon-a-44tubiao-134"></span>
+        <span class="iconfont icon-favorite"></span>
         <span class="text">收藏</span>
       </van-grid-item>
       <van-grid-item class="grid-item" to="/user/browse">
-        <span class="iconfont icon-a-44tubiao-74"></span>
+        <span class="iconfont icon-eyes"></span>
         <span class="text">历史</span>
       </van-grid-item>
     </van-grid>
 
     <van-cell title="账户安全" is-link to="/security">
       <template #icon>
-        <span class="iconfont icon-a-44tubiao-114"></span>
+        <span class="iconfont icon-security"></span>
       </template>
     </van-cell>
     <van-cell title="设置" is-link to="/user">
       <template #icon>
-        <span class="iconfont icon-a-44tubiao-47"></span>
+        <span class="iconfont icon-setting"></span>
       </template>
     </van-cell>
     <van-cell title="客服" is-link to="/user">
       <template #icon>
-        <span class="iconfont icon-a-44tubiao-131"></span>
+        <span class="iconfont icon-service"></span>
       </template>
     </van-cell>
     <van-cell title="问题" is-link to="/user">
       <template #icon>
-        <span class="iconfont icon-a-44tubiao-07"></span>
+        <span class="iconfont icon-question"></span>
       </template>
     </van-cell>
   </div>
@@ -130,7 +130,7 @@ onMounted(async () => {
       height: 140px;
       background-color: #fff;
       border-radius: 50%;
-      .icon-a-44tubiao-57 {
+      .icon-mobile {
         font-size: 70px;
         color: #f04142;
       }

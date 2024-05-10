@@ -30,17 +30,17 @@ const onLogout = () => {
     <NavBar title="账户安全" />
     <van-cell title="修改密码" is-link to="/security/password">
       <template #icon>
-        <span class="iconfont icon-a-44tubiao-33"></span>
+        <span class="iconfont icon-lock"></span>
       </template>
     </van-cell>
     <van-cell title="更换手机" is-link to="/security">
       <template #icon>
-        <span class="iconfont icon-a-44tubiao-57"></span>
+        <span class="iconfont icon-mobile"></span>
       </template>
     </van-cell>
     <van-cell title="更换邮箱" is-link to="/security">
       <template #icon>
-        <span class="iconfont icon-a-44tubiao-118"></span>
+        <span class="iconfont icon-email"></span>
       </template>
     </van-cell>
   </div>

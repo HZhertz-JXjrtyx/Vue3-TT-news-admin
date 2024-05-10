@@ -15,7 +15,7 @@ const router = useRouter()
   <van-sticky>
     <van-nav-bar :title="title" class="app-nav-bar">
       <template #left>
-        <span class="iconfont icon-a-44tubiao-14" @click="router.back()"></span>
+        <span class="iconfont icon-arrow_left" @click="router.back()"></span>
       </template>
     </van-nav-bar>
   </van-sticky>
