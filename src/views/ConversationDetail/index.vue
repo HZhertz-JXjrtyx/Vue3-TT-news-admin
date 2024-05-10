@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useUserStore } from '@/stores'
-import { getChatDetailApi } from '@/api'
+import { getChatDetailApi, sendChatMessageApi } from '@/api'
 import { formatMessageTime } from '@/utils'
 import NavBar from '@/components/NavBar.vue'
 
@@ -47,6 +47,14 @@ onMounted(() => {
 })
 
 const sendMessage = ref('')
+const handleSend = async () => {
+  const res = await sendChatMessageApi(interlocutor.value._id, props.conversationId, sendMessage.value)
+  console.log(res)
+  if (res.status === 200) {
+    messageList.value.push(res.data)
+    sendMessage.value = ''
+  }
+}
 </script>
 <template>
   <NavBar :title="interlocutor.user_nickname || ''" />
@@ -70,14 +78,14 @@ const sendMessage = ref('')
   <div class="bottom-send">
     <van-field v-model="sendMessage" rows="1" autosize type="textarea" placeholder="发消息..." />
     <span class="iconfont icon-image"></span>
-    <span class="send-icon">发送</span>
+    <span class="send-icon" @click="handleSend">发送</span>
   </div>
 </template>
 
 <style lang="less" scoped>
 .message-list {
-  height: calc(100vh - 300px);
-  overflow: hidden;
+  height: calc(100vh - 180px);
+  overflow: auto;
 }
 .time-label {
   text-align: center;

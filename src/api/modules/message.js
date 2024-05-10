@@ -37,3 +37,17 @@ export const getChatDetailApi = (conversationId) => {
     },
   })
 }
+
+// 发送对话消息
+export const sendChatMessageApi = (receiverId, conversationId, content, createdAt = Date.now()) => {
+  return instance({
+    method: 'POST',
+    url: '/message/chat/send',
+    data: {
+      receiverId,
+      conversationId,
+      content,
+      createdAt,
+    },
+  })
+}
