@@ -51,3 +51,25 @@ export function formatPublishTime(publish_time, isMilli = false) {
     return publishDate.getFullYear() + '年' + (publishDate.getMonth() + 1) + '月'
   }
 }
+
+export function formatMessageTime(timestamp) {
+  const now = new Date()
+  const date = new Date(timestamp)
+
+  const isSameDay = now.toDateString() === date.toDateString()
+  const isSameYear = now.getFullYear() === date.getFullYear()
+
+  const zeroPad = (num) => String(num).padStart(2, '0')
+
+  const hhmm = `${zeroPad(date.getHours())}:${zeroPad(date.getMinutes())}`
+  const mmdd = `${zeroPad(date.getMonth() + 1)}-${zeroPad(date.getDate())} ${hhmm}`
+  const yyyymmdd = `${date.getFullYear()}-${mmdd}`
+
+  if (isSameDay) {
+    return hhmm
+  } else if (isSameYear) {
+    return mmdd
+  } else {
+    return yyyymmdd
+  }
+}

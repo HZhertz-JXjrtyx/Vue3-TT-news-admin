@@ -10,7 +10,7 @@ export const getNotifyListApi = (userId) => {
     },
   })
 }
-// 获取通知消息列表
+// 获取通知消息内容
 // type:comment like follow
 export const getNotifyDetailApi = (userId, type, page, size) => {
   return instance({
@@ -31,6 +31,17 @@ export const getChatListApi = (userId) => {
     url: '/message/chat/list',
     params: {
       userId,
+    },
+  })
+}
+// 获取对话消息内容
+export const getChatDetailApi = (userId, conversationId) => {
+  return instance({
+    method: 'GET',
+    url: '/message/chat/detail',
+    params: {
+      userId,
+      conversationId,
     },
   })
 }
