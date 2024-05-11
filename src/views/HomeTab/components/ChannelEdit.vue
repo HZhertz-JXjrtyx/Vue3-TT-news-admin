@@ -30,7 +30,7 @@ const switchChannel = (element) => {
         itemKey="id"
       >
         <template #item="{ element }">
-          <div class="item container" @click="switchChannel(element)">
+          <div class="item" @click="switchChannel(element)">
             {{ element.name }}
           </div>
         </template>
@@ -47,7 +47,7 @@ const switchChannel = (element) => {
         itemKey="id"
       >
         <template #item="{ element }">
-          <div class="item container">{{ element.name }}</div>
+          <div class="item">{{ element.name }}</div>
         </template>
       </draggable>
     </div>
@@ -73,6 +73,9 @@ const switchChannel = (element) => {
 }
 
 .item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 140px;
   height: 80px;
   margin: 20px;

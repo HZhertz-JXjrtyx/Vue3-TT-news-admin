@@ -121,6 +121,7 @@ const handleSend = async () => {
   flex-direction: row-reverse;
 }
 .bottom-send {
+  background-color: #ffffff;
   display: flex;
   align-items: flex-end;
   position: absolute;

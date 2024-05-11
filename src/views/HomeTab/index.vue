@@ -124,7 +124,7 @@ onDeactivated(() => {
       </van-tab>
 
       <template #nav-bottom>
-        <span @click="isChannelEditShow = true" class="iconfont icon-filtrate container"></span>
+        <span @click="isChannelEditShow = true" class="iconfont icon-filtrate"></span>
       </template>
     </van-tabs>
 
@@ -146,6 +146,9 @@ onDeactivated(() => {
 
 <style lang="less" scoped>
 .icon-filtrate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: absolute;
   top: 0;
   right: 0;
