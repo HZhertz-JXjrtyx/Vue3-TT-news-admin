@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import { useUserStore } from '@/stores'
 import { getChatDetailApi, sendChatMessageApi } from '@/api'
 import { formatMessageTime } from '@/utils'
@@ -42,9 +42,34 @@ const addMessageTime = (messageList) => {
   }
   return messagesWithTime
 }
-onMounted(() => {
-  getChatDetail()
+
+let resizeObserver = null
+onMounted(async () => {
+  await getChatDetail()
+  nextTick(() => {
+    scrollToBottom()
+  })
+  // 创建一个新的 ResizeObserver 实例来监听 .message-list 的高度变化
+  resizeObserver = new ResizeObserver(() => {
+    // 当 .message-list 的高度变化时，滚动消息列表到底部
+    scrollToBottom()
+  })
+  // 开始观察 .message-list
+  resizeObserver.observe(messageListRef.value)
 })
+onUnmounted(() => {
+  // 停止观察 .message-list
+  if (resizeObserver && messageListRef.value) {
+    resizeObserver.unobserve(messageListRef.value)
+  }
+})
+
+const messageListRef = ref(null)
+const scrollToBottom = () => {
+  if (messageListRef.value) {
+    messageListRef.value.scrollTop = messageListRef.value.scrollHeight
+  }
+}
 
 const sendMessage = ref('')
 const handleSend = async () => {
@@ -53,13 +78,16 @@ const handleSend = async () => {
   if (res.status === 200) {
     messageList.value.push(res.data)
     sendMessage.value = ''
+    nextTick(() => {
+      scrollToBottom()
+    })
   }
 }
 </script>
 <template>
   <NavBar :title="interlocutor.user_nickname || ''" />
   <div class="container">
-    <div class="message-list">
+    <div class="message-list" ref="messageListRef">
       <ul>
         <li v-for="item in messageList" :key="item._id">
           <div class="time-label" v-if="item.isTimeLabel">{{ formatMessageTime(item.time) }}</div>
