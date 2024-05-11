@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick, computed } from 'vue'
 import { useUserStore } from '@/stores'
 import { getChatDetailApi, sendChatMessageApi } from '@/api'
 import { formatMessageTime } from '@/utils'
@@ -83,6 +83,9 @@ const handleSend = async () => {
     })
   }
 }
+const isSendDisabled = computed(() => {
+  return sendMessage.value === ''
+})
 </script>
 <template>
   <NavBar :title="interlocutor.user_nickname || ''" />
@@ -99,7 +102,7 @@ const handleSend = async () => {
             <div class="user-avatar">
               <van-image round fit="cover" position="center" :src="item.sender.user_avatar" />
             </div>
-            <span class="message-content">{{ item.content }}</span>
+            <span class="message-content">{{ item.content.split(' ').join('&nbsp;') }}</span>
           </div>
         </li>
       </ul>
@@ -107,7 +110,9 @@ const handleSend = async () => {
     <div class="bottom-send">
       <van-field v-model="sendMessage" rows="1" autosize type="textarea" placeholder="发消息..." />
       <span class="iconfont icon-image"></span>
-      <span class="send-icon" @click="handleSend">发送</span>
+      <span class="send-icon" :class="{ 'send-icon-disabled': isSendDisabled }" @click="handleSend">
+        发送
+      </span>
     </div>
   </div>
 </template>
@@ -186,6 +191,10 @@ const handleSend = async () => {
     margin: 20px;
     font-size: 34px;
     color: rgb(91, 157, 255);
+  }
+  .send-icon-disabled {
+    pointer-events: none;
+    color: #9191917f;
   }
 }
 </style>
