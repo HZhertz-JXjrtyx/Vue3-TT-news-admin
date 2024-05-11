@@ -108,7 +108,14 @@ const isSendDisabled = computed(() => {
       </ul>
     </div>
     <div class="bottom-send">
-      <van-field v-model="sendMessage" rows="1" autosize type="textarea" placeholder="发消息..." />
+      <van-field
+        v-model="sendMessage"
+        rows="1"
+        autosize
+        type="textarea"
+        maxlength="300"
+        placeholder="发消息..."
+      />
       <span class="iconfont icon-image"></span>
       <span class="send-icon" :class="{ 'send-icon-disabled': isSendDisabled }" @click="handleSend">
         发送
