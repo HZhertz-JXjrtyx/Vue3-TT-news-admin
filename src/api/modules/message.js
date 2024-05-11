@@ -51,3 +51,16 @@ export const sendChatMessageApi = (receiverId, conversationId, content, createdA
     },
   })
 }
+
+// 清除未读消息
+// messageType: comment,like,follow,chat,all
+export const clearUnreadApi = (messageType, conversationId) => {
+  return instance({
+    method: 'PATCH',
+    url: '/message/clear/unread',
+    data: {
+      messageType,
+      conversationId,
+    },
+  })
+}

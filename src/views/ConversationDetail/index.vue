@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted, nextTick, computed } from 'vue'
 import { useUserStore } from '@/stores'
-import { getChatDetailApi, sendChatMessageApi } from '@/api'
+import { getChatDetailApi, sendChatMessageApi, clearUnreadApi } from '@/api'
 import { formatMessageTime } from '@/utils'
 import NavBar from '@/components/NavBar.vue'
 
@@ -46,6 +46,7 @@ const addMessageTime = (messageList) => {
 let resizeObserver = null
 onMounted(async () => {
   await getChatDetail()
+
   nextTick(() => {
     scrollToBottom()
   })
@@ -57,7 +58,8 @@ onMounted(async () => {
   // 开始观察 .message-list
   resizeObserver.observe(messageListRef.value)
 })
-onUnmounted(() => {
+onUnmounted(async () => {
+  await clearUnreadApi('chat', props.conversationId)
   // 停止观察 .message-list
   if (resizeObserver && messageListRef.value) {
     resizeObserver.unobserve(messageListRef.value)
