@@ -1,5 +1,13 @@
 import instance from '../request'
 
+// 获取未读消息数
+export const getTotalUnreadCountApi = () => {
+  return instance({
+    method: 'GET',
+    url: '/message/unread/total',
+  })
+}
+
 // 获取通知列表
 export const getNotifyListApi = () => {
   return instance({

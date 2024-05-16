@@ -44,6 +44,9 @@ const router = createRouter({
       path: '/message',
       name: 'message',
       component: MessageTab,
+      meta: {
+        keepAlive: true,
+      },
     },
     {
       path: '/user',
@@ -89,12 +92,18 @@ const router = createRouter({
       name: 'noticedetail',
       component: NoticeDetail,
       props: true,
+      meta: {
+        requiresAuth: true,
+      },
     },
     {
       path: '/conversation/detail/:conversationId',
       name: 'conversationdetail',
       component: ConversationDetail,
       props: true,
+      meta: {
+        requiresAuth: true,
+      },
     },
     {
       path: '/user/login',

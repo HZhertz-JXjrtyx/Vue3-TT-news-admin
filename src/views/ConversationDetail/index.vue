@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted, nextTick, computed } from 'vue'
-import { useUserStore } from '@/stores'
+import { useUserStore, useMessageStore } from '@/stores'
 import { getChatDetailApi, sendChatMessageApi, clearUnreadApi } from '@/api'
 import { formatMessageTime } from '@/utils'
 import NavBar from '@/components/NavBar.vue'
@@ -13,6 +13,7 @@ const props = defineProps({
 })
 
 const userStore = useUserStore()
+const messageStore = useMessageStore()
 
 const interlocutor = ref({})
 const messageList = ref([])
@@ -59,6 +60,9 @@ onMounted(async () => {
   resizeObserver.observe(messageListRef.value)
 })
 onUnmounted(async () => {
+  // 前端更新
+  messageStore.clearChatUnread()
+  // 后端更新
   await clearUnreadApi('chat', props.conversationId)
   // 停止观察 .message-list
   if (resizeObserver && messageListRef.value) {

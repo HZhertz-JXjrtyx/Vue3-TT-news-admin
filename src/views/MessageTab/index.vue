@@ -1,27 +1,35 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { getChatListApi, getNotifyListApi } from '@/api'
+import { watch, onActivated, onDeactivated } from 'vue'
+import { useUserStore, useMessageStore } from '@/stores'
 import { formatPublishTime } from '@/utils'
 
-const notifyList = ref({})
-const commentNotify = ref('')
-const likeNotify = ref('')
-const followNotify = ref('')
-const chatList = ref([])
-onMounted(async () => {
-  const notifyRes = await getNotifyListApi()
-  const chatRes = await getChatListApi()
-  console.log(notifyRes, chatRes)
-  notifyList.value = notifyRes.data
-  commentNotify.value =
-    notifyRes.data.comment.last_message?.sender.user_nickname +
-      notifyRes.data.comment.last_message?.content || ''
-  likeNotify.value =
-    notifyRes.data.like.last_message?.sender.user_nickname + notifyRes.data.like.last_message?.content || ''
-  followNotify.value =
-    notifyRes.data.follow.last_message?.sender.user_nickname + notifyRes.data.follow.last_message?.content ||
-    ''
-  chatList.value = chatRes.data
+const userStore = useUserStore()
+const messageStore = useMessageStore()
+
+watch(
+  () => userStore.token,
+  (nv) => {
+    if (nv) {
+      console.log('token change')
+      messageStore.getNotifyList()
+      messageStore.getChatList()
+      messageStore.getTotalUnreadCount()
+    } else {
+      messageStore.initialize()
+    }
+  },
+  {
+    immediate: true,
+  }
+)
+
+onActivated(() => {
+  console.log('MessageTab被重新激活')
+  scrollTo()
+})
+
+onDeactivated(() => {
+  console.log('MessageTab被缓存')
 })
 </script>
 
@@ -45,14 +53,16 @@ onMounted(async () => {
       <template #title>
         <div class="inform-content">
           <span class="content__type-text">评论</span>
-          <span class="content__latest-word" v-if="commentNotify">{{ commentNotify }}</span>
+          <span class="content__latest-word" v-if="messageStore.commentNotify">{{
+            messageStore.commentNotify
+          }}</span>
         </div>
       </template>
       <template #value>
         <div class="inform-badge">
           <van-badge
-            v-if="notifyList.comment?.unReadCount > 0"
-            :content="notifyList.comment.unReadCount"
+            v-if="messageStore.notifyList.comment?.unReadCount > 0"
+            :content="messageStore.notifyList.comment.unReadCount"
             max="99"
           />
         </div>
@@ -75,14 +85,16 @@ onMounted(async () => {
       <template #title>
         <div class="inform-content">
           <span class="content__type-text">点赞</span>
-          <span class="content__latest-word" v-if="likeNotify">{{ likeNotify }}</span>
+          <span class="content__latest-word" v-if="messageStore.likeNotify">{{
+            messageStore.likeNotify
+          }}</span>
         </div>
       </template>
       <template #value>
         <div class="inform-badge">
           <van-badge
-            v-if="notifyList.like?.unReadCount > 0"
-            :content="notifyList.like.unReadCount"
+            v-if="messageStore.notifyList.like?.unReadCount > 0"
+            :content="messageStore.notifyList.like.unReadCount"
             max="99"
           />
         </div>
@@ -105,14 +117,16 @@ onMounted(async () => {
       <template #title>
         <div class="inform-content">
           <span class="content__type-text">粉丝</span>
-          <span class="content__latest-word" v-if="followNotify">{{ followNotify }}</span>
+          <span class="content__latest-word" v-if="messageStore.followNotify">{{
+            messageStore.followNotify
+          }}</span>
         </div>
       </template>
       <template #value>
         <div class="inform-badge">
           <van-badge
-            v-if="notifyList.follow?.unReadCount > 0"
-            :content="notifyList.follow.unReadCount"
+            v-if="messageStore.notifyList.follow?.unReadCount > 0"
+            :content="messageStore.notifyList.follow.unReadCount"
             max="99"
           />
         </div>
@@ -120,7 +134,7 @@ onMounted(async () => {
     </van-cell>
   </div>
   <div class="conversation-list">
-    <van-swipe-cell right-width="40" v-for="item in chatList" :key="item._id">
+    <van-swipe-cell right-width="40" v-for="item in messageStore.chatList" :key="item._id">
       <router-link
         class="conversation"
         :to="{

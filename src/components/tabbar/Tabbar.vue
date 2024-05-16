@@ -1,9 +1,10 @@
 <script setup>
 import { ref } from 'vue'
-import { useUserStore } from '@/stores'
+import { useUserStore, useMessageStore } from '@/stores'
 import LoadIcon from './LoadIcon.vue'
 
 const userStore = useUserStore()
+const messageStore = useMessageStore()
 
 const showPublishType = ref(false)
 </script>
@@ -34,8 +35,10 @@ const showPublishType = ref(false)
         <template #icon="{ active }">
           <LoadIcon iconSrc="http://127.0.0.1:3007/other/lord_icon/chat.json" :active="active"></LoadIcon>
         </template>
+        <van-badge v-show="messageStore.unreadCountTotal > 0" :content="messageStore.unreadCountTotal" />
         消息
       </van-tabbar-item>
+
       <van-tabbar-item replace to="/user">
         <template #icon="{ active }">
           <LoadIcon iconSrc="http://127.0.0.1:3007/other/lord_icon/account.json" :active="active"></LoadIcon>
@@ -95,5 +98,11 @@ const showPublishType = ref(false)
       margin-right: 40px;
     }
   }
+}
+:deep(.van-badge) {
+  position: absolute;
+  top: 15px;
+  right: 190px;
+  z-index: 2024;
 }
 </style>
