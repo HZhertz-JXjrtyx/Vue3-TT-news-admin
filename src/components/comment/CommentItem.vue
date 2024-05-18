@@ -1,6 +1,5 @@
 <script setup>
 import { computed, ref, inject, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 import { debounce } from 'lodash'
 import { showConfirmDialog } from 'vant'
 import 'vant/es/dialog/style'
@@ -16,10 +15,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['updCommentlist'])
-
-const commentCount = inject('commentCount')
-const isShowTextarea = inject('isShowTextarea')
+const commentList = inject('commentList')
 
 const userStore = useUserStore()
 const commentStore = useCommentStore()
@@ -51,7 +47,7 @@ const isShowCommentReply = computed(() => {
 const isLikeComment = ref(props.comment.is_like)
 const likeCount = ref(props.comment.like_count)
 const LikeComment = async () => {
-  await likeCommentApi(props.comment.comment_id, isLikeComment.value)
+  await likeCommentApi(props.comment._id, isLikeComment.value)
 }
 const debouncedLikeComment = debounce(LikeComment, 500)
 const handleLikeCommentClick = () => {
@@ -63,13 +59,14 @@ const handleLikeCommentClick = () => {
 // 回复评论
 const handleReplyCommentClick = () => {
   commentStore.textareaPlaceholder = `回复 ${props.comment.user_info.user_nickname}:`
-  isShowTextarea.value = true
-  commentStore.typeParam = 3
-  if (props.comment.type === 3) {
-    commentStore.sourceidParam = props.comment.source_id
-    commentStore.replyUseridParam = props.comment.user_info.user_id
+  commentStore.isShowTextarea = true
+  if ([1, 2].includes(props.comment.comment_type)) {
+    commentStore.commentType = 3
+    commentStore.parentComment = props.comment._id
+    commentStore.relatedId = props.comment._id
   } else {
-    commentStore.sourceidParam = props.comment.comment_id
+    commentStore.commentType = 4
+    commentStore.replyUser = props.comment.user_info._id
   }
 }
 
@@ -83,14 +80,16 @@ const handleDelCommentClick = () => {
   })
     .then(async () => {
       const res = await deleteCommentApi(
-        props.comment.comment_id,
-        props.comment.type,
-        props.comment.source_id
+        props.comment._id,
+        props.comment.comment_type,
+        props.comment.related_id
       )
       console.log(res)
       if (res.status === 200) {
-        commentCount.value--
-        emit('updCommentlist', props.comment.comment_id)
+        commentStore.commentCount--
+        commentList.value = commentList.value.filter((item) => {
+          return item._id !== props.comment._id
+        })
       }
     })
     .catch((error) => {
@@ -98,15 +97,12 @@ const handleDelCommentClick = () => {
     })
 }
 
-//  跳转评论详情
-const router = useRouter()
-const goToCommentDetail = () => {
-  router.push({
-    name: 'commentdetail',
-    params: {
-      commentId: props.comment.comment_id,
-    },
-  })
+const showCommentDetail = () => {
+  commentStore.isShowCommentDetail = true
+  commentStore.commentDetailId = props.comment._id
+  // commentStore.replyCount = props.comment.reply_count
+
+  commentStore.commentType = 3
 }
 </script>
 
@@ -121,16 +117,16 @@ const goToCommentDetail = () => {
           <span class="name">
             {{ comment.user_info.user_nickname }}
           </span>
-          <div class="reply" v-if="comment.type === 3 && comment.reply_user !== 0">
+          <div class="reply" v-if="comment.comment_type === 4">
             <span class="reply_user">
               &nbsp;回复&nbsp;
-              <span class="reply-user-name">{{ comment.reply_user_nickname }}</span
+              <span class="reply-user-name">{{ comment.reply_user.user_nickname }}</span
               >&#xFF1A;
             </span>
           </div>
         </div>
 
-        <div class="pub-time">{{ convertToMMDDHHmm(comment.publish_time) }}</div>
+        <div class="pub-time">{{ convertToMMDDHHmm(comment.created_time) }}</div>
       </div>
     </div>
 
@@ -158,7 +154,11 @@ const goToCommentDetail = () => {
       </div>
     </div>
 
-    <div class="comment_reply" v-if="isShowCommentReply && comment.type !== 3" @click="goToCommentDetail">
+    <div
+      class="comment_reply"
+      v-if="isShowCommentReply && [1, 2].includes(comment.comment_type)"
+      @click="showCommentDetail"
+    >
       <CommentReply :commentReply="comment.replies" :replyCount="comment.reply_count" />
     </div>
   </div>

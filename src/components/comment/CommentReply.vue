@@ -17,9 +17,9 @@ defineProps({
       <span class="item" v-for="item in commentReply" :key="item._id">
         <span class="user-name">{{ item.user_info.user_nickname }}</span
         >&#xFF1A;
-        <span class="reply-user" v-if="item.reply_user !== 0">
+        <span class="reply-user" v-if="item.comment_type === 4">
           回复
-          <span class="reply-user-name">{{ item.reply_user_nickname }}</span
+          <span class="reply-user-name">{{ item.reply_user.user_nickname }}</span
           >&#xFF1A;
         </span>
         <span>{{ item.content }}</span>

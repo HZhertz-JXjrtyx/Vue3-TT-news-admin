@@ -1,14 +1,16 @@
 <script setup>
 import { ref, onMounted, provide } from 'vue'
+import { onBeforeRouteLeave } from 'vue-router'
 import { debounce } from 'lodash'
-import { useUserStore } from '@/stores'
+import { useUserStore, useCommentStore } from '@/stores'
 import { getArticleInfoApi, collectArticleApi, likeArticleApi, addUserBrowseApi } from '@/api'
 import '@/styles/github-markdown-light.less'
 import NavBar from '@/components/NavBar.vue'
 import UserInfo from '@/components/user/UserInfo.vue'
 import UserInfoSkt from '@/components/user/UserInfoSkt.vue'
 import CommentList from '@/components/comment/CommentList.vue'
-import DetailBottom from '@/components/DetailBottom.vue'
+import CommentBar from '@/components/CommentBar.vue'
+import CommentDetail from '@/components/comment/CommentDetail.vue'
 
 const props = defineProps({
   articleId: {
@@ -18,13 +20,8 @@ const props = defineProps({
 })
 
 const userStore = useUserStore()
+const commentStore = useCommentStore()
 
-const commentCount = ref(0)
-provide('commentCount', commentCount)
-const commentList = ref([])
-provide('commentList', commentList)
-const isShowTextarea = ref(false)
-provide('isShowTextarea', isShowTextarea)
 const isLike = ref(false)
 provide('isLike', isLike)
 const isCollected = ref(false)
@@ -42,15 +39,17 @@ const getArticleInfo = async () => {
   const res = await getArticleInfoApi(props.articleId)
   console.log(res)
   articleInfo.value = res.data
-  commentCount.value = res.data.comment_count
   isCollected.value = res.data.is_collected
   isLike.value = res.data.is_liked
   isLoading.value = false
 }
 
-onMounted(() => {
-  getArticleInfo()
-  userStore.token && addUserBrowse()
+onMounted(async () => {
+  await getArticleInfo()
+  commentStore.commentCount = articleInfo.value.comment_count
+  commentStore.replyUser = articleInfo.value.user_info._id
+  commentStore.relatedId = articleInfo.value.article_id
+  userStore.token && (await addUserBrowse())
 })
 
 /* 收藏文章 */
@@ -79,6 +78,10 @@ const scrollToComment = () => {
   const isInViewPort = rect.top >= 0 && rect.top <= window.innerHeight
   !isInViewPort && commentSection.value.scrollIntoView({ behavior: 'smooth' })
 }
+onBeforeRouteLeave(() => {
+  commentStore.commentList = []
+  commentStore.commentReplyList = []
+})
 </script>
 
 <template>
@@ -94,21 +97,24 @@ const scrollToComment = () => {
     <div class="divider"></div>
     <div class="comment" ref="commentSection">
       <div class="comment-header">
-        <div class="title">评论{{ commentCount }}</div>
+        <div class="title">评论{{ commentStore.commentCount }}</div>
       </div>
-      <CommentList :type="1" :sourceId="articleId" />
+      <CommentList :commentType="1" :relatedId="articleId" />
     </div>
 
     <van-back-top right="28px" bottom="80px" />
-    <DetailBottom
+    <CommentBar
       v-if="!isLoading"
-      :sourceType="1"
-      :sourceId="props.articleId"
+      :commentType="1"
+      :relatedId="props.articleId"
       @clickLike="handleClickLike"
       @clickCollect="handleClickCollect"
       @scrollTo="scrollToComment"
     />
   </div>
+  <van-popup v-model:show="commentStore.isShowCommentDetail" position="bottom" :style="{ height: '100%' }">
+    <CommentDetail />
+  </van-popup>
 </template>
 
 <style lang="less" scoped>

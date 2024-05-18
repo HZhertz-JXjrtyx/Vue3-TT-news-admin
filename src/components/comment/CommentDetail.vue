@@ -1,29 +1,17 @@
 <script setup>
-import { onMounted, ref, provide } from 'vue'
+import { ref, watch, watchEffect, provide, nextTick } from 'vue'
 import { debounce } from 'lodash'
 import { useCommentStore } from '@/stores'
 import { getCommentDetailApi, likeCommentApi } from '@/api'
-import NavBar from '@/components/NavBar.vue'
 import UserInfo from '@/components/user/UserInfo.vue'
 import UserInfoSkt from '@/components/user/UserInfoSkt.vue'
 import CommentList from '@/components/comment/CommentList.vue'
 import CommentBar from '@/components/CommentBar.vue'
 
-const props = defineProps({
-  commentId: {
-    type: String,
-    required: true,
-  },
-})
-
 const commentStore = useCommentStore()
 
-const commentCount = ref(0)
-provide('commentCount', commentCount)
-const commentList = ref([])
-provide('commentList', commentList)
-const isShowTextarea = ref(false)
-provide('isShowTextarea', isShowTextarea)
+const commentReplyList = ref([])
+provide('commentReplyList', commentReplyList)
 const isLike = ref(false)
 provide('isLike', isLike)
 
@@ -31,20 +19,32 @@ provide('isLike', isLike)
 const commentDetail = ref({})
 const isLoading = ref(true)
 const getCommentDetail = async () => {
-  const res = await getCommentDetailApi(props.commentId)
+  const res = await getCommentDetailApi(commentStore.commentDetailId)
   console.log(res)
-  // commentStore.replyUseridParam = res.data.user_info.user_id
   commentDetail.value = res.data
-  commentCount.value = res.data.reply_count
   isLike.value = res.data.is_like
   isLoading.value = false
 }
-onMounted(async () => {
+watchEffect(async () => {
   await getCommentDetail()
+  commentStore.replyCount = commentDetail.value.reply_count
   commentStore.commentType = 3
   commentStore.parentComment = commentDetail.value._id
   commentStore.relatedId = commentDetail.value._id
 })
+
+const commentListRef = ref(null)
+watch(
+  () => commentStore.commentDetailId,
+  () => {
+    commentStore.commentReplyList = []
+    commentListRef.value.page = 1
+    // CommentList不会立刻重新渲染
+    nextTick(() => {
+      commentListRef.value.getCommentList()
+    })
+  }
+)
 
 /* 点赞 */
 const likeComment = async () => {
@@ -59,12 +59,25 @@ const handleClickLike = () => {
 
 <template>
   <div class="comment-page">
-    <NavBar title="评论详情" />
+    <van-sticky>
+      <van-nav-bar title="评论回复" class="app-nav-bar">
+        <template #left>
+          <span
+            class="iconfont icon-arrow_left"
+            @click="
+              () => {
+                commentStore.isShowCommentDetail = false
+              }
+            "
+          ></span>
+        </template>
+      </van-nav-bar>
+    </van-sticky>
     <div class="detail">
       <UserInfo
         v-if="!isLoading"
         :userInfo="commentDetail.user_info"
-        :publishTime="commentDetail.publish_time"
+        :publishTime="commentDetail.created_time"
       ></UserInfo>
       <UserInfoSkt v-if="isLoading" />
       <div class="content">{{ commentDetail.content }}</div>
@@ -72,14 +85,14 @@ const handleClickLike = () => {
     <div class="divider"></div>
     <div class="reply">
       <div class="reply-header">
-        <div class="title">评论回复 {{ commentCount }}</div>
+        <div class="title">评论回复 {{ commentStore.replyCount }}</div>
       </div>
-      <CommentList :type="3" :sourceId="commentId" />
+      <CommentList ref="commentListRef" :commentType="3" :relatedId="commentStore.commentDetailId" />
     </div>
     <CommentBar
       v-if="!isLoading"
-      :sourceType="3"
-      :sourceId="props.commentId"
+      :commentType="3"
+      :relatedId="commentStore.commentDetailId"
       :replyName="commentDetail.user_info.user_nickname"
       @clickLike="handleClickLike"
     />
@@ -87,6 +100,14 @@ const handleClickLike = () => {
 </template>
 
 <style lang="less" scoped>
+.app-nav-bar {
+  background-color: #fff;
+  border-bottom: 1px solid #d6d6d6;
+
+  :deep(.van-nav-bar__title) {
+    color: #000000;
+  }
+}
 .comment-page {
   .detail {
     margin: 20px;
@@ -117,5 +138,8 @@ const handleClickLike = () => {
       }
     }
   }
+}
+.van-popup {
+  z-index: 2024;
 }
 </style>

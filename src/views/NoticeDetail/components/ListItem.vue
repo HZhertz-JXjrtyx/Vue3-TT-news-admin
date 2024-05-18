@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { debounce } from 'lodash'
 import { isFollowUserApi, followUserApi } from '@/api'
+import { formatMessageTime } from '@/utils'
 
 const props = defineProps({
   notice: {
@@ -67,6 +68,7 @@ const handleFollow = () => {
       <span class="center__content" v-if="notice.type === 'comment'">{{
         notice.related_content.content
       }}</span>
+      <span class="center__create-at">{{ formatMessageTime(notice.created_at) }}</span>
     </div>
     <div class="item-right">
       <div class="right__preview">
@@ -126,7 +128,7 @@ const handleFollow = () => {
   display: flex;
   flex: 1;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: space-evenly;
   .center__notice {
     width: 420px;
     white-space: nowrap;
@@ -142,6 +144,10 @@ const handleFollow = () => {
     text-overflow: ellipsis;
     overflow: hidden;
     color: rgb(106, 106, 106);
+  }
+  .center__create-at {
+    font-size: 22px;
+    color: #797979;
   }
 }
 .item-right {

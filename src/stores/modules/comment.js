@@ -4,25 +4,47 @@ import storeNames from '../storeNames'
 import { addCommentApi } from '@/api'
 
 export const useCommentStore = defineStore(storeNames.COMMENT, () => {
-  const commentCount = ref(0)
   const isShowTextarea = ref(false)
   const textareaPlaceholder = ref('请输入评论')
 
-  const typeParam = ref(1)
-  const sourceidParam = ref('')
-  const replyUseridParam = ref(0)
+  const isShowCommentDetail = ref(false)
+  const commentDetailId = ref('')
+  const replyCount = ref(0)
 
-  const submitComment = async (commentContent) => {
-    return await addCommentApi(typeParam.value, sourceidParam.value, commentContent, replyUseridParam.value)
+  const commentList = ref([])
+  const commentReplyList = ref([])
+
+  const commentCount = ref(0)
+  const commentType = ref(0)
+  const replyUser = ref(null)
+  const parentComment = ref(null)
+  const relatedId = ref('')
+
+  const submitComment = async (Content) => {
+    return await addCommentApi(
+      commentType.value,
+      replyUser.value,
+      Content,
+      undefined,
+      parentComment.value,
+      relatedId.value
+    )
   }
 
   return {
+    commentList,
+    commentReplyList,
     commentCount,
     isShowTextarea,
     textareaPlaceholder,
-    typeParam,
-    sourceidParam,
-    replyUseridParam,
+    isShowCommentDetail,
+    commentDetailId,
+    replyCount,
+
+    commentType,
+    replyUser,
+    parentComment,
+    relatedId,
     submitComment,
   }
 })
