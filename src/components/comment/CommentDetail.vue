@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, watchEffect, provide, nextTick } from 'vue'
+import { ref, computed, watch, watchEffect, nextTick } from 'vue'
 import { debounce } from 'lodash'
 import { useCommentStore } from '@/stores'
 import { getCommentDetailApi, likeCommentApi } from '@/api'
@@ -10,10 +10,12 @@ import CommentBar from '@/components/CommentBar.vue'
 
 const commentStore = useCommentStore()
 
-const commentReplyList = ref([])
-provide('commentReplyList', commentReplyList)
-const isLike = ref(false)
-provide('isLike', isLike)
+const isLikeComment = computed(() => {
+  const likeIndex = commentStore.commentList.findIndex((item) => {
+    return item._id === commentStore.commentDetailId
+  })
+  return commentStore.commentList[likeIndex].is_like
+})
 
 /* 获取评论详情 */
 const commentDetail = ref({})
@@ -22,7 +24,7 @@ const getCommentDetail = async () => {
   const res = await getCommentDetailApi(commentStore.commentDetailId)
   console.log(res)
   commentDetail.value = res.data
-  isLike.value = res.data.is_like
+  // isLikeComment.value = res.data.is_like
   isLoading.value = false
 }
 watchEffect(async () => {
@@ -48,11 +50,16 @@ watch(
 
 /* 点赞 */
 const likeComment = async () => {
-  await likeCommentApi(commentDetail.value.comment_id, isLike.value)
+  await likeCommentApi(commentDetail.value._id, isLikeComment.value)
 }
 const debouncedLikeComment = debounce(likeComment, 500)
 const handleClickLike = () => {
-  isLike.value = !isLike.value
+  const likeIndex = commentStore.commentList.findIndex((item) => {
+    return item._id === commentStore.commentDetailId
+  })
+  commentStore.commentList[likeIndex].is_like = !commentStore.commentList[likeIndex].is_like
+  isLikeComment.value && commentStore.commentList[likeIndex].like_count++
+  !isLikeComment.value && commentStore.commentList[likeIndex].like_count--
   debouncedLikeComment()
 }
 </script>
@@ -94,6 +101,7 @@ const handleClickLike = () => {
       :commentType="3"
       :relatedId="commentStore.commentDetailId"
       :replyName="commentDetail.user_info.user_nickname"
+      :isLike="isLikeComment"
       @clickLike="handleClickLike"
     />
   </div>

@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, inject, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { debounce } from 'lodash'
 import { showConfirmDialog } from 'vant'
 import 'vant/es/dialog/style'
@@ -14,8 +14,6 @@ const props = defineProps({
     required: true,
   },
 })
-
-const commentList = inject('commentList')
 
 const userStore = useUserStore()
 const commentStore = useCommentStore()
@@ -44,15 +42,26 @@ const isShowCommentReply = computed(() => {
 })
 
 // 点赞评论
-const isLikeComment = ref(props.comment.is_like)
-const likeCount = ref(props.comment.like_count)
 const LikeComment = async () => {
-  await likeCommentApi(props.comment._id, isLikeComment.value)
+  await likeCommentApi(props.comment._id, props.comment.is_like)
 }
 const debouncedLikeComment = debounce(LikeComment, 500)
 const handleLikeCommentClick = () => {
-  isLikeComment.value ? likeCount.value-- : likeCount.value++
-  isLikeComment.value = !isLikeComment.value
+  if (commentStore.isShowCommentDetail) {
+    const likeIndex = commentStore.commentReplyList.findIndex((item) => {
+      return item._id === props.comment._id
+    })
+    commentStore.commentReplyList[likeIndex].is_like = !commentStore.commentReplyList[likeIndex].is_like
+    commentStore.commentReplyList[likeIndex].is_like && commentStore.commentReplyList[likeIndex].like_count++
+    !commentStore.commentReplyList[likeIndex].is_like && commentStore.commentReplyList[likeIndex].like_count--
+  } else {
+    const likeIndex = commentStore.commentList.findIndex((item) => {
+      return item._id === props.comment._id
+    })
+    commentStore.commentList[likeIndex].is_like = !commentStore.commentList[likeIndex].is_like
+    commentStore.commentList[likeIndex].is_like && commentStore.commentList[likeIndex].like_count++
+    !commentStore.commentList[likeIndex].is_like && commentStore.commentList[likeIndex].like_count--
+  }
   debouncedLikeComment()
 }
 
@@ -87,9 +96,15 @@ const handleDelCommentClick = () => {
       console.log(res)
       if (res.status === 200) {
         commentStore.commentCount--
-        commentList.value = commentList.value.filter((item) => {
-          return item._id !== props.comment._id
-        })
+        if (!commentStore.isShowCommentDetail) {
+          commentStore.commentList = commentStore.commentList.filter((item) => {
+            return item._id !== props.comment._id
+          })
+        } else {
+          commentStore.commentReplyList = commentStore.commentReplyList.filter((item) => {
+            return item._id !== props.comment._id
+          })
+        }
       }
     })
     .catch((error) => {
@@ -100,8 +115,6 @@ const handleDelCommentClick = () => {
 const showCommentDetail = () => {
   commentStore.isShowCommentDetail = true
   commentStore.commentDetailId = props.comment._id
-  // commentStore.replyCount = props.comment.reply_count
-
   commentStore.commentType = 3
 }
 </script>
@@ -141,10 +154,10 @@ const showCommentDetail = () => {
         <div class="like-count">
           <span
             class="iconfont"
-            :class="isLikeComment ? 'icon-like_fill' : 'icon-like'"
+            :class="comment.is_like ? 'icon-like_fill' : 'icon-like'"
             v-login="handleLikeCommentClick"
           ></span>
-          <span class="count">{{ formatCount(likeCount) }}</span>
+          <span class="count" v-if="comment.like_count > 0">{{ formatCount(comment.like_count) }}</span>
         </div>
         <span class="iconfont icon-share"></span>
         <span class="iconfont icon-message" v-login="handleReplyCommentClick"></span>

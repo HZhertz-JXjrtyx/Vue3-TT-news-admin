@@ -7,14 +7,14 @@ export const useCommentStore = defineStore(storeNames.COMMENT, () => {
   const isShowTextarea = ref(false)
   const textareaPlaceholder = ref('请输入评论')
 
+  const commentCount = ref(0)
+  const commentList = ref([])
+
+  const replyCount = ref(0)
+  const commentReplyList = ref([])
   const isShowCommentDetail = ref(false)
   const commentDetailId = ref('')
-  const replyCount = ref(0)
 
-  const commentList = ref([])
-  const commentReplyList = ref([])
-
-  const commentCount = ref(0)
   const commentType = ref(0)
   const replyUser = ref(null)
   const parentComment = ref(null)

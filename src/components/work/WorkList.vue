@@ -54,7 +54,7 @@ const goDetail = (item) => {
     router.push({
       name: 'articledetail',
       params: {
-        articleId: item.article_id,
+        articleId: item._id,
       },
     })
   }
@@ -62,7 +62,7 @@ const goDetail = (item) => {
     router.push({
       name: 'videodetail',
       params: {
-        videoId: item.video_id,
+        videoId: item._id,
       },
     })
   }

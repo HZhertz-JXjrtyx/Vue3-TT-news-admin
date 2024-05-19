@@ -44,7 +44,7 @@ const captureCover = () => {
   coverUrl.value = canvas.toDataURL('image/png')
   publishStore.videoCoverDataurl = coverUrl.value
   publishStore.videoCoverFile = base64ToFile(coverUrl.value)
-  console.log(coverUrl.value)
+  // console.log(coverUrl.value)
 }
 // const handleLoadedData = () => {
 //   captureCover()

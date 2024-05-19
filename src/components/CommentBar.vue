@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, inject } from 'vue'
+import { ref, computed } from 'vue'
 import { useCommentStore } from '@/stores'
 
 const props = defineProps({
@@ -15,14 +15,16 @@ const props = defineProps({
     type: String,
     required: false,
   },
+  isLike: {
+    type: Boolean,
+    required: true,
+  },
+  isCollect: {
+    type: Boolean,
+    required: false,
+  },
 })
 const emit = defineEmits(['scrollTo', 'clickCollect', 'clickLike'])
-
-let isCollected
-if (props.commentType !== 3) {
-  isCollected = inject('isCollected')
-}
-const isLike = inject('isLike')
 
 const commentStore = useCommentStore()
 
@@ -40,7 +42,6 @@ const clickInput = () => {
   // 显示 popup
   commentStore.isShowTextarea = true
   // 1: 文章评论 2: 视频评论 3: 评论回复 4: 回复回复
-  console.log(props.commentType)
   commentStore.commentType = props.commentType
   // 页面id
   commentStore.relatedId = props.relatedId
@@ -53,11 +54,9 @@ const submit = async () => {
   if (res.status === 200) {
     // 清空
     commentContent.value = ''
-    console.log(props.commentType)
     // 关闭 popup
     commentStore.isShowTextarea = false
     // 如果不是在评论详情页
-    console.log(props.commentType)
     if (!commentStore.isShowCommentDetail) {
       // 如果不是对评论回复
       if ([1, 2].includes(res.data.comment_type)) {
@@ -129,7 +128,7 @@ const clickComment = () => {
       <span
         v-if="commentType !== 3"
         class="iconfont"
-        :class="isCollected ? 'icon-favorite_fill' : 'icon-favorite'"
+        :class="isCollect ? 'icon-favorite_fill' : 'icon-favorite'"
         v-login="
           () => {
             emit('clickCollect')

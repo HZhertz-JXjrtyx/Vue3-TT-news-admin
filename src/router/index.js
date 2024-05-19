@@ -12,7 +12,6 @@ import PublishVideo from '@/views/PublishVideo'
 import SearchDetail from '@/views/SearchDetail'
 import ArticleDetail from '@/views/ArticleDetail'
 import VideoDetail from '@/views/VideoDetail'
-import CommentDetail from '@/views/CommentDetail'
 import NoticeDetail from '@/views/NoticeDetail'
 import ConversationDetail from '@/views/ConversationDetail'
 import UserLogin from '@/views/UserLogin'
@@ -79,12 +78,6 @@ const router = createRouter({
       path: '/video/detail/:videoId',
       name: 'videodetail',
       component: VideoDetail,
-      props: true,
-    },
-    {
-      path: '/comment/detail/:commentId',
-      name: 'commentdetail',
-      component: CommentDetail,
       props: true,
     },
     {

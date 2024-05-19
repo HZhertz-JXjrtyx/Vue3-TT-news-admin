@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, provide } from 'vue'
+import { ref, onMounted } from 'vue'
 import { onBeforeRouteLeave } from 'vue-router'
 import { debounce } from 'lodash'
 import { useUserStore, useCommentStore } from '@/stores'
@@ -22,11 +22,6 @@ const props = defineProps({
 const userStore = useUserStore()
 const commentStore = useCommentStore()
 
-const isLike = ref(false)
-provide('isLike', isLike)
-const isCollected = ref(false)
-provide('isCollected', isCollected)
-
 /* 新增浏览历史 */
 const addUserBrowse = async () => {
   await addUserBrowseApi(props.articleId, 'article')
@@ -34,13 +29,15 @@ const addUserBrowse = async () => {
 
 /* 获取文章详情 */
 const articleInfo = ref({})
+const isLikeArticle = ref(false)
+const isCollectArticle = ref(false)
 const isLoading = ref(true)
 const getArticleInfo = async () => {
   const res = await getArticleInfoApi(props.articleId)
   console.log(res)
   articleInfo.value = res.data
-  isCollected.value = res.data.is_collected
-  isLike.value = res.data.is_liked
+  isLikeArticle.value = res.data.is_liked
+  isCollectArticle.value = res.data.is_collected
   isLoading.value = false
 }
 
@@ -48,26 +45,26 @@ onMounted(async () => {
   await getArticleInfo()
   commentStore.commentCount = articleInfo.value.comment_count
   commentStore.replyUser = articleInfo.value.user_info._id
-  commentStore.relatedId = articleInfo.value.article_id
+  commentStore.relatedId = articleInfo.value._id
   userStore.token && (await addUserBrowse())
 })
 
 /* 收藏文章 */
 const collectArticle = async () => {
-  await collectArticleApi(articleInfo.value.article_id, isCollected.value)
+  await collectArticleApi(articleInfo.value._id, isCollectArticle.value)
 }
 const debouncedCollectArticle = debounce(collectArticle, 500)
 const handleClickCollect = () => {
-  isCollected.value = !isCollected.value
+  isCollectArticle.value = !isCollectArticle.value
   debouncedCollectArticle()
 }
 /* 点赞文章 */
 const likeArticle = async () => {
-  await likeArticleApi(articleInfo.value.article_id, isLike.value)
+  await likeArticleApi(articleInfo.value._id, isLikeArticle.value)
 }
 const debouncedLikeArticle = debounce(likeArticle, 500)
 const handleClickLike = () => {
-  isLike.value = !isLike.value
+  isLikeArticle.value = !isLikeArticle.value
   debouncedLikeArticle()
 }
 
@@ -106,7 +103,9 @@ onBeforeRouteLeave(() => {
     <CommentBar
       v-if="!isLoading"
       :commentType="1"
-      :relatedId="props.articleId"
+      :relatedId="articleId"
+      :isLike="isLikeArticle"
+      :isCollect="isCollectArticle"
       @clickLike="handleClickLike"
       @clickCollect="handleClickCollect"
       @scrollTo="scrollToComment"

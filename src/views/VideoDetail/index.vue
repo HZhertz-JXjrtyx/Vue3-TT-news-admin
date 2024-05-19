@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, provide } from 'vue'
+import { ref, onMounted } from 'vue'
 import { onBeforeRouteLeave } from 'vue-router'
 import { debounce } from 'lodash'
 // 使用 Plyr 视频组件
@@ -24,11 +24,6 @@ const props = defineProps({
 const userStore = useUserStore()
 const commentStore = useCommentStore()
 
-const isLike = ref(false)
-provide('isLike', isLike)
-const isCollected = ref(false)
-provide('isCollected', isCollected)
-
 // Plyr 视频组件
 const videoPlayer = ref(null)
 let player
@@ -51,6 +46,8 @@ const addUserBrowse = async () => {
 
 /* 获取视频详情 */
 const videoInfo = ref({})
+const isLikeVideo = ref(false)
+const isCollectVideo = ref(false)
 const isLoading = ref(true)
 const getVideoInfo = async () => {
   const res = await getVideoInfoApi(props.videoId)
@@ -58,8 +55,8 @@ const getVideoInfo = async () => {
   videoInfo.value = res.data
   // 视频封面
   player.poster = res.data.cover_src
-  isCollected.value = res.data.is_collected
-  isLike.value = res.data.is_liked
+  isCollectVideo.value = res.data.is_collected
+  isLikeVideo.value = res.data.is_liked
   isLoading.value = false
 }
 
@@ -67,26 +64,26 @@ onMounted(async () => {
   await getVideoInfo()
   commentStore.commentCount = videoInfo.value.comment_count
   commentStore.replyUser = videoInfo.value.user_info._id
-  commentStore.relatedId = videoInfo.value.video_id
+  commentStore.relatedId = videoInfo.value._id
   userStore.token && (await addUserBrowse())
 })
 
 /* 收藏视频 */
 const collectVideo = async () => {
-  await collectVideoApi(videoInfo.value.video_id, isCollected.value)
+  await collectVideoApi(videoInfo.value._id, isCollectVideo.value)
 }
 const debouncedCollectVideo = debounce(collectVideo, 500)
 const handleClickCollect = () => {
-  isCollected.value = !isCollected.value
+  isCollectVideo.value = !isCollectVideo.value
   debouncedCollectVideo()
 }
 /* 点赞视频 */
 const likeVideo = async () => {
-  await likeVideoApi(videoInfo.value.video_id, isLike.value)
+  await likeVideoApi(videoInfo.value._id, isLikeVideo.value)
 }
 const debouncedLikeVideo = debounce(likeVideo, 500)
 const handleClickLike = () => {
-  isLike.value = !isLike.value
+  isLikeVideo.value = !isLikeVideo.value
   debouncedLikeVideo()
 }
 
@@ -129,7 +126,9 @@ onBeforeRouteLeave(() => {
     <CommentBar
       v-if="!isLoading"
       :commentType="2"
-      :relatedId="props.videoId"
+      :relatedId="videoId"
+      :isLike="isLikeVideo"
+      :isCollect="isCollectVideo"
       @clickLike="handleClickLike"
       @clickCollect="handleClickCollect"
       @scrollTo="scrollToComment"
