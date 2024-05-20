@@ -65,6 +65,8 @@ onMounted(async () => {
   commentStore.commentCount = videoInfo.value.comment_count
   commentStore.replyUser = videoInfo.value.user_info._id
   commentStore.relatedId = videoInfo.value._id
+  commentStore.relatedWork = videoInfo.value._id
+  commentStore.workModel = 'Video'
   userStore.token && (await addUserBrowse())
 })
 
@@ -127,6 +129,7 @@ onBeforeRouteLeave(() => {
       v-if="!isLoading"
       :commentType="2"
       :relatedId="videoId"
+      :replyUser="videoInfo.user_info._id"
       :isLike="isLikeVideo"
       :isCollect="isCollectVideo"
       @clickLike="handleClickLike"

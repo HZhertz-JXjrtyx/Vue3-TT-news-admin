@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { debounce } from 'lodash'
 import { isFollowUserApi, followUserApi } from '@/api'
-import { formatMessageTime } from '@/utils'
+import { formatTimeAccurately } from '@/utils'
 
 const props = defineProps({
   notice: {
@@ -68,7 +68,7 @@ const handleFollow = () => {
       <span class="center__content" v-if="notice.type === 'comment'">{{
         notice.related_content.content
       }}</span>
-      <span class="center__create-at">{{ formatMessageTime(notice.created_at) }}</span>
+      <span class="center__create-at">{{ formatTimeAccurately(notice.created_at) }}</span>
     </div>
     <div class="item-right">
       <div class="right__preview">

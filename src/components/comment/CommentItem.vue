@@ -5,7 +5,7 @@ import { showConfirmDialog } from 'vant'
 import 'vant/es/dialog/style'
 import { useCommentStore, useUserStore } from '@/stores'
 import { likeCommentApi, deleteCommentApi } from '@/api'
-import { formatCount, convertToMMDDHHmm } from '@/utils'
+import { formatCount, formatTimeAccurately } from '@/utils'
 import CommentReply from './CommentReply.vue'
 
 const props = defineProps({
@@ -71,6 +71,7 @@ const handleReplyCommentClick = () => {
   commentStore.isShowTextarea = true
   if ([1, 2].includes(props.comment.comment_type)) {
     commentStore.commentType = 3
+    commentStore.replyUser = props.comment.user_info._id
     commentStore.parentComment = props.comment._id
     commentStore.relatedId = props.comment._id
   } else {
@@ -139,7 +140,7 @@ const showCommentDetail = () => {
           </div>
         </div>
 
-        <div class="pub-time">{{ convertToMMDDHHmm(comment.created_time) }}</div>
+        <div class="pub-time">{{ formatTimeAccurately(comment.created_time) }}</div>
       </div>
     </div>
 

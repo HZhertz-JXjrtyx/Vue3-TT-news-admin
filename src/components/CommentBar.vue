@@ -11,6 +11,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  replyUser: {
+    type: String,
+    required: true,
+  },
   replyName: {
     type: String,
     required: false,
@@ -45,6 +49,8 @@ const clickInput = () => {
   commentStore.commentType = props.commentType
   // 页面id
   commentStore.relatedId = props.relatedId
+
+  commentStore.replyUser = props.replyUser
 }
 // 提交
 const submit = async () => {

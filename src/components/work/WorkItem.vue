@@ -1,5 +1,5 @@
 <script setup>
-import { formatVideoDuration, formatPublishTime } from '@/utils/format'
+import { formatVideoDuration, formatTimeRoughly } from '@/utils/format'
 
 defineProps({
   work: {
@@ -15,7 +15,7 @@ defineProps({
       <span v-if="work.type === 'article'" class="data">{{ work.view_count }}阅读</span>
       <span v-if="work.type === 'video'" class="data">{{ work.play_count }}播放</span>
       <span class="data">{{ work.comment_count }}评论</span>
-      <span class="pub-time">{{ formatPublishTime(work.publish_time) }}</span>
+      <span class="pub-time">{{ formatTimeRoughly(work.publish_time) }}</span>
     </div>
     <div v-if="work.ui_style !== 'image_none'" class="right">
       <div

@@ -2,7 +2,7 @@
 import { ref, onMounted, onUnmounted, nextTick, computed } from 'vue'
 import { useUserStore, useMessageStore } from '@/stores'
 import { getChatDetailApi, sendChatMessageApi, clearUnreadApi } from '@/api'
-import { formatMessageTime } from '@/utils'
+import { formatTimeAccurately } from '@/utils'
 import NavBar from '@/components/NavBar.vue'
 
 const props = defineProps({
@@ -99,7 +99,7 @@ const isSendDisabled = computed(() => {
     <div class="message-list" ref="messageListRef">
       <ul>
         <li v-for="item in messageList" :key="item._id">
-          <div class="time-label" v-if="item.isTimeLabel">{{ formatMessageTime(item.time) }}</div>
+          <div class="time-label" v-if="item.isTimeLabel">{{ formatTimeAccurately(item.time) }}</div>
           <div
             class="message-item"
             :class="{ 'send-itself': item.sender._id === userStore.userInfo._id }"

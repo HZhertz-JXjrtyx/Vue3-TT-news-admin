@@ -1,5 +1,6 @@
 <script setup>
 import { onUnmounted } from 'vue'
+import { useMessageStore } from '@/stores'
 import { clearUnreadApi } from '@/api'
 import NavBar from '@/components/NavBar.vue'
 import NoticeList from './components/NoticeList.vue'
@@ -11,6 +12,8 @@ const props = defineProps({
   },
 })
 
+const messageStore = useMessageStore()
+
 const title = {
   comment: '回复我的',
   like: '收到的赞',
@@ -18,6 +21,9 @@ const title = {
 }
 
 onUnmounted(async () => {
+  const clearCount = messageStore.notifyList[props.noticeType].unReadCount
+  messageStore.notifyList[props.noticeType].unReadCount = 0
+  messageStore.unreadCountTotal -= clearCount
   await clearUnreadApi(props.noticeType)
 })
 </script>

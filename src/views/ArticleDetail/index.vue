@@ -46,6 +46,8 @@ onMounted(async () => {
   commentStore.commentCount = articleInfo.value.comment_count
   commentStore.replyUser = articleInfo.value.user_info._id
   commentStore.relatedId = articleInfo.value._id
+  commentStore.relatedWork = articleInfo.value._id
+  commentStore.workModel = 'Article'
   userStore.token && (await addUserBrowse())
 })
 
@@ -104,6 +106,7 @@ onBeforeRouteLeave(() => {
       v-if="!isLoading"
       :commentType="1"
       :relatedId="articleId"
+      :replyUser="articleInfo.user_info._id"
       :isLike="isLikeArticle"
       :isCollect="isCollectArticle"
       @clickLike="handleClickLike"

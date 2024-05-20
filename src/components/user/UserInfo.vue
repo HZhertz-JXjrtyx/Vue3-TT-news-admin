@@ -3,7 +3,7 @@ import { ref, onMounted, computed } from 'vue'
 import { debounce } from 'lodash'
 import { useUserStore } from '@/stores'
 import { followUserApi, isFollowUserApi } from '@/api'
-import { convertToMMDDHHmm } from '@/utils'
+import { formatTimeAccurately } from '@/utils'
 import FollowBotton from '../FollowBotton.vue'
 
 const props = defineProps({
@@ -49,7 +49,7 @@ const handleFollowClick = () => {
   <div class="user-info">
     <van-image class="user-avatar" round width="40px" height="40px" :src="userInfo?.user_avatar || ''" />
     <span class="user-name">{{ userInfo?.user_nickname || '' }}</span>
-    <span class="pub-time">{{ convertToMMDDHHmm(publishTime) }}</span>
+    <span class="pub-time">{{ formatTimeAccurately(publishTime) }}</span>
     <div class="follow-btn">
       <FollowBotton v-if="isShowFollowBtn" :isFollow="isFollow" v-login="handleFollowClick" />
     </div>

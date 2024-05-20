@@ -100,6 +100,7 @@ const handleClickLike = () => {
       v-if="!isLoading"
       :commentType="3"
       :relatedId="commentStore.commentDetailId"
+      :replyUser="commentDetail.user_info._id"
       :replyName="commentDetail.user_info.user_nickname"
       :isLike="isLikeComment"
       @clickLike="handleClickLike"

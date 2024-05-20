@@ -21,9 +21,11 @@ export const addCommentApi = (
   commentType,
   replyUser = '',
   content,
-  createdTime = ~~(Date.now() / 1000),
+  createdTime = Date.now(),
   parentComment = '',
-  relatedId
+  relatedId,
+  relatedWork,
+  workModel
 ) => {
   return instance({
     method: 'POST',
@@ -35,6 +37,8 @@ export const addCommentApi = (
       createdTime,
       parentComment,
       relatedId,
+      relatedWork,
+      workModel,
     },
   })
 }

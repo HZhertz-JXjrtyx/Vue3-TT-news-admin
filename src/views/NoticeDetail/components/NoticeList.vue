@@ -59,7 +59,7 @@ const goDetail = (item) => {
       router.push({
         name: 'articledetail',
         params: {
-          articleId: item.related_entity.article_id,
+          articleId: item.related_entity._id,
         },
       })
       break
@@ -67,7 +67,7 @@ const goDetail = (item) => {
       router.push({
         name: 'videodetail',
         params: {
-          videoId: item.related_entity.video_id,
+          videoId: item.related_entity._id,
         },
       })
       break

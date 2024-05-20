@@ -59,7 +59,7 @@ export const publishVideoApi = (
   coverImage,
   duration,
   uiStyle,
-  publishTime = ~~(Date.now() / 1000)
+  publishTime = Date.now()
 ) => {
   return instance({
     method: 'POST',

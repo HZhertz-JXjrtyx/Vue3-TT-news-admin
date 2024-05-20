@@ -19,6 +19,8 @@ export const useCommentStore = defineStore(storeNames.COMMENT, () => {
   const replyUser = ref(null)
   const parentComment = ref(null)
   const relatedId = ref('')
+  const relatedWork = ref('')
+  const workModel = ref('')
 
   const submitComment = async (Content) => {
     return await addCommentApi(
@@ -27,24 +29,30 @@ export const useCommentStore = defineStore(storeNames.COMMENT, () => {
       Content,
       undefined,
       parentComment.value,
-      relatedId.value
+      relatedId.value,
+      relatedWork.value,
+      workModel.value
     )
   }
 
   return {
-    commentList,
-    commentReplyList,
-    commentCount,
     isShowTextarea,
     textareaPlaceholder,
+
+    commentCount,
+    commentList,
+
+    replyCount,
+    commentReplyList,
     isShowCommentDetail,
     commentDetailId,
-    replyCount,
 
     commentType,
     replyUser,
     parentComment,
     relatedId,
+    relatedWork,
+    workModel,
     submitComment,
   }
 })

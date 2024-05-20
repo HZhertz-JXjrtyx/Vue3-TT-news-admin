@@ -1,7 +1,7 @@
 <script setup>
 import { watch, onActivated, onDeactivated } from 'vue'
 import { useUserStore, useMessageStore } from '@/stores'
-import { formatPublishTime } from '@/utils'
+import { formatTimeRoughly } from '@/utils'
 
 const userStore = useUserStore()
 const messageStore = useMessageStore()
@@ -154,7 +154,7 @@ onDeactivated(() => {
           <span class="center__latest-word">{{ item.last_message.content }}</span>
         </div>
         <div class="conversation-right">
-          <span class="right__latest-time">{{ formatPublishTime(item.last_message.created_at, true) }}</span>
+          <span class="right__latest-time">{{ formatTimeRoughly(item.last_message.created_at) }}</span>
           <span class="right__badge">
             <van-badge v-if="item.unread_count > 0" :content="item.unread_count" max="99" />
           </span>
