@@ -74,7 +74,7 @@ const submit = async () => {
       } else {
         // 如果是对评论回复,找到回复项,添加在回复项 replies 头部
         const replyIndex = commentStore.commentList.findIndex((item) => {
-          return item._id === res.data.related_id
+          return item._id === res.data.related_entity
         })
         commentStore.commentList[replyIndex].replies.unshift(res.data)
         commentStore.commentReplyList.length > 0 && commentStore.commentReplyList.unshift(res.data)
@@ -85,7 +85,7 @@ const submit = async () => {
       // 如果是在评论详情页,将返回的数据添加在列表头部
       commentStore.commentReplyList.unshift(res.data)
       const replyIndex = commentStore.commentList.findIndex((item) => {
-        return item._id === res.data.related_id
+        return item._id === res.data.related_entity
       })
       commentStore.commentList[replyIndex].replies.unshift(res.data)
       commentStore.replyCount++

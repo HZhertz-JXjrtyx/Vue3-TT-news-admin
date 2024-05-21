@@ -2,14 +2,14 @@ import instance from '../request'
 
 // 获取评论列表
 // commentType:评论类型 1：文章评论 2：视频评论 3：评论回复 4: 回复回复
-// relatedId：根据类型不同表示不同的id
-export const getCommentListApi = (commentType, relatedId, page, size) => {
+// relatedEntity：根据类型不同表示不同的id
+export const getCommentListApi = (commentType, relatedEntity, page, size) => {
   return instance({
     method: 'GET',
     url: '/comment/list',
     params: {
       commentType,
-      relatedId,
+      relatedEntity,
       page,
       size,
     },
@@ -23,9 +23,9 @@ export const addCommentApi = (
   content,
   createdTime = Date.now(),
   parentComment = '',
-  relatedId,
+  relatedEntity,
   relatedWork,
-  workModel
+  workType
 ) => {
   return instance({
     method: 'POST',
@@ -36,9 +36,9 @@ export const addCommentApi = (
       content,
       createdTime,
       parentComment,
-      relatedId,
+      relatedEntity,
       relatedWork,
-      workModel,
+      workType,
     },
   })
 }

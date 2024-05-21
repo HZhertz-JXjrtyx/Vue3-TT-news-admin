@@ -72,24 +72,24 @@ const handleFollow = () => {
     </div>
     <div class="item-right">
       <div class="right__preview">
-        <div class="preview__article" v-if="notice.onModel === 'Article'">
+        <div class="preview__article" v-if="notice.entity_type === 'Article'">
           <div class="preview__article--img preview--img" v-if="notice.related_entity.cover_list[0]">
             <van-image fit="cover" position="center" :src="notice.related_entity.cover_list[0]" />
           </div>
           <div class="preview__article--text preview--text" v-else>{{ notice.related_entity.title }}</div>
         </div>
-        <div class="preview__video" v-if="notice.onModel === 'Video'">
+        <div class="preview__video" v-if="notice.entity_type === 'Video'">
           <div class="preview__video--img preview--img">
             <van-image fit="cover" position="center" :src="notice.related_entity.cover_src" />
           </div>
         </div>
-        <div class="preview__comment" v-if="notice.onModel === 'Comment'">
+        <div class="preview__comment" v-if="notice.entity_type === 'Comment'">
           <div class="preview__Comment--text preview--text">
             {{ notice.related_entity.content }}
           </div>
         </div>
       </div>
-      <div class="follow-btn" v-if="notice.onModel === 'User'">
+      <div class="follow-btn" v-if="notice.entity_type === 'User'">
         <van-button
           v-if="!isFollow"
           size="small"

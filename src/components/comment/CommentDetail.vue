@@ -11,10 +11,14 @@ import CommentBar from '@/components/CommentBar.vue'
 const commentStore = useCommentStore()
 
 const isLikeComment = computed(() => {
-  const likeIndex = commentStore.commentList.findIndex((item) => {
-    return item._id === commentStore.commentDetailId
-  })
-  return commentStore.commentList[likeIndex].is_like
+  if (commentStore.commentList.length) {
+    const likeIndex = commentStore.commentList.findIndex((item) => {
+      return item._id === commentStore.commentDetailId
+    })
+    return commentStore.commentList[likeIndex].is_like
+  } else {
+    return false
+  }
 })
 
 /* 获取评论详情 */

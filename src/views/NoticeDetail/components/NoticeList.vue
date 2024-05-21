@@ -54,7 +54,7 @@ onMounted(() => {
 const goDetail = (item) => {
   console.log(item)
 
-  switch (item.onModel) {
+  switch (item.entity_type) {
     case 'Article':
       router.push({
         name: 'articledetail',
@@ -72,12 +72,20 @@ const goDetail = (item) => {
       })
       break
     case 'Comment':
-      router.push({
-        name: 'commentdetail',
-        params: {
-          commentId: item.related_entity.comment_id,
-        },
-      })
+      item.work_type === 'Article' &&
+        router.push({
+          name: 'articledetail',
+          params: {
+            articleId: item.related_work,
+          },
+        })
+      item.work_type === 'Video' &&
+        router.push({
+          name: 'videodetail',
+          params: {
+            videoId: item.related_work,
+          },
+        })
       break
     case 'User':
       router.push({

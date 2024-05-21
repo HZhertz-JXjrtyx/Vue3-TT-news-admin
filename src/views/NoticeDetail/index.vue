@@ -21,9 +21,13 @@ const title = {
 }
 
 onUnmounted(async () => {
-  const clearCount = messageStore.notifyList[props.noticeType].unReadCount
-  messageStore.notifyList[props.noticeType].unReadCount = 0
-  messageStore.unreadCountTotal -= clearCount
+  console.log(Object.keys(messageStore.notifyList))
+  if (Object.keys(messageStore.notifyList).length) {
+    const clearCount = messageStore.notifyList[props.noticeType].unReadCount
+    messageStore.notifyList[props.noticeType].unReadCount = 0
+    messageStore.unreadCountTotal -= clearCount
+  }
+
   await clearUnreadApi(props.noticeType)
 })
 </script>

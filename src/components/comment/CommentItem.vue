@@ -92,7 +92,7 @@ const handleDelCommentClick = () => {
       const res = await deleteCommentApi(
         props.comment._id,
         props.comment.comment_type,
-        props.comment.related_id
+        props.comment.related_entity
       )
       console.log(res)
       if (res.status === 200) {
