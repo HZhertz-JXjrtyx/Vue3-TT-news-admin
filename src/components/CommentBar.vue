@@ -157,7 +157,7 @@ const clickComment = () => {
       v-model:show="commentStore.isShowTextarea"
       round
       position="bottom"
-      :style="{ height: '30%' }"
+      :style="{ height: '60vw' }"
     >
       <van-field
         v-model="commentContent"

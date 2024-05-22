@@ -47,7 +47,7 @@ const showPublishType = ref(false)
       </van-tabbar-item>
     </van-tabbar>
   </div>
-  <van-popup v-model:show="showPublishType" position="bottom" round :style="{ height: '40%' }">
+  <van-popup v-model:show="showPublishType" position="bottom" round :style="{ height: '70vw' }">
     <van-cell-group inset>
       <van-cell title="发布文章" size="large" to="/publish/article">
         <img src="@/assets/image/edit.png" alt=""
