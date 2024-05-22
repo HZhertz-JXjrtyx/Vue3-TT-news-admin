@@ -3,8 +3,7 @@ import { ref, computed, watch, watchEffect, nextTick } from 'vue'
 import { debounce } from 'lodash'
 import { useCommentStore } from '@/stores'
 import { getCommentDetailApi, likeCommentApi } from '@/api'
-import UserInfo from '@/components/user/UserInfo.vue'
-import UserInfoSkt from '@/components/user/UserInfoSkt.vue'
+import UserItem from '@/components/user/UserItem.vue'
 import CommentList from '@/components/comment/CommentList.vue'
 import CommentBar from '@/components/CommentBar.vue'
 
@@ -85,12 +84,13 @@ const handleClickLike = () => {
       </van-nav-bar>
     </van-sticky>
     <div class="detail">
-      <UserInfo
+      <UserItem
         v-if="!isLoading"
         :userInfo="commentDetail.user_info"
-        :publishTime="commentDetail.created_time"
-      ></UserInfo>
-      <UserInfoSkt v-if="isLoading" />
+        :showTime="true"
+        :time="commentDetail.created_time"
+      ></UserItem>
+
       <div class="content">{{ commentDetail.content }}</div>
     </div>
     <div class="divider"></div>

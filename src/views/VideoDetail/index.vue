@@ -8,8 +8,7 @@ import 'plyr/dist/plyr.css'
 import { useUserStore, useCommentStore } from '@/stores'
 import { getVideoInfoApi, collectVideoApi, likeVideoApi, addUserBrowseApi } from '@/api'
 import NavBar from '@/components/NavBar.vue'
-import UserInfo from '@/components/user/UserInfo.vue'
-import UserInfoSkt from '@/components/user/UserInfoSkt.vue'
+import UserItem from '@/components/user/UserItem.vue'
 import CommentList from '@/components/comment/CommentList.vue'
 import CommentBar from '@/components/CommentBar.vue'
 import CommentDetail from '@/components/comment/CommentDetail.vue'
@@ -108,8 +107,13 @@ onBeforeRouteLeave(() => {
     <NavBar title="视频详情" />
 
     <div class="video">
-      <UserInfo v-if="!isLoading" :userInfo="videoInfo.user_info" :publishTime="videoInfo.publish_time" />
-      <UserInfoSkt v-if="isLoading" />
+      <UserItem
+        v-if="!isLoading"
+        :userInfo="videoInfo.user_info"
+        :showTime="true"
+        :time="videoInfo.publish_time"
+      />
+
       <h1 class="title">{{ videoInfo.title }}</h1>
       <p class="description">{{ videoInfo.description }}</p>
       <video ref="videoPlayer">

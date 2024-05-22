@@ -111,7 +111,7 @@ onMounted(async () => {
 <style lang="less" scoped>
 .top {
   height: 460px;
-  background: url('@/assets/image/OIG.jpg');
+  background: url('@/assets/image/bg.jpg');
   background-size: cover;
 }
 

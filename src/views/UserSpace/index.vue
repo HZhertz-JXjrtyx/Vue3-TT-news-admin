@@ -7,6 +7,7 @@ import { useUserStore } from '@/stores'
 import { getUserDetailApi, isFollowUserApi, followUserApi } from '@/api'
 import ScrollContainer from '@/components/ScrollContainer.vue'
 import WorkList from '@/components/work/WorkList.vue'
+import FollowBotton from '@/components/FollowBotton.vue'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -80,7 +81,7 @@ const tabData = [
 <template>
   <div class="user-space">
     <div class="nav-icon" @click="router.back()"><span class="iconfont icon-arrow_left"></span></div>
-    <div class="bg-img"><img src="@/assets/image/OIG.jpg" alt="" /></div>
+    <div class="bg-img"><img src="@/assets/image/bg.jpg" alt="" /></div>
     <div class="show-case">
       <div class="user-avatar"><img :src="userDetail.user_avatar" alt="" /></div>
       <div class="right-info">
@@ -101,18 +102,14 @@ const tabData = [
           </div>
         </div>
         <div class="btn">
-          <router-link v-if="isSelf" to="/user/profile"
-            ><van-button block color="#f04142">编辑资料</van-button></router-link
-          >
-
-          <van-button
-            v-else
-            :class="{ follow: isFollow }"
-            block
-            :color="isFollow ? '#bebebe' : '#f04142'"
-            v-login="handleClickFollow"
-            >{{ isFollow ? '已关注' : ' 关注' }}
-          </van-button>
+          <FollowBotton
+            v-if="isSelf"
+            :isFollow="false"
+            size="large"
+            followText="编辑资料"
+            @click="router.push('/user/profile')"
+          />
+          <FollowBotton v-else :isFollow="isFollow" size="large" v-login="handleClickFollow" />
         </div>
       </div>
     </div>

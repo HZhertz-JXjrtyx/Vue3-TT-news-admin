@@ -6,8 +6,7 @@ import { useUserStore, useCommentStore } from '@/stores'
 import { getArticleInfoApi, collectArticleApi, likeArticleApi, addUserBrowseApi } from '@/api'
 import '@/styles/github-markdown-light.less'
 import NavBar from '@/components/NavBar.vue'
-import UserInfo from '@/components/user/UserInfo.vue'
-import UserInfoSkt from '@/components/user/UserInfoSkt.vue'
+import UserItem from '@/components/user/UserItem.vue'
 import CommentList from '@/components/comment/CommentList.vue'
 import CommentBar from '@/components/CommentBar.vue'
 import CommentDetail from '@/components/comment/CommentDetail.vue'
@@ -86,13 +85,15 @@ onBeforeRouteLeave(() => {
 <template>
   <div class="article-detail">
     <NavBar title="文章详情" />
+    <h1 class="article-title">{{ articleInfo.title }}</h1>
+    <UserItem
+      v-if="!isLoading"
+      :userInfo="articleInfo.user_info"
+      :showTime="true"
+      :time="articleInfo.publish_time"
+    />
+    <div class="article-content markdown-body" v-html="articleInfo.content || ''"></div>
 
-    <div class="article">
-      <h1 class="title">{{ articleInfo.title }}</h1>
-      <UserInfo v-if="!isLoading" :userInfo="articleInfo.user_info" :publishTime="articleInfo.publish_time" />
-      <UserInfoSkt v-if="isLoading" />
-      <div class="article-content markdown-body" v-html="articleInfo.content || ''"></div>
-    </div>
     <div class="divider"></div>
     <div class="comment" ref="commentSection">
       <div class="comment-header">
@@ -100,8 +101,7 @@ onBeforeRouteLeave(() => {
       </div>
       <CommentList :commentType="1" :relatedId="articleId" />
     </div>
-
-    <van-back-top right="28px" bottom="80px" />
+    <van-back-top right="6vw" bottom="16vw" />
     <CommentBar
       v-if="!isLoading"
       :commentType="1"
@@ -120,32 +120,26 @@ onBeforeRouteLeave(() => {
 </template>
 
 <style lang="less" scoped>
-.article {
-  margin: 20px 20px 100px;
-
-  .title {
-    margin-bottom: 20px;
-    font-size: 42px;
-  }
+.article-title {
+  margin: 20px;
+  font-size: 42px;
+}
+.article-content {
+  margin: 20px;
 }
 
 .divider {
-  width: 750px;
+  width: 100%;
   height: 12px;
-  margin: 0;
   background-color: var(--bg-color-3);
 }
 
 .comment {
-  margin: 20px 20px 160px;
-  padding-top: 100px;
-
+  margin: 20px 20px 120px;
   .comment-header {
     border-bottom: 1px solid var(--bg-color-3);
-
     .title {
       display: inline-block;
-
       height: 60px;
       color: var(--main-color-red-1);
       border-bottom: 2px solid var(--main-color-red-1);

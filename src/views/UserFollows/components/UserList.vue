@@ -1,7 +1,7 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { getUserfansApi, getUserfollowersApi } from '@/api'
-import UserItem from './UserItem.vue'
+import UserItem from '@/components/user/UserItem.vue'
 // import WorkItem from './WorkItem.vue'
 // import { useRouter } from 'vue-router'
 
@@ -52,6 +52,14 @@ const onLoad = async () => {
 onMounted(() => {
   onLoad()
 })
+
+const followText = computed(() => {
+  if (props.userType === 'fans') {
+    return '回关'
+  } else {
+    return '关注'
+  }
+})
 </script>
 <template>
   <div class="user-list">
@@ -62,7 +70,13 @@ onMounted(() => {
       description="没有用户"
     />
     <van-list v-else v-model:loading="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-      <UserItem :userId="item" v-for="item in userList" :key="item" />
+      <UserItem
+        v-for="item in userList"
+        :key="item._id"
+        :userInfo="item"
+        :showIntro="true"
+        :followText="followText"
+      />
     </van-list>
   </div>
 </template>
