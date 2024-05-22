@@ -5,7 +5,7 @@ import { getNotifyListApi, getChatListApi, getTotalUnreadCountApi } from '@/api'
 
 export const useMessageStore = defineStore(storeNames.MESSAGE, () => {
   // 用户通知列表
-  const notifyList = ref({})
+  const notifyList = ref(null)
   const commentNotify = ref('')
   const likeNotify = ref('')
   const followNotify = ref('')
@@ -13,6 +13,7 @@ export const useMessageStore = defineStore(storeNames.MESSAGE, () => {
   const chatList = ref([])
   // 未读消息总数
   const unreadCountTotal = ref(0)
+  const temporaryChatInfo = ref(null)
 
   // 获取用户通知列表
   const getNotifyList = async () => {
@@ -63,6 +64,7 @@ export const useMessageStore = defineStore(storeNames.MESSAGE, () => {
     followNotify,
     chatList,
     unreadCountTotal,
+    temporaryChatInfo,
     getNotifyList,
     getChatList,
     getTotalUnreadCount,

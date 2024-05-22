@@ -3,14 +3,15 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { debounce } from 'lodash'
 import { showDialog } from 'vant'
-import { useUserStore } from '@/stores'
-import { getUserDetailApi, isFollowUserApi, followUserApi } from '@/api'
+import { useUserStore, useMessageStore } from '@/stores'
+import { getUserDetailApi, isFollowUserApi, followUserApi, isHaveChat } from '@/api'
 import ScrollContainer from '@/components/ScrollContainer.vue'
 import WorkList from '@/components/work/WorkList.vue'
 import FollowBotton from '@/components/FollowBotton.vue'
 
 const router = useRouter()
 const userStore = useUserStore()
+const messageStore = useMessageStore()
 
 const props = defineProps({
   userId: {
@@ -76,11 +77,40 @@ const tabData = [
   { title: '文章', type: 'article' },
   { title: '视频', type: 'video' },
 ]
+
+const handleChat = async () => {
+  console.log(userDetail.value._id)
+  const res = await isHaveChat(userDetail.value._id)
+  console.log(res)
+  if (res.status === 200) {
+    router.push({
+      name: 'conversationdetail',
+      params: {
+        conversationId: res.data._id,
+      },
+    })
+  } else {
+    messageStore.temporaryChatInfo = userDetail.value
+    router.push({
+      name: 'conversationdetail',
+      params: {
+        conversationId: '0',
+      },
+    })
+  }
+}
 </script>
 
 <template>
   <div class="user-space">
-    <div class="nav-icon" @click="router.back()"><span class="iconfont icon-arrow_left"></span></div>
+    <div class="nav">
+      <div class="back-icon" @click="router.back()"><span class="iconfont icon-arrow_left"></span></div>
+      <div class="chat-icon" v-if="!isSelf" @click="handleChat">
+        <span class="iconfont icon-comment_fill"></span>
+      </div>
+      <div class="home-icon" @click="router.replace('/home')"><span class="iconfont icon-home"></span></div>
+    </div>
+
     <div class="bg-img"><img src="@/assets/image/bg.jpg" alt="" /></div>
     <div class="show-case">
       <div class="user-avatar"><img :src="userDetail.user_avatar" alt="" /></div>
@@ -133,20 +163,49 @@ const tabData = [
 
 <style lang="less" scoped>
 .user-space {
-  .nav-icon {
+  .nav {
     position: absolute;
-    top: 40px;
-    left: 40px;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100px;
+  }
+  .back-icon,
+  .chat-icon,
+  .home-icon {
+    position: absolute;
     width: 60px;
     height: 60px;
     border-radius: 50%;
     background-color: #00000068;
     .iconfont {
       position: absolute;
-      top: 12px;
-      left: 11px;
       font-size: 36px;
       color: #ffffff;
+    }
+  }
+  .back-icon {
+    top: 30px;
+    left: 30px;
+    .iconfont {
+      top: 12px;
+      left: 11px;
+    }
+  }
+  .chat-icon {
+    top: 30px;
+    right: 120px;
+    .iconfont {
+      top: 12px;
+      left: 11px;
+    }
+  }
+  .home-icon {
+    top: 30px;
+    right: 30px;
+    .iconfont {
+      top: 10px;
+      left: 12px;
     }
   }
   .bg-img {

@@ -1,7 +1,8 @@
 <script setup>
 import { ref, onMounted, onUnmounted, nextTick, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { useUserStore, useMessageStore } from '@/stores'
-import { getChatDetailApi, sendChatMessageApi, clearUnreadApi } from '@/api'
+import { getChatDetailApi, sendChatMessageApi, clearUnreadApi, addChatApi } from '@/api'
 import { formatTimeAccurately } from '@/utils'
 import NavBar from '@/components/NavBar.vue'
 
@@ -12,6 +13,7 @@ const props = defineProps({
   },
 })
 
+const router = useRouter()
 const userStore = useUserStore()
 const messageStore = useMessageStore()
 
@@ -28,6 +30,11 @@ const addMessageTime = (messageList) => {
   const threshold = 5 * 60 * 1000
   const messagesWithTime = []
   for (let i = 0; i < messageList.length; i++) {
+    i === 0 &&
+      messagesWithTime.push({
+        isTimeLabel: true,
+        time: messageList[0].created_at,
+      })
     messagesWithTime.push(messageList[i])
     if (i < messageList.length - 1) {
       const currentMessageTime = messageList[i].created_at
@@ -46,7 +53,12 @@ const addMessageTime = (messageList) => {
 
 let resizeObserver = null
 onMounted(async () => {
-  await getChatDetail()
+  if (props.conversationId !== '0') {
+    await getChatDetail()
+  } else {
+    // console.log(route.query.interlocutor)
+    interlocutor.value.user_nickname = messageStore.temporaryChatInfo.user_nickname
+  }
 
   nextTick(() => {
     scrollToBottom()
@@ -60,10 +72,13 @@ onMounted(async () => {
   resizeObserver.observe(messageListRef.value)
 })
 onUnmounted(async () => {
-  // 前端更新
-  messageStore.clearChatUnread()
-  // 后端更新
-  await clearUnreadApi('chat', props.conversationId)
+  if (props.conversationId !== '0') {
+    // 前端更新
+    messageStore.clearChatUnread()
+    // 后端更新
+    await clearUnreadApi('chat', props.conversationId)
+  }
+
   // 停止观察 .message-list
   if (resizeObserver && messageListRef.value) {
     resizeObserver.unobserve(messageListRef.value)
@@ -79,13 +94,59 @@ const scrollToBottom = () => {
 
 const sendMessage = ref('')
 const handleSend = async () => {
-  const res = await sendChatMessageApi(interlocutor.value._id, props.conversationId, sendMessage.value)
-  console.log(res)
-  if (res.status === 200) {
-    messageList.value.push(res.data)
-    sendMessage.value = ''
-    nextTick(() => {
-      scrollToBottom()
+  if (props.conversationId !== '0') {
+    const res = await sendChatMessageApi(interlocutor.value._id, props.conversationId, sendMessage.value)
+    console.log(res)
+    if (res.status === 200) {
+      if (res.data.created_at - messageList.value.at(-1).created_at > 5 * 60 * 1000) {
+        messageList.value.push({
+          isTimeLabel: true,
+          time: res.data.created_at,
+        })
+      }
+      messageList.value.push(res.data)
+      sendMessage.value = ''
+      nextTick(() => {
+        scrollToBottom()
+      })
+    }
+  } else {
+    // 新建对话
+    const addChatRes = await addChatApi(messageStore.temporaryChatInfo._id)
+    console.log(addChatRes)
+    // 新增对话消息
+    const addChatMsgRes = await sendChatMessageApi(
+      messageStore.temporaryChatInfo._id,
+      addChatRes.data._id,
+      sendMessage.value
+    )
+    console.log(addChatMsgRes)
+    // 前端更新视图
+    // 消息列表更新
+    if (addChatMsgRes.status === 200) {
+      messageList.value.push(addChatMsgRes.data)
+      sendMessage.value = ''
+      nextTick(() => {
+        scrollToBottom()
+      })
+    }
+    // 对话列表更新
+    if (messageStore.notifyList) {
+      messageStore.chatList.push({
+        _id: addChatRes.data._id,
+        interlocutor: addChatRes.data.participants.find((item) => {
+          return item.user._id !== userStore.userInfo._id
+        }).user,
+        last_message: addChatMsgRes.data,
+        unread_count: 0,
+      })
+    }
+    // 路由更改
+    router.replace({
+      name: 'conversationdetail',
+      params: {
+        conversationId: addChatRes.data._id,
+      },
     })
   }
 }
@@ -140,6 +201,7 @@ const isSendDisabled = computed(() => {
 .message-list {
   flex: 1;
   overflow: auto;
+  margin-top: 20px;
   .time-label {
     text-align: center;
     font-size: 22px;

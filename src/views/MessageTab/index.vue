@@ -25,7 +25,7 @@ watch(
 
 onActivated(() => {
   console.log('MessageTab被重新激活')
-  scrollTo()
+  // scrollTo()
 })
 
 onDeactivated(() => {
@@ -61,7 +61,7 @@ onDeactivated(() => {
       <template #value>
         <div class="inform-badge">
           <van-badge
-            v-if="messageStore.notifyList.comment?.unReadCount > 0"
+            v-if="messageStore.notifyList?.comment?.unReadCount > 0"
             :content="messageStore.notifyList.comment.unReadCount"
             max="99"
           />
@@ -93,7 +93,7 @@ onDeactivated(() => {
       <template #value>
         <div class="inform-badge">
           <van-badge
-            v-if="messageStore.notifyList.like?.unReadCount > 0"
+            v-if="messageStore.notifyList?.like?.unReadCount > 0"
             :content="messageStore.notifyList.like.unReadCount"
             max="99"
           />
@@ -125,7 +125,7 @@ onDeactivated(() => {
       <template #value>
         <div class="inform-badge">
           <van-badge
-            v-if="messageStore.notifyList.follow?.unReadCount > 0"
+            v-if="messageStore.notifyList?.follow?.unReadCount > 0"
             :content="messageStore.notifyList.follow.unReadCount"
             max="99"
           />

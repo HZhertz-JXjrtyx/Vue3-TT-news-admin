@@ -35,6 +35,27 @@ export const getChatListApi = () => {
     url: '/message/chat/list',
   })
 }
+// 是否已有对话
+export const isHaveChat = (interlocutor) => {
+  return instance({
+    method: 'GET',
+    url: '/message/chat/ishas',
+    params: {
+      interlocutor,
+    },
+  })
+}
+// 新增对话
+export const addChatApi = (interlocutor) => {
+  return instance({
+    method: 'POST',
+    url: '/message/chat/add',
+    data: {
+      interlocutor,
+    },
+  })
+}
+
 // 获取对话消息内容
 export const getChatDetailApi = (conversationId) => {
   return instance({

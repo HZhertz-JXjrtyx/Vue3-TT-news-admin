@@ -21,8 +21,8 @@ const title = {
 }
 
 onUnmounted(async () => {
-  console.log(Object.keys(messageStore.notifyList))
-  if (Object.keys(messageStore.notifyList).length) {
+  // console.log(Object.keys(messageStore.notifyList))
+  if (messageStore.notifyList) {
     const clearCount = messageStore.notifyList[props.noticeType].unReadCount
     messageStore.notifyList[props.noticeType].unReadCount = 0
     messageStore.unreadCountTotal -= clearCount
