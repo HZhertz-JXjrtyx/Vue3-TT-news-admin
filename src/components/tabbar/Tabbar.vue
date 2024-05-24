@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watchEffect } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useUserStore, useMessageStore } from '@/stores'
 
 import LoadIcon from './LoadIcon.vue'
@@ -9,7 +9,7 @@ const messageStore = useMessageStore()
 
 const showPublishType = ref(false)
 
-watchEffect(() => {
+onMounted(() => {
   if (userStore.token) {
     messageStore.getTotalUnreadCount()
   } else {
