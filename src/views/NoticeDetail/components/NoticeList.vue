@@ -18,7 +18,7 @@ const noticeDetail = ref([])
 const loading = ref(false)
 const hasMore = ref(true)
 const getNotifyDetail = async () => {
-  const res = await getNotifyDetailApi(props.noticeType)
+  const res = await getNotifyDetailApi(props.noticeType, page.value, pageSize.value)
   console.log(res)
   if (res.data.length < pageSize.value) {
     hasMore.value = false
@@ -114,5 +114,6 @@ const goDetail = (item) => {
 <style lang="less" scoped>
 .van-list {
   height: calc(100vh - 100px);
+  overflow: auto;
 }
 </style>
