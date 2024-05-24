@@ -39,7 +39,12 @@ export default () => {
 
     // 接收消息 新增notify message
     socket.value.on('notify_message', (msg) => {
-      console.log('新增chat message', msg)
+      console.log('新增notify_message', msg)
+      if (messageStore.notifyList) {
+        messageStore.notifyList[msg.data.type].last_message = msg.data
+        messageStore.notifyList[msg.data.type].unReadCount++
+      }
+      messageStore.unreadCountTotal !== -1 && messageStore.unreadCountTotal++
     })
     // 接收消息 新增chat
     socket.value.on('chat', (msg) => {
