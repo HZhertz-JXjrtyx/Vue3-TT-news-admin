@@ -1,27 +1,20 @@
 <script setup>
-import { watch, onMounted, onActivated, onDeactivated } from 'vue'
+import { watchEffect, onMounted, onActivated, onDeactivated } from 'vue'
 import { useUserStore, useMessageStore } from '@/stores'
 import { formatTimeRoughly } from '@/utils'
 
 const userStore = useUserStore()
 const messageStore = useMessageStore()
 
-watch(
-  () => userStore.token,
-  (nv) => {
-    if (nv) {
-      console.log('token change')
-      messageStore.getNotifyList()
-      messageStore.getChatList()
-      messageStore.getTotalUnreadCount()
-    } else {
-      messageStore.initialize()
-    }
-  },
-  {
-    immediate: true,
+watchEffect(() => {
+  if (userStore.token) {
+    console.log('token change')
+    messageStore.getNotifyList()
+    messageStore.getChatList()
+  } else {
+    messageStore.initialize()
   }
-)
+})
 onMounted(() => {
   console.log('MessageTab onMounted')
 })
@@ -154,10 +147,10 @@ onDeactivated(() => {
         </div>
         <div class="conversation-center">
           <span class="center__user-nickname">{{ item.interlocutor.user_nickname }}</span>
-          <span class="center__latest-word">{{ item.last_message.content }}</span>
+          <span class="center__latest-word">{{ item.last_message?.content }}</span>
         </div>
         <div class="conversation-right">
-          <span class="right__latest-time">{{ formatTimeRoughly(item.last_message.created_at) }}</span>
+          <span class="right__latest-time">{{ formatTimeRoughly(item.last_message?.created_at) }}</span>
           <span class="right__badge">
             <van-badge v-if="item.unread_count > 0" :content="item.unread_count" max="99" />
           </span>

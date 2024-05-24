@@ -1,9 +1,15 @@
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, provide } from 'vue'
+import { useRoute } from 'vue-router'
 import { io } from 'socket.io-client'
-import { useUserStore } from '@/stores'
+import { useUserStore, useMessageStore } from '@/stores'
 
 export default () => {
+  const addMessage = ref(null)
+  provide('addMessage', addMessage)
+
+  const route = useRoute()
   const userStore = useUserStore()
+  const messageStore = useMessageStore()
   const socket = ref(null)
 
   onMounted(() => {
@@ -38,10 +44,40 @@ export default () => {
     // 接收消息 新增chat
     socket.value.on('chat', (msg) => {
       console.log('新增chat', msg)
+      // 更新数据
+      // 对话列表项
+      if (messageStore.notifyList) {
+        messageStore.chatList.unshift(msg.data)
+      }
     })
     // 接收消息 新增chat message
     socket.value.on('chat_message', (msg) => {
       console.log('新增chat message', msg)
+      // 更新数据
+      // 对话列表项
+      if (messageStore.notifyList) {
+        // 找到匹配对话的索引
+        const chatIndex = messageStore.chatList.findIndex((item) => item._id === msg.data.related_entity)
+        console.log(chatIndex)
+        if (chatIndex !== -1) {
+          // 将匹配对话移动到首位
+          if (chatIndex !== 0) {
+            let [chat] = messageStore.chatList.splice(chatIndex, 1)
+            messageStore.chatList.unshift(chat)
+          }
+          // 修改字段值
+          messageStore.chatList[0].last_message = msg.data
+          messageStore.chatList[0].unread_count++
+        }
+      }
+      // 总未读数
+      messageStore.unreadCountTotal !== -1 && messageStore.unreadCountTotal++
+
+      // 如果在对话页面
+      console.log(route.name === 'conversationdetail')
+      if (route.name === 'conversationdetail' && route.params.conversationId === msg.data.related_entity) {
+        addMessage.value(msg.data)
+      }
     })
   })
 

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted, nextTick, computed } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick, computed, inject } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore, useMessageStore } from '@/stores'
 import { getChatDetailApi, sendChatMessageApi, clearUnreadApi, addChatApi } from '@/api'
@@ -12,6 +12,8 @@ const props = defineProps({
     required: true,
   },
 })
+
+const addMessage = inject('addMessage')
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -51,6 +53,24 @@ const addMessageTime = (messageList) => {
   return messagesWithTime
 }
 
+addMessage.value = (newMessage) => {
+  // 更新messageList
+  console.log('addMessage调用', newMessage)
+  if (
+    newMessage.created_at - messageList.value.at(-1).created_at > 5 * 60 * 1000 ||
+    messageList.value.length === 0
+  ) {
+    messageList.value.push({
+      isTimeLabel: true,
+      time: newMessage.created_at,
+    })
+  }
+  messageList.value.push(newMessage)
+  nextTick(() => {
+    scrollToBottom()
+  })
+}
+
 let resizeObserver = null
 onMounted(async () => {
   if (props.conversationId !== '0') {
@@ -74,7 +94,7 @@ onMounted(async () => {
 onUnmounted(async () => {
   if (props.conversationId !== '0') {
     // 前端更新
-    messageStore.clearChatUnread()
+    messageStore.clearChatUnread(props.conversationId)
     // 后端更新
     await clearUnreadApi('chat', props.conversationId)
   }
@@ -83,6 +103,8 @@ onUnmounted(async () => {
   if (resizeObserver && messageListRef.value) {
     resizeObserver.unobserve(messageListRef.value)
   }
+
+  addMessage.value = null
 })
 
 const messageListRef = ref(null)

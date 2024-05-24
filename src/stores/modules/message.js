@@ -12,7 +12,7 @@ export const useMessageStore = defineStore(storeNames.MESSAGE, () => {
   // 用户对话列表
   const chatList = ref([])
   // 未读消息总数
-  const unreadCountTotal = ref(0)
+  const unreadCountTotal = ref(-1)
   const temporaryChatInfo = ref(null)
 
   // 获取用户通知列表
@@ -41,7 +41,8 @@ export const useMessageStore = defineStore(storeNames.MESSAGE, () => {
   }
   // 清除对话未读
   const clearChatUnread = (conversationId) => {
-    const index = chatList.value.findIndex((chat) => chat.conversationId === conversationId)
+    const index = chatList.value.findIndex((chat) => chat._id === conversationId)
+    console.log(index)
     if (index !== -1) {
       unreadCountTotal.value -= chatList.value[index].unread_count
       chatList.value[index].unread_count = 0

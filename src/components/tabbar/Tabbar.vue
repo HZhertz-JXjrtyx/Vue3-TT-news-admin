@@ -1,12 +1,21 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, watchEffect } from 'vue'
 import { useUserStore, useMessageStore } from '@/stores'
+
 import LoadIcon from './LoadIcon.vue'
 
 const userStore = useUserStore()
 const messageStore = useMessageStore()
 
 const showPublishType = ref(false)
+
+watchEffect(() => {
+  if (userStore.token) {
+    messageStore.getTotalUnreadCount()
+  } else {
+    messageStore.initialize()
+  }
+})
 </script>
 <template>
   <div class="tabbar">
