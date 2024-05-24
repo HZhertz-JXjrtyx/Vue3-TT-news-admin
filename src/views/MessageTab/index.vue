@@ -1,5 +1,5 @@
 <script setup>
-import { watch, onActivated, onDeactivated } from 'vue'
+import { watch, onMounted, onActivated, onDeactivated } from 'vue'
 import { useUserStore, useMessageStore } from '@/stores'
 import { formatTimeRoughly } from '@/utils'
 
@@ -22,6 +22,9 @@ watch(
     immediate: true,
   }
 )
+onMounted(() => {
+  console.log('MessageTab onMounted')
+})
 
 onActivated(() => {
   console.log('MessageTab被重新激活')

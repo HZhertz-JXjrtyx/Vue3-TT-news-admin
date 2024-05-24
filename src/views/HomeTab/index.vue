@@ -76,7 +76,7 @@ const scrollTo = () => {
 
 const scrollContainers = ref({})
 onMounted(() => {
-  console.log('onMounted')
+  console.log('HomeTab onMounted')
   sessionStorage.removeItem('scrollPositions')
   scrollPositions.value = {}
   list.value.forEach((item) => {
@@ -89,12 +89,12 @@ const handleChange = (name, title) => {
 }
 
 onActivated(() => {
-  console.log('组件被重新激活')
+  console.log('HomeTab组件被重新激活')
   scrollTo()
 })
 
 onDeactivated(() => {
-  console.log('组件被缓存')
+  console.log('HomeTab组件被缓存')
 })
 </script>
 
