@@ -31,144 +31,156 @@ onDeactivated(() => {
 
 <template>
   <div class="tab-title">消息私信</div>
-  <div class="inform">
-    <van-cell
-      is-link
-      :to="{
-        name: 'noticedetail',
-        params: {
-          noticeType: 'comment',
-        },
-      }"
-    >
-      <template #icon>
-        <div class="inform-icon" :style="{ backgroundColor: '#00b2fd' }">
-          <img src="@/assets/image/comment_icon.png" alt="" />
-        </div>
-      </template>
-      <template #title>
-        <div class="inform-content">
-          <span class="content__type-text">评论</span>
-          <span class="content__latest-word" v-if="messageStore.commentNotify">{{
-            messageStore.commentNotify
-          }}</span>
-        </div>
-      </template>
-      <template #value>
-        <div class="inform-badge">
-          <van-badge
-            v-if="messageStore.notifyList?.comment?.unReadCount > 0"
-            :content="messageStore.notifyList.comment.unReadCount"
-            max="99"
-          />
-        </div>
-      </template>
-    </van-cell>
-    <van-cell
-      is-link
-      :to="{
-        name: 'noticedetail',
-        params: {
-          noticeType: 'like',
-        },
-      }"
-    >
-      <template #icon>
-        <div class="inform-icon" :style="{ backgroundColor: '#ff676c' }">
-          <img src="@/assets/image/like_icon.png" alt="" />
-        </div>
-      </template>
-      <template #title>
-        <div class="inform-content">
-          <span class="content__type-text">点赞</span>
-          <span class="content__latest-word" v-if="messageStore.likeNotify">{{
-            messageStore.likeNotify
-          }}</span>
-        </div>
-      </template>
-      <template #value>
-        <div class="inform-badge">
-          <van-badge
-            v-if="messageStore.notifyList?.like?.unReadCount > 0"
-            :content="messageStore.notifyList.like.unReadCount"
-            max="99"
-          />
-        </div>
-      </template>
-    </van-cell>
-    <van-cell
-      is-link
-      :to="{
-        name: 'noticedetail',
-        params: {
-          noticeType: 'follow',
-        },
-      }"
-    >
-      <template #icon>
-        <div class="inform-icon" :style="{ backgroundColor: '#ff7f21' }">
-          <img src="@/assets/image/fans_icon.png" alt="" />
-        </div>
-      </template>
-      <template #title>
-        <div class="inform-content">
-          <span class="content__type-text">粉丝</span>
-          <span class="content__latest-word" v-if="messageStore.followNotify">{{
-            messageStore.followNotify
-          }}</span>
-        </div>
-      </template>
-      <template #value>
-        <div class="inform-badge">
-          <van-badge
-            v-if="messageStore.notifyList?.follow?.unReadCount > 0"
-            :content="messageStore.notifyList.follow.unReadCount"
-            max="99"
-          />
-        </div>
-      </template>
-    </van-cell>
-  </div>
-  <div class="conversation-list">
-    <van-swipe-cell right-width="40" v-for="item in messageStore.chatList" :key="item._id">
-      <router-link
-        class="conversation"
+  <div class="message-container">
+    <div class="inform">
+      <van-cell
+        is-link
         :to="{
-          name: 'conversationdetail',
+          name: 'noticedetail',
           params: {
-            conversationId: item._id,
+            noticeType: 'comment',
           },
         }"
       >
-        <div class="conversation-left">
-          <div class="left__user-avatar">
-            <van-image round fit="cover" position="center" :src="item.interlocutor.user_avatar" />
+        <template #icon>
+          <div class="inform-icon" :style="{ backgroundColor: '#00b2fd' }">
+            <img src="@/assets/image/comment_icon.png" alt="" />
           </div>
-        </div>
-        <div class="conversation-center">
-          <span class="center__user-nickname">{{ item.interlocutor.user_nickname }}</span>
-          <span class="center__latest-word">{{ item.last_message?.content }}</span>
-        </div>
-        <div class="conversation-right">
-          <span class="right__latest-time">{{ formatTimeRoughly(item.last_message?.created_at) }}</span>
-          <span class="right__badge">
-            <van-badge v-if="item.unread_count > 0" :content="item.unread_count" max="99" />
-          </span>
-        </div>
-      </router-link>
-      <template #right>
-        <van-button square type="danger" text="删除" />
-      </template>
-    </van-swipe-cell>
+        </template>
+        <template #title>
+          <div class="inform-content">
+            <span class="content__type-text">评论</span>
+            <span class="content__latest-word" v-if="messageStore.commentNotify">{{
+              messageStore.commentNotify
+            }}</span>
+          </div>
+        </template>
+        <template #value>
+          <div class="inform-badge">
+            <van-badge
+              v-if="messageStore.notifyList?.comment?.unReadCount > 0"
+              :content="messageStore.notifyList.comment.unReadCount"
+              max="99"
+            />
+          </div>
+        </template>
+      </van-cell>
+      <van-cell
+        is-link
+        :to="{
+          name: 'noticedetail',
+          params: {
+            noticeType: 'like',
+          },
+        }"
+      >
+        <template #icon>
+          <div class="inform-icon" :style="{ backgroundColor: '#ff676c' }">
+            <img src="@/assets/image/like_icon.png" alt="" />
+          </div>
+        </template>
+        <template #title>
+          <div class="inform-content">
+            <span class="content__type-text">点赞</span>
+            <span class="content__latest-word" v-if="messageStore.likeNotify">{{
+              messageStore.likeNotify
+            }}</span>
+          </div>
+        </template>
+        <template #value>
+          <div class="inform-badge">
+            <van-badge
+              v-if="messageStore.notifyList?.like?.unReadCount > 0"
+              :content="messageStore.notifyList.like.unReadCount"
+              max="99"
+            />
+          </div>
+        </template>
+      </van-cell>
+      <van-cell
+        is-link
+        :to="{
+          name: 'noticedetail',
+          params: {
+            noticeType: 'follow',
+          },
+        }"
+      >
+        <template #icon>
+          <div class="inform-icon" :style="{ backgroundColor: '#ff7f21' }">
+            <img src="@/assets/image/fans_icon.png" alt="" />
+          </div>
+        </template>
+        <template #title>
+          <div class="inform-content">
+            <span class="content__type-text">粉丝</span>
+            <span class="content__latest-word" v-if="messageStore.followNotify">{{
+              messageStore.followNotify
+            }}</span>
+          </div>
+        </template>
+        <template #value>
+          <div class="inform-badge">
+            <van-badge
+              v-if="messageStore.notifyList?.follow?.unReadCount > 0"
+              :content="messageStore.notifyList.follow.unReadCount"
+              max="99"
+            />
+          </div>
+        </template>
+      </van-cell>
+    </div>
+    <div class="conversation-list">
+      <van-swipe-cell right-width="40" v-for="item in messageStore.chatList" :key="item._id">
+        <router-link
+          class="conversation"
+          :to="{
+            name: 'conversationdetail',
+            params: {
+              conversationId: item._id,
+            },
+          }"
+        >
+          <div class="conversation-left">
+            <div class="left__user-avatar">
+              <van-image round fit="cover" position="center" :src="item.interlocutor.user_avatar" />
+            </div>
+          </div>
+          <div class="conversation-center">
+            <span class="center__user-nickname">{{ item.interlocutor.user_nickname }}</span>
+            <span class="center__latest-word">{{ item.last_message?.content }}</span>
+          </div>
+          <div class="conversation-right">
+            <span class="right__latest-time">{{ formatTimeRoughly(item.last_message?.created_at) }}</span>
+            <span class="right__badge">
+              <van-badge v-if="item.unread_count > 0" :content="item.unread_count" max="99" />
+            </span>
+          </div>
+        </router-link>
+        <template #right>
+          <van-button square type="danger" text="删除" />
+        </template>
+      </van-swipe-cell>
+    </div>
   </div>
 </template>
 
 <style lang="less" scoped>
 .tab-title {
-  padding: 30px 30px;
+  position: fixed;
+  top: 0;
+  z-index: 2024;
+  width: 100%;
+  height: 100px;
+
   font-size: 34px;
   text-align: center;
+  line-height: 100px;
+  background-color: #fff;
   border-bottom: 1px solid #eeeeee;
+}
+.message-container {
+  margin: 100px 0;
 }
 .inform {
   border-bottom: 8px solid #f0f0f0;
