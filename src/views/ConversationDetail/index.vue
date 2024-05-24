@@ -170,6 +170,8 @@ const handleSend = async () => {
         conversationId: addChatRes.data._id,
       },
     })
+
+    interlocutor.value = messageStore.temporaryChatInfo
   }
 }
 const isSendDisabled = computed(() => {
