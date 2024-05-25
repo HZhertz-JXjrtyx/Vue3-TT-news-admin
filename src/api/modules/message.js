@@ -29,10 +29,14 @@ export const getNotifyDetailApi = (type, page, size) => {
   })
 }
 // 获取对话列表
-export const getChatListApi = () => {
+export const getChatListApi = (pre, size) => {
   return instance({
     method: 'GET',
     url: '/message/chat/list',
+    params: {
+      pre,
+      size,
+    },
   })
 }
 // 是否已有对话

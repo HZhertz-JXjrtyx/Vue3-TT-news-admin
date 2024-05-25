@@ -6,27 +6,6 @@ import { getNotifyListApi, getChatListApi, getTotalUnreadCountApi } from '@/api'
 export const useMessageStore = defineStore(storeNames.MESSAGE, () => {
   // 用户通知列表
   const notifyList = ref(null)
-  // const commentNotify = ref('')
-  // const likeNotify = ref('')
-  // const followNotify = ref('')
-  // 用户对话列表
-  const chatList = ref([])
-  // 未读消息总数
-  const unreadCountTotal = ref(-1)
-  const temporaryChatInfo = ref(null)
-
-  // 获取用户通知列表
-  const getNotifyList = async () => {
-    const res = await getNotifyListApi()
-    console.log(res)
-    notifyList.value = res.data
-    // commentNotify.value =
-    //   res.data.comment.last_message?.sender.user_nickname + res.data.comment.last_message?.content || ''
-    // likeNotify.value =
-    //   res.data.like.last_message?.sender.user_nickname + res.data.like.last_message?.content || ''
-    // followNotify.value =
-    //   res.data.follow.last_message?.sender.user_nickname + res.data.follow.last_message?.content || ''
-  }
   const commentNotify = computed(() => {
     if (notifyList.value) {
       return (
@@ -57,11 +36,25 @@ export const useMessageStore = defineStore(storeNames.MESSAGE, () => {
     }
   })
 
-  // 获取用户对话列表
-  const getChatList = async () => {
-    const res = await getChatListApi()
+  // 用户对话列表
+  const chatList = ref([])
+  // 未读消息总数
+  const unreadCountTotal = ref(-1)
+  const temporaryChatInfo = ref(null)
+
+  // 获取用户通知列表
+  const getNotifyList = async () => {
+    const res = await getNotifyListApi()
     console.log(res)
-    chatList.value = res.data
+    notifyList.value = res.data
+  }
+
+  // 获取用户对话列表
+  const getChatList = async (pre, size) => {
+    const res = await getChatListApi(pre, size)
+    console.log(res)
+    chatList.value = chatList.value.concat(res.data)
+    return res.data.length < size
   }
   // 获取未读消息总数
   const getTotalUnreadCount = async () => {
@@ -80,12 +73,10 @@ export const useMessageStore = defineStore(storeNames.MESSAGE, () => {
   }
 
   const initialize = () => {
-    notifyList.value = {}
-    commentNotify.value = ''
-    likeNotify.value = ''
-    followNotify.value = ''
+    notifyList.value = null
+
     chatList.value = []
-    unreadCountTotal.value = 0
+    unreadCountTotal.value = -1
   }
 
   return {
