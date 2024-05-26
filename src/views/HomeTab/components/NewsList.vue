@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { getNewsListApi } from '@/api'
 import ListItem from './ListItem.vue'
@@ -19,10 +19,12 @@ const router = useRouter()
 
 const page = ref(1)
 const pageSize = ref(10)
-const newsList = ref([])
+
 const loading = ref(false)
 const hasMore = ref(true)
+const finished = ref(false)
 
+const newsList = ref([])
 const getNewsList = async () => {
   const res = await getNewsListApi(props.channelId, page.value, pageSize.value)
   // console.log(res)
@@ -30,32 +32,28 @@ const getNewsList = async () => {
     hasMore.value = false
   }
   newsList.value = newsList.value.concat(res.data)
-  loading.value = false
 }
 
-const finished = ref(false)
 const onLoad = async () => {
   // console.log('hasMore.value', hasMore.value)
   if (hasMore.value) {
     loading.value = true
-    getNewsList()
+    await getNewsList()
+    loading.value = false
     page.value++
   } else {
     finished.value = true
   }
 }
+
 const refreshing = ref(false)
-const onRefresh = () => {
+const onRefresh = async () => {
   newsList.value = []
   page.value = 1
   hasMore.value = true
-  onLoad()
+  await onLoad()
   refreshing.value = false
 }
-
-onMounted(() => {
-  onLoad()
-})
 
 const goDetail = (item) => {
   console.log(item)
@@ -81,7 +79,13 @@ const goDetail = (item) => {
 <template>
   <div class="news-list">
     <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
+      <template #loading>
+        <img class="loading-gif-1" src="@/assets/image/loading1.gif" />
+      </template>
       <van-list v-model:loading="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+        <template #loading>
+          <img class="loading-gif-2" src="@/assets/image/loading2.gif" />
+        </template>
         <ListItem v-for="item in newsList" :key="item._id" :news="item" @click="goDetail(item)"></ListItem>
       </van-list>
     </van-pull-refresh>

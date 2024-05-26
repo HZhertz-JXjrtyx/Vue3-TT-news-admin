@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { getUserFavoriteApi } from '@/api'
 import WorkItem from '@/components/work/WorkItem.vue'
 import { useRouter } from 'vue-router'
@@ -15,9 +15,12 @@ const router = useRouter()
 
 const page = ref(1)
 const pageSize = ref(10)
-const favoriteList = ref([])
+
 const loading = ref(false)
 const hasMore = ref(true)
+const finished = ref(false)
+
+const favoriteList = ref([])
 const getFavoriteList = async () => {
   const res = await getUserFavoriteApi(props.favoriteType, page.value, pageSize.value)
   console.log(res)
@@ -25,24 +28,19 @@ const getFavoriteList = async () => {
     hasMore.value = false
   }
   favoriteList.value = favoriteList.value.concat(res.data)
-  loading.value = false
 }
 
-const finished = ref(false)
 const onLoad = async () => {
   // console.log('hasMore.value', hasMore.value)
   if (hasMore.value) {
     loading.value = true
-    getFavoriteList()
+    await getFavoriteList()
+    loading.value = false
     page.value++
   } else {
     finished.value = true
   }
 }
-
-onMounted(() => {
-  onLoad()
-})
 
 const goDetail = (item) => {
   console.log(item)
@@ -66,6 +64,9 @@ const goDetail = (item) => {
 </script>
 <template>
   <van-list v-model:loading="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+    <template #loading>
+      <img class="loading-gif-2" src="@/assets/image/loading2.gif" />
+    </template>
     <WorkItem v-for="item in favoriteList" :key="item._id" :work="item" @click="goDetail(item)" />
   </van-list>
 </template>

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { showConfirmDialog } from 'vant'
 import { useMessageStore } from '@/stores'
 import { deleteChatApi } from '@/api'
@@ -16,22 +16,16 @@ const finished = ref(false)
 
 const onLoad = async () => {
   // console.log('hasMore.value', hasMore.value)
-  console.log()
   if (hasMore.value) {
     loading.value = true
     const result = await messageStore.getChatList(pre.value, pageSize.value)
-    pre.value = messageStore.chatList.at(-1)?._id || ''
-
     hasMore.value = !result
     loading.value = false
+    pre.value = messageStore.chatList.at(-1)?._id || ''
   } else {
     finished.value = true
   }
 }
-
-onMounted(() => {
-  onLoad()
-})
 
 const beforeClose = ({ position }, conversationId) => {
   // console.log(conversationId)
@@ -63,6 +57,14 @@ const beforeClose = ({ position }, conversationId) => {
       })
   }
 }
+
+defineExpose({
+  pre,
+  loading,
+  hasMore,
+  finished,
+  onLoad,
+})
 </script>
 
 <template>

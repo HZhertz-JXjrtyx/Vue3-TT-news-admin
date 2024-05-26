@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, computed } from 'vue'
 import { getUserfansApi, getUserfollowersApi } from '@/api'
 import UserItem from '@/components/user/UserItem.vue'
 // import WorkItem from './WorkItem.vue'
@@ -16,13 +16,14 @@ const props = defineProps({
   },
 })
 
-const isLoading = ref(true)
-
 const page = ref(1)
 const pageSize = ref(10)
-const userList = ref([])
+
 const loading = ref(false)
 const hasMore = ref(true)
+const finished = ref(false)
+
+const userList = ref([])
 const getUserList = async () => {
   let res
   if (props.userType === 'fans') {
@@ -30,28 +31,25 @@ const getUserList = async () => {
   } else if (props.userType === 'followers') {
     res = await getUserfollowersApi(props.userId, page.value, pageSize.value)
   }
-  isLoading.value = false
+
   console.log(res)
   if (res.data.length < pageSize.value) {
     hasMore.value = false
   }
   userList.value = userList.value.concat(res.data)
-  loading.value = false
 }
-const finished = ref(false)
+
 const onLoad = async () => {
   // console.log('hasMore.value', hasMore.value)
   if (hasMore.value) {
     loading.value = true
-    getUserList()
+    await getUserList()
+    loading.value = false
     page.value++
   } else {
     finished.value = true
   }
 }
-onMounted(() => {
-  onLoad()
-})
 
 const followText = computed(() => {
   if (props.userType === 'fans') {
@@ -64,12 +62,15 @@ const followText = computed(() => {
 <template>
   <div class="user-list">
     <van-empty
-      v-if="!isLoading && userList.length === 0"
+      v-if="!loading && userList.length === 0"
       image="https://fastly.jsdelivr.net/npm/@vant/assets/custom-empty-image.png"
       image-size="80"
       description="没有用户"
     />
     <van-list v-else v-model:loading="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+      <template #loading>
+        <img class="loading-gif-2" src="@/assets/image/loading2.gif" />
+      </template>
       <UserItem
         v-for="item in userList"
         :key="item._id"

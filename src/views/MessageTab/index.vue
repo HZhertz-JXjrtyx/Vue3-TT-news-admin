@@ -1,5 +1,5 @@
 <script setup>
-import { watchEffect, onMounted, onActivated, onDeactivated } from 'vue'
+import { ref, watchEffect, onMounted, onActivated, onDeactivated } from 'vue'
 import { useUserStore, useMessageStore } from '@/stores'
 import ConversationList from './components/ConversationList.vue'
 
@@ -14,6 +14,21 @@ watchEffect(() => {
     messageStore.initialize()
   }
 })
+
+const conversationListRef = ref(null)
+
+const loading = ref(false)
+const onRefresh = async () => {
+  messageStore.initialize()
+  await messageStore.getNotifyList()
+  await messageStore.getTotalUnreadCount()
+  conversationListRef.value.pre = ''
+  conversationListRef.value.loading = false
+  conversationListRef.value.hasMore = true
+  conversationListRef.value.finished = false
+  await conversationListRef.value.onLoad()
+  loading.value = false
+}
 onMounted(() => {
   console.log('MessageTab onMounted')
 })
@@ -29,111 +44,116 @@ onDeactivated(() => {
 
 <template>
   <div class="tab-title">消息私信</div>
-  <div class="message-container">
-    <div class="inform">
-      <van-cell
-        is-link
-        :to="{
-          name: 'noticedetail',
-          params: {
-            noticeType: 'comment',
-          },
-        }"
-      >
-        <template #icon>
-          <div class="inform-icon" :style="{ backgroundColor: '#00b2fd' }">
-            <img src="@/assets/image/comment_icon.png" alt="" />
-          </div>
-        </template>
-        <template #title>
-          <div class="inform-content">
-            <span class="content__type-text">评论</span>
-            <span class="content__latest-word" v-if="messageStore.commentNotify">{{
-              messageStore.commentNotify
-            }}</span>
-          </div>
-        </template>
-        <template #value>
-          <div class="inform-badge">
-            <van-badge
-              v-if="messageStore.notifyList?.comment?.unReadCount > 0"
-              :content="messageStore.notifyList.comment.unReadCount"
-              max="99"
-            />
-          </div>
-        </template>
-      </van-cell>
-      <van-cell
-        is-link
-        :to="{
-          name: 'noticedetail',
-          params: {
-            noticeType: 'like',
-          },
-        }"
-      >
-        <template #icon>
-          <div class="inform-icon" :style="{ backgroundColor: '#ff676c' }">
-            <img src="@/assets/image/like_icon.png" alt="" />
-          </div>
-        </template>
-        <template #title>
-          <div class="inform-content">
-            <span class="content__type-text">点赞</span>
-            <span class="content__latest-word" v-if="messageStore.likeNotify">{{
-              messageStore.likeNotify
-            }}</span>
-          </div>
-        </template>
-        <template #value>
-          <div class="inform-badge">
-            <van-badge
-              v-if="messageStore.notifyList?.like?.unReadCount > 0"
-              :content="messageStore.notifyList.like.unReadCount"
-              max="99"
-            />
-          </div>
-        </template>
-      </van-cell>
-      <van-cell
-        is-link
-        :to="{
-          name: 'noticedetail',
-          params: {
-            noticeType: 'follow',
-          },
-        }"
-      >
-        <template #icon>
-          <div class="inform-icon" :style="{ backgroundColor: '#ff7f21' }">
-            <img src="@/assets/image/fans_icon.png" alt="" />
-          </div>
-        </template>
-        <template #title>
-          <div class="inform-content">
-            <span class="content__type-text">粉丝</span>
-            <span class="content__latest-word" v-if="messageStore.followNotify">{{
-              messageStore.followNotify
-            }}</span>
-          </div>
-        </template>
-        <template #value>
-          <div class="inform-badge">
-            <van-badge
-              v-if="messageStore.notifyList?.follow?.unReadCount > 0"
-              :content="messageStore.notifyList.follow.unReadCount"
-              max="99"
-            />
-          </div>
-        </template>
-      </van-cell>
+  <van-pull-refresh v-model="loading" @refresh="onRefresh">
+    <template #loading>
+      <img class="loading-gif-1" src="@/assets/image/loading1.gif" />
+    </template>
+    <div class="message-container">
+      <div class="inform">
+        <van-cell
+          is-link
+          :to="{
+            name: 'noticedetail',
+            params: {
+              noticeType: 'comment',
+            },
+          }"
+        >
+          <template #icon>
+            <div class="inform-icon" :style="{ backgroundColor: '#00b2fd' }">
+              <img src="@/assets/image/comment_icon.png" alt="" />
+            </div>
+          </template>
+          <template #title>
+            <div class="inform-content">
+              <span class="content__type-text">评论</span>
+              <span class="content__latest-word" v-if="messageStore.commentNotify">{{
+                messageStore.commentNotify
+              }}</span>
+            </div>
+          </template>
+          <template #value>
+            <div class="inform-badge">
+              <van-badge
+                v-if="messageStore.notifyList?.comment?.unReadCount > 0"
+                :content="messageStore.notifyList.comment.unReadCount"
+                max="99"
+              />
+            </div>
+          </template>
+        </van-cell>
+        <van-cell
+          is-link
+          :to="{
+            name: 'noticedetail',
+            params: {
+              noticeType: 'like',
+            },
+          }"
+        >
+          <template #icon>
+            <div class="inform-icon" :style="{ backgroundColor: '#ff676c' }">
+              <img src="@/assets/image/like_icon.png" alt="" />
+            </div>
+          </template>
+          <template #title>
+            <div class="inform-content">
+              <span class="content__type-text">点赞</span>
+              <span class="content__latest-word" v-if="messageStore.likeNotify">{{
+                messageStore.likeNotify
+              }}</span>
+            </div>
+          </template>
+          <template #value>
+            <div class="inform-badge">
+              <van-badge
+                v-if="messageStore.notifyList?.like?.unReadCount > 0"
+                :content="messageStore.notifyList.like.unReadCount"
+                max="99"
+              />
+            </div>
+          </template>
+        </van-cell>
+        <van-cell
+          is-link
+          :to="{
+            name: 'noticedetail',
+            params: {
+              noticeType: 'follow',
+            },
+          }"
+        >
+          <template #icon>
+            <div class="inform-icon" :style="{ backgroundColor: '#ff7f21' }">
+              <img src="@/assets/image/fans_icon.png" alt="" />
+            </div>
+          </template>
+          <template #title>
+            <div class="inform-content">
+              <span class="content__type-text">粉丝</span>
+              <span class="content__latest-word" v-if="messageStore.followNotify">{{
+                messageStore.followNotify
+              }}</span>
+            </div>
+          </template>
+          <template #value>
+            <div class="inform-badge">
+              <van-badge
+                v-if="messageStore.notifyList?.follow?.unReadCount > 0"
+                :content="messageStore.notifyList.follow.unReadCount"
+                max="99"
+              />
+            </div>
+          </template>
+        </van-cell>
+      </div>
+      <ConversationList v-if="userStore.token" ref="conversationListRef" />
+      <div class="no-login" v-else>
+        <div class="no-login__text">登录后查看更多~</div>
+        <van-button color="#f04142" to="/user/login">登录</van-button>
+      </div>
     </div>
-    <ConversationList v-if="userStore.token" />
-    <div class="no-login" v-else>
-      <div class="no-login__text">登录后查看更多~</div>
-      <van-button color="#f04142" to="/user/login">登录</van-button>
-    </div>
-  </div>
+  </van-pull-refresh>
 </template>
 
 <style lang="less" scoped>
@@ -150,6 +170,7 @@ onDeactivated(() => {
   background-color: #fff;
   border-bottom: 1px solid #eeeeee;
 }
+
 .message-container {
   margin: 100px 0;
 }
@@ -201,6 +222,10 @@ onDeactivated(() => {
   width: 440px;
   font-size: 26px;
   color: #686868;
+}
+
+.conversation-list {
+  min-height: 1000px;
 }
 
 .no-login {

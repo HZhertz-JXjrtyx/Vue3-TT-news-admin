@@ -113,12 +113,7 @@ onDeactivated(() => {
       @change="handleChange"
     >
       <van-tab v-for="item in list" :key="item.id" :name="item.id" :title="item.name">
-        <div
-          class="scroll-container"
-          :ref="(el) => (scrollContainers[item.id] = el)"
-          @scroll="handleScroll"
-          style="height: calc(100vh - 100px); overflow: auto"
-        >
+        <div class="scroll-container" :ref="(el) => (scrollContainers[item.id] = el)" @scroll="handleScroll">
           <NewsList :channelId="item.channel_id" :channelName="item.name"></NewsList>
         </div>
       </van-tab>
@@ -145,6 +140,10 @@ onDeactivated(() => {
 </template>
 
 <style lang="less" scoped>
+.scroll-container {
+  height: calc(100vh - 300px);
+  overflow: auto;
+}
 .icon-filtrate {
   display: flex;
   align-items: center;
