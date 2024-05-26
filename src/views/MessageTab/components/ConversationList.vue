@@ -1,6 +1,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+import { showConfirmDialog } from 'vant'
 import { useMessageStore } from '@/stores'
+import { deleteChatApi } from '@/api'
 import { formatTimeRoughly } from '@/utils'
 
 const messageStore = useMessageStore()
@@ -30,12 +32,48 @@ const onLoad = async () => {
 onMounted(() => {
   onLoad()
 })
+
+const beforeClose = ({ position }, conversationId) => {
+  // console.log(conversationId)
+  switch (position) {
+    case 'left':
+    case 'cell':
+    case 'outside':
+      return true
+    case 'right':
+      return new Promise((resolve) => {
+        showConfirmDialog({
+          title: '确定删除吗？此操作将清空对话',
+        })
+          .then(async () => {
+            // 发起删除请求
+            const res = await deleteChatApi(conversationId)
+            console.log(res)
+            if (res.status === 200) {
+              messageStore.chatList = messageStore.chatList.filter((c) => {
+                return c._id !== conversationId
+              })
+              messageStore.unreadCountTotal -= res.clearCount
+              resolve(true)
+            } else {
+              resolve(false)
+            }
+          })
+          .catch(() => resolve(false))
+      })
+  }
+}
 </script>
 
 <template>
   <div class="conversation-list">
     <van-list v-model:loading="loading" :finished="finished" @load="onLoad">
-      <van-swipe-cell right-width="40" v-for="item in messageStore.chatList" :key="item._id">
+      <van-swipe-cell
+        right-width="40"
+        v-for="item in messageStore.chatList"
+        :key="item._id"
+        :before-close="(args) => beforeClose(args, item._id)"
+      >
         <router-link
           class="conversation"
           :to="{

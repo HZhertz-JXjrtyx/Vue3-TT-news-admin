@@ -40,7 +40,6 @@ export const useMessageStore = defineStore(storeNames.MESSAGE, () => {
   const chatList = ref([])
   // 未读消息总数
   const unreadCountTotal = ref(-1)
-  const temporaryChatInfo = ref(null)
 
   // 获取用户通知列表
   const getNotifyList = async () => {
@@ -61,6 +60,25 @@ export const useMessageStore = defineStore(storeNames.MESSAGE, () => {
     const res = await getTotalUnreadCountApi()
     console.log(res)
     unreadCountTotal.value = res.unreadTotalCount
+  }
+  // 提升/新增对话项
+  const upChat = (conversation) => {
+    // 列表中是否存在对话项
+    const chatIndex = chatList.value.findIndex((item) => item._id === conversation._id)
+    console.log(chatIndex)
+    if (chatIndex === -1) {
+      // 新增对话项
+      chatList.value.unshift(conversation)
+    } else {
+      // 将匹配对话移动到首位
+      if (chatIndex !== 0) {
+        let [chat] = chatList.value.splice(chatIndex, 1)
+        chatList.value.unshift(chat)
+      }
+      // 修改字段值
+      chatList.value[0].last_message = conversation.last_message
+      chatList.value[0].unread_count++
+    }
   }
   // 清除对话未读
   const clearChatUnread = (conversationId) => {
@@ -86,10 +104,11 @@ export const useMessageStore = defineStore(storeNames.MESSAGE, () => {
     followNotify,
     chatList,
     unreadCountTotal,
-    temporaryChatInfo,
+
     getNotifyList,
     getChatList,
     getTotalUnreadCount,
+    upChat,
     clearChatUnread,
     initialize,
   }

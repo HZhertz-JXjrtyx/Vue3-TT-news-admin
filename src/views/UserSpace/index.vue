@@ -3,15 +3,14 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { debounce } from 'lodash'
 import { showDialog } from 'vant'
-import { useUserStore, useMessageStore } from '@/stores'
-import { getUserDetailApi, isFollowUserApi, followUserApi, isHaveChat } from '@/api'
+import { useUserStore } from '@/stores'
+import { getUserDetailApi, isFollowUserApi, followUserApi, isHaveChat, addChatApi } from '@/api'
 import ScrollContainer from '@/components/ScrollContainer.vue'
 import WorkList from '@/components/work/WorkList.vue'
 import FollowBotton from '@/components/FollowBotton.vue'
 
 const router = useRouter()
 const userStore = useUserStore()
-const messageStore = useMessageStore()
 
 const props = defineProps({
   userId: {
@@ -20,8 +19,9 @@ const props = defineProps({
   },
 })
 
-// 获取用户信息
 const active = ref(0)
+
+// 获取用户信息
 const userDetail = ref({})
 const getUserDetail = async () => {
   const res = await getUserDetailApi(props.userId)
@@ -61,7 +61,7 @@ const handleClickFollow = async () => {
   isFollow.value = !isFollow.value
   debouncedFollowUser()
 }
-
+// 展示点赞数据
 const handleClickLikes = () => {
   showDialog({
     title: userDetail.value.user_nickname,
@@ -78,11 +78,14 @@ const tabData = [
   { title: '视频', type: 'video' },
 ]
 
+// 发起对话
 const handleChat = async () => {
   console.log(userDetail.value._id)
+  // 是否已存在对话项
   const res = await isHaveChat(userDetail.value._id)
   console.log(res)
   if (res.status === 200) {
+    // 是 路由跳转
     router.push({
       name: 'conversationdetail',
       params: {
@@ -90,13 +93,17 @@ const handleChat = async () => {
       },
     })
   } else {
-    messageStore.temporaryChatInfo = userDetail.value
-    router.push({
-      name: 'conversationdetail',
-      params: {
-        conversationId: '0',
-      },
-    })
+    // 否 新增对话项
+    const addChatRes = await addChatApi(userDetail.value._id)
+    console.log(addChatRes)
+    // 路由跳转
+    addChatRes.status === 200 &&
+      router.push({
+        name: 'conversationdetail',
+        params: {
+          conversationId: addChatRes.data._id,
+        },
+      })
   }
 }
 </script>

@@ -1,8 +1,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted, nextTick, computed, inject } from 'vue'
-import { useRouter } from 'vue-router'
 import { useUserStore, useMessageStore } from '@/stores'
-import { getChatDetailApi, sendChatMessageApi, clearUnreadApi, addChatApi } from '@/api'
+import { getChatDetailApi, sendChatMessageApi, clearUnreadApi } from '@/api'
 import { formatTimeAccurately } from '@/utils'
 import NavBar from '@/components/NavBar.vue'
 
@@ -13,9 +12,6 @@ const props = defineProps({
   },
 })
 
-const addMessage = inject('addMessage')
-
-const router = useRouter()
 const userStore = useUserStore()
 const messageStore = useMessageStore()
 
@@ -25,10 +21,10 @@ const getChatDetail = async () => {
   const res = await getChatDetailApi(props.conversationId)
   console.log(res)
   interlocutor.value = res.data.interlocutor
-  messageList.value = addMessageTime(res.data.messages)
+  messageList.value = insertTimeToList(res.data.messages)
   console.log(messageList.value)
 }
-const addMessageTime = (messageList) => {
+const insertTimeToList = (messageList) => {
   const threshold = 5 * 60 * 1000
   const messagesWithTime = []
   for (let i = 0; i < messageList.length; i++) {
@@ -53,33 +49,9 @@ const addMessageTime = (messageList) => {
   return messagesWithTime
 }
 
-addMessage.value = (newMessage) => {
-  // 更新messageList
-  console.log('addMessage调用', newMessage)
-  if (
-    newMessage.created_at - messageList.value.at(-1).created_at > 5 * 60 * 1000 ||
-    messageList.value.length === 0
-  ) {
-    messageList.value.push({
-      isTimeLabel: true,
-      time: newMessage.created_at,
-    })
-  }
-  messageList.value.push(newMessage)
-  nextTick(() => {
-    scrollToBottom()
-  })
-}
-
 let resizeObserver = null
 onMounted(async () => {
-  if (props.conversationId !== '0') {
-    await getChatDetail()
-  } else {
-    // console.log(route.query.interlocutor)
-    interlocutor.value.user_nickname = messageStore.temporaryChatInfo.user_nickname
-  }
-
+  await getChatDetail()
   nextTick(() => {
     scrollToBottom()
   })
@@ -91,20 +63,19 @@ onMounted(async () => {
   // 开始观察 .message-list
   resizeObserver.observe(messageListRef.value)
 })
+
 onUnmounted(async () => {
-  if (props.conversationId !== '0') {
-    // 前端更新
-    messageStore.clearChatUnread(props.conversationId)
-    // 后端更新
-    await clearUnreadApi('chat', props.conversationId)
-  }
+  // 前端更新
+  messageStore.clearChatUnread(props.conversationId)
+  // 后端更新
+  await clearUnreadApi('chat', props.conversationId)
 
   // 停止观察 .message-list
   if (resizeObserver && messageListRef.value) {
     resizeObserver.unobserve(messageListRef.value)
   }
 
-  addMessage.value = null
+  pushMessageToList.value = null
 })
 
 const messageListRef = ref(null)
@@ -114,69 +85,49 @@ const scrollToBottom = () => {
   }
 }
 
-const sendMessage = ref('')
-const handleSend = async () => {
-  if (props.conversationId !== '0') {
-    const res = await sendChatMessageApi(interlocutor.value._id, props.conversationId, sendMessage.value)
-    console.log(res)
-    if (res.status === 200) {
-      if (res.data.created_at - messageList.value.at(-1).created_at > 5 * 60 * 1000) {
-        messageList.value.push({
-          isTimeLabel: true,
-          time: res.data.created_at,
-        })
-      }
-      messageList.value.push(res.data)
-      sendMessage.value = ''
-      nextTick(() => {
-        scrollToBottom()
-      })
-    }
-  } else {
-    // 新建对话
-    const addChatRes = await addChatApi(messageStore.temporaryChatInfo._id)
-    console.log(addChatRes)
-    // 新增对话消息
-    const addChatMsgRes = await sendChatMessageApi(
-      messageStore.temporaryChatInfo._id,
-      addChatRes.data._id,
-      sendMessage.value
-    )
-    console.log(addChatMsgRes)
-    // 前端更新视图
-    // 消息列表更新
-    if (addChatMsgRes.status === 200) {
-      messageList.value.push(addChatMsgRes.data)
-      sendMessage.value = ''
-      nextTick(() => {
-        scrollToBottom()
-      })
-    }
-    // 对话列表更新
-    if (messageStore.notifyList) {
-      messageStore.chatList.push({
-        _id: addChatRes.data._id,
-        interlocutor: addChatRes.data.participants.find((item) => {
-          return item.user._id !== userStore.userInfo._id
-        }).user,
-        last_message: addChatMsgRes.data,
-        unread_count: 0,
-      })
-    }
-    // 路由更改
-    router.replace({
-      name: 'conversationdetail',
-      params: {
-        conversationId: addChatRes.data._id,
-      },
+const pushMessageToList = inject('pushMessageToList')
+const insertTimeOnPush = (message) => {
+  if (
+    messageList.value.length === 0 ||
+    (messageList.value.length !== 0 &&
+      message.created_at - messageList.value.at(-1).created_at > 5 * 60 * 1000)
+  ) {
+    messageList.value.push({
+      isTimeLabel: true,
+      time: message.created_at,
     })
-
-    interlocutor.value = messageStore.temporaryChatInfo
   }
 }
+pushMessageToList.value = (newMessage) => {
+  console.log('pushMessageToList调用', newMessage)
+  insertTimeOnPush(newMessage)
+  messageList.value.push(newMessage)
+  nextTick(() => {
+    scrollToBottom()
+  })
+}
+
+const sendMessage = ref('')
 const isSendDisabled = computed(() => {
   return sendMessage.value === ''
 })
+const handleSend = async () => {
+  const res = await sendChatMessageApi(interlocutor.value._id, props.conversationId, sendMessage.value)
+  console.log(res)
+  if (res.status === 200) {
+    sendMessage.value = ''
+    // 消息列表更新
+    pushMessageToList.value(res.data)
+    // 对话列表更新
+    messageStore.notifyList &&
+      messageStore.upChat({
+        _id: res.data.related_entity,
+        interlocutor: res.data.receiver,
+        last_message: res.data,
+        unread_count: 0,
+      })
+  }
+}
 </script>
 <template>
   <NavBar :title="interlocutor.user_nickname || ''" />

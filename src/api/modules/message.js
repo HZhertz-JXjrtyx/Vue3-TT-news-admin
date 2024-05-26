@@ -59,6 +59,16 @@ export const addChatApi = (interlocutor) => {
     },
   })
 }
+// 删除对话项
+export const deleteChatApi = (conversationId) => {
+  return instance({
+    method: 'DELETE',
+    url: '/message/chat/list',
+    params: {
+      conversationId,
+    },
+  })
+}
 
 // 获取对话消息内容
 export const getChatDetailApi = (conversationId) => {
