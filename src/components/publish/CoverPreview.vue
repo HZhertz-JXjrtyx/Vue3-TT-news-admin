@@ -43,7 +43,7 @@ const handleSelectImage = () => {
 <template>
   <div class="cover-preview">
     <div v-if="!dataUrl" class="preview--no-img" @click="handleSelectImage">
-      <span class="iconfont icon-cc-plus-crude"></span>
+      <span class="iconfont icon-plus"></span>
       <span class="text">添加封面图</span>
     </div>
     <div v-else class="preview--has-img">

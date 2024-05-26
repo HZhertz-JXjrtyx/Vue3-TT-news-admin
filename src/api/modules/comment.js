@@ -1,15 +1,15 @@
 import instance from '../request'
 
 // 获取评论列表
-// type:评论类型 1：文章评论 2：视频评论 3：评论回复
-// id：根据类型不同表示不同的id
-export const getCommentListApi = (type, id, page, size) => {
+// commentType:评论类型 1：文章评论 2：视频评论 3：评论回复 4: 回复回复
+// relatedEntity：根据类型不同表示不同的id
+export const getCommentListApi = (commentType, relatedEntity, page, size) => {
   return instance({
     method: 'GET',
     url: '/comment/list',
     params: {
-      type,
-      id,
+      commentType,
+      relatedEntity,
       page,
       size,
     },
@@ -17,17 +17,28 @@ export const getCommentListApi = (type, id, page, size) => {
 }
 
 // 新增评论
-// content:评论内容 pubTime:发布时间 replyId:如果是评论回复，回复的用户的id
-export const addCommentApi = (type, id, content, replyId = 0, pubTime = ~~(Date.now() / 1000)) => {
+export const addCommentApi = (
+  commentType,
+  replyUser = '',
+  content,
+  createdTime = Date.now(),
+  parentComment = '',
+  relatedEntity,
+  relatedWork,
+  workType
+) => {
   return instance({
     method: 'POST',
     url: '/comment/add',
     data: {
-      type,
-      id,
+      commentType,
+      replyUser,
       content,
-      replyId,
-      pubTime,
+      createdTime,
+      parentComment,
+      relatedEntity,
+      relatedWork,
+      workType,
     },
   })
 }
@@ -45,14 +56,14 @@ export const likeCommentApi = (commentId, type) => {
 }
 
 // 删除评论
-export const deleteCommentApi = (commentId, type, sourceId) => {
+export const deleteCommentApi = (commentId, commentType, relatedId) => {
   return instance({
     method: 'DELETE',
     url: '/comment/delete',
     data: {
       commentId,
-      type,
-      sourceId,
+      commentType,
+      relatedId,
     },
   })
 }

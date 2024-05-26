@@ -1,16 +1,17 @@
 <script setup>
-import { ref, onMounted, provide } from 'vue'
+import { ref, onMounted } from 'vue'
+import { onBeforeRouteLeave } from 'vue-router'
 import { debounce } from 'lodash'
 // 使用 Plyr 视频组件
 import Plyr from 'plyr'
 import 'plyr/dist/plyr.css'
-import { useUserStore } from '@/stores'
+import { useUserStore, useCommentStore } from '@/stores'
 import { getVideoInfoApi, collectVideoApi, likeVideoApi, addUserBrowseApi } from '@/api'
 import NavBar from '@/components/NavBar.vue'
-import UserInfo from '@/components/user/UserInfo.vue'
-import UserInfoSkt from '@/components/user/UserInfoSkt.vue'
+import UserItem from '@/components/user/UserItem.vue'
 import CommentList from '@/components/comment/CommentList.vue'
-import DetailBottom from '@/components/DetailBottom.vue'
+import CommentBar from '@/components/CommentBar.vue'
+import CommentDetail from '@/components/comment/CommentDetail.vue'
 
 const props = defineProps({
   videoId: {
@@ -20,17 +21,7 @@ const props = defineProps({
 })
 
 const userStore = useUserStore()
-
-const commentCount = ref(0)
-provide('commentCount', commentCount)
-const commentList = ref([])
-provide('commentList', commentList)
-const isShowTextarea = ref(false)
-provide('isShowTextarea', isShowTextarea)
-const isLike = ref(false)
-provide('isLike', isLike)
-const isCollected = ref(false)
-provide('isCollected', isCollected)
+const commentStore = useCommentStore()
 
 // Plyr 视频组件
 const videoPlayer = ref(null)
@@ -54,6 +45,8 @@ const addUserBrowse = async () => {
 
 /* 获取视频详情 */
 const videoInfo = ref({})
+const isLikeVideo = ref(false)
+const isCollectVideo = ref(false)
 const isLoading = ref(true)
 const getVideoInfo = async () => {
   const res = await getVideoInfoApi(props.videoId)
@@ -61,33 +54,37 @@ const getVideoInfo = async () => {
   videoInfo.value = res.data
   // 视频封面
   player.poster = res.data.cover_src
-  commentCount.value = res.data.comment_count
-  isCollected.value = res.data.is_collected
-  isLike.value = res.data.is_liked
+  isCollectVideo.value = res.data.is_collected
+  isLikeVideo.value = res.data.is_liked
   isLoading.value = false
 }
 
-onMounted(() => {
-  getVideoInfo()
-  userStore.token && addUserBrowse()
+onMounted(async () => {
+  await getVideoInfo()
+  commentStore.commentCount = videoInfo.value.comment_count
+  commentStore.replyUser = videoInfo.value.user_info._id
+  commentStore.relatedId = videoInfo.value._id
+  commentStore.relatedWork = videoInfo.value._id
+  commentStore.workModel = 'Video'
+  userStore.token && (await addUserBrowse())
 })
 
 /* 收藏视频 */
 const collectVideo = async () => {
-  await collectVideoApi(videoInfo.value.video_id, isCollected.value)
+  await collectVideoApi(videoInfo.value._id, isCollectVideo.value)
 }
 const debouncedCollectVideo = debounce(collectVideo, 500)
 const handleClickCollect = () => {
-  isCollected.value = !isCollected.value
+  isCollectVideo.value = !isCollectVideo.value
   debouncedCollectVideo()
 }
 /* 点赞视频 */
 const likeVideo = async () => {
-  await likeVideoApi(videoInfo.value.video_id, isLike.value)
+  await likeVideoApi(videoInfo.value._id, isLikeVideo.value)
 }
 const debouncedLikeVideo = debounce(likeVideo, 500)
 const handleClickLike = () => {
-  isLike.value = !isLike.value
+  isLikeVideo.value = !isLikeVideo.value
   debouncedLikeVideo()
 }
 
@@ -98,6 +95,11 @@ const scrollToComment = () => {
   const isInViewPort = rect.top >= 0 && rect.top <= window.innerHeight
   !isInViewPort && commentSection.value.scrollIntoView({ behavior: 'smooth' })
 }
+
+onBeforeRouteLeave(() => {
+  commentStore.commentList = []
+  commentStore.commentReplyList = []
+})
 </script>
 
 <template>
@@ -105,8 +107,13 @@ const scrollToComment = () => {
     <NavBar title="视频详情" />
 
     <div class="video">
-      <UserInfo v-if="!isLoading" :userInfo="videoInfo.user_info" :publishTime="videoInfo.publish_time" />
-      <UserInfoSkt v-if="isLoading" />
+      <UserItem
+        v-if="!isLoading"
+        :userInfo="videoInfo.user_info"
+        :showTime="true"
+        :time="videoInfo.publish_time"
+      />
+
       <h1 class="title">{{ videoInfo.title }}</h1>
       <p class="description">{{ videoInfo.description }}</p>
       <video ref="videoPlayer">
@@ -116,21 +123,27 @@ const scrollToComment = () => {
     <div class="divider"></div>
     <div class="comment" ref="commentSection">
       <div class="comment-header">
-        <div class="title">评论{{ commentCount }}</div>
+        <div class="title">评论{{ commentStore.commentCount }}</div>
       </div>
-      <CommentList :type="2" :sourceId="videoId" />
+      <CommentList :commentType="2" :relatedId="videoId" />
     </div>
 
     <van-back-top right="28px" bottom="80px" />
-    <DetailBottom
+    <CommentBar
       v-if="!isLoading"
-      :sourceType="2"
-      :sourceId="props.videoId"
+      :commentType="2"
+      :relatedId="videoId"
+      :replyUser="videoInfo.user_info._id"
+      :isLike="isLikeVideo"
+      :isCollect="isCollectVideo"
       @clickLike="handleClickLike"
       @clickCollect="handleClickCollect"
       @scrollTo="scrollToComment"
     />
   </div>
+  <van-popup v-model:show="commentStore.isShowCommentDetail" position="bottom" :style="{ height: '100%' }">
+    <CommentDetail />
+  </van-popup>
 </template>
 
 <style lang="less" scoped>

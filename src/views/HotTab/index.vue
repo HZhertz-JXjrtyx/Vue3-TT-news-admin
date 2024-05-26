@@ -28,13 +28,13 @@ onMounted(() => {
                 ? {
                     name: 'articledetail',
                     params: {
-                      articleId: item.ArticleId,
+                      articleId: item.related_id,
                     },
                   }
                 : {
                     name: 'videodetail',
                     params: {
-                      videoId: item.VideoId,
+                      videoId: item.related_id,
                     },
                   }
             "

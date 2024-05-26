@@ -20,10 +20,8 @@ const publishStore = usePublishStore()
 // 选择封面类型
 publishStore.coverType = props.publishType === 'article' ? 'image_none' : 'image_large|video'
 const changeCoverType = (e) => {
-  console.dir(e.target, e.target.innerText)
   if (props.publishType === 'article') {
     if (e.target.tagName === 'SPAN') {
-      console.log('e.target.getAttribute(data-ui)', e.target.getAttribute('data-ui'))
       publishStore.coverType = e.target.getAttribute('data-ui')
     }
   }
@@ -31,7 +29,7 @@ const changeCoverType = (e) => {
 
 // 封面文件列表
 const afterRead = (file, index) => {
-  console.log(file, index)
+  // console.log(file, index)
   publishStore.articleCoverFileList[index] = file
 }
 
@@ -77,7 +75,7 @@ watch(
         } else if (publishStore.coverType === 'image_right') {
           publishBtnDisabled.value = !publishStore.articleCoverFileList[0]
         } else if (publishStore.coverType === 'image_list') {
-          console.log(Object.keys(publishStore.articleCoverFileList).length !== 3)
+          // console.log(Object.keys(publishStore.articleCoverFileList).length !== 3)
           publishBtnDisabled.value = Object.keys(publishStore.articleCoverFileList).length !== 3
         }
       }
@@ -121,7 +119,7 @@ const handlePublishArticle = async () => {
     formData.append('folder', 'article_images')
     // 将所有图片添加到 FormData 对象中
     publishStore.articleImageFileList.forEach((fileObj) => {
-      console.log(fileObj)
+      // console.log(fileObj)
       formData.append('article_img', fileObj.file)
     })
     const res = await uploadArticleImgApi(formData)
@@ -136,7 +134,6 @@ const handlePublishArticle = async () => {
       publishStore.articleImageSrcList[index]
     )
   })
-  console.log(publishStore.articleContent)
 
   // 发布文章
   const res = await publishStore.publishArticle()
@@ -147,7 +144,6 @@ const handlePublishArticle = async () => {
 }
 // 发布视频
 const handlePublishVideo = async () => {
-  console.log('handlePublishVideo')
   // 上传视频
   const videoFormData = new FormData()
   videoFormData.append('folder', 'videos')

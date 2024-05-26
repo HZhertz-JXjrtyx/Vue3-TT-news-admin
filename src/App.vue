@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
+import useSocket from './composables/useSocket'
 import Tabbar from './components/tabbar/Tabbar.vue'
 
 const route = useRoute()
@@ -8,6 +9,8 @@ const route = useRoute()
 const isShowTabbar = computed(() => {
   return ['home', 'hot', 'message', 'user'].includes(route.name)
 })
+
+useSocket()
 </script>
 
 <template>

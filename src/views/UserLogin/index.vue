@@ -156,7 +156,7 @@ const switchRegister = () => {
           maxlength="16"
         >
           <template #left-icon>
-            <span class="iconfont icon-a-44tubiao-128"></span>
+            <span class="iconfont icon-user"></span>
           </template>
         </van-field>
         <van-field
@@ -167,7 +167,7 @@ const switchRegister = () => {
           maxlength="20"
         >
           <template #left-icon>
-            <span class="iconfont icon-a-44tubiao-33"></span>
+            <span class="iconfont icon-lock"></span>
           </template>
         </van-field>
         <div class="submit-btn-wrap">
@@ -188,7 +188,7 @@ const switchRegister = () => {
           center
         >
           <template #left-icon>
-            <span class="iconfont icon-a-44tubiao-128"></span>
+            <span class="iconfont icon-user"></span>
           </template>
         </van-field>
         <van-field
@@ -201,7 +201,7 @@ const switchRegister = () => {
           center
         >
           <template #left-icon>
-            <span class="iconfont icon-a-44tubiao-33"></span>
+            <span class="iconfont icon-lock"></span>
           </template>
         </van-field>
         <van-field
@@ -214,7 +214,7 @@ const switchRegister = () => {
           center
         >
           <template #left-icon>
-            <span class="iconfont icon-a-44tubiao-33"></span>
+            <span class="iconfont icon-lock"></span>
           </template>
         </van-field>
 
@@ -227,7 +227,7 @@ const switchRegister = () => {
           center
         >
           <template #left-icon>
-            <span class="iconfont icon-a-44tubiao-118"></span>
+            <span class="iconfont icon-email"></span>
           </template>
         </van-field>
 
@@ -242,7 +242,7 @@ const switchRegister = () => {
           center
         >
           <template #left-icon>
-            <span class="iconfont icon-a-44tubiao-114"></span>
+            <span class="iconfont icon-security"></span>
           </template>
           <template #button>
             <van-count-down

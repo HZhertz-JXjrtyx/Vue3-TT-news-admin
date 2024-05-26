@@ -1,5 +1,3 @@
-import dayjs from 'dayjs'
-
 export function formatCount(count) {
   if (count > 10000) {
     return (count / 10000).toFixed(1) + '万'
@@ -14,18 +12,10 @@ export function formatVideoDuration(value) {
   return minutes + ':' + (seconds < 10 ? '0' : '') + seconds
 }
 
-export function convertToMMDDHHmm(value, hasY = false) {
-  let date = dayjs.unix(value)
-  if (hasY) {
-    return date.format('YY-MM-DD HH:mm')
-  }
-  return date.format('MM-DD HH:mm')
-}
-
-export function formatPublishTime(publish_time) {
+export function formatTimeRoughly(timestamp) {
   const now = new Date()
-  const publishDate = new Date(publish_time * 1000) // 将时间戳转换为毫秒
-  const diffTime = Math.abs(now - publishDate)
+  const date = new Date(timestamp)
+  const diffTime = Math.abs(now - date)
   const diffMinutes = Math.floor(diffTime / (1000 * 60))
   const diffHours = Math.floor(diffTime / (1000 * 60 * 60))
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
@@ -37,14 +27,36 @@ export function formatPublishTime(publish_time) {
   } else if (diffHours < 24) {
     return diffHours + '小时前'
   } else if (diffDays === 2) {
-    return '昨天' + publishDate.getHours() + ':' + publishDate.getMinutes()
+    return '昨天' + date.getHours() + ':' + date.getMinutes()
   } else if (diffDays === 3) {
-    return '前天' + publishDate.getHours() + ':' + publishDate.getMinutes()
+    return '前天' + date.getHours() + ':' + date.getMinutes()
   } else if (diffDays <= 10) {
     return diffDays + '天前'
-  } else if (publishDate.getFullYear() === now.getFullYear()) {
-    return publishDate.getMonth() + 1 + '月' + publishDate.getDate() + '日'
+  } else if (date.getFullYear() === now.getFullYear()) {
+    return date.getMonth() + 1 + '月' + date.getDate() + '日'
   } else {
-    return publishDate.getFullYear() + '年' + (publishDate.getMonth() + 1) + '月'
+    return date.getFullYear() + '年' + (date.getMonth() + 1) + '月'
+  }
+}
+
+export function formatTimeAccurately(timestamp) {
+  const now = new Date()
+  const date = new Date(timestamp)
+
+  const isSameDay = now.toDateString() === date.toDateString()
+  const isSameYear = now.getFullYear() === date.getFullYear()
+
+  const zeroPad = (num) => String(num).padStart(2, '0')
+
+  const hhmm = `${zeroPad(date.getHours())}:${zeroPad(date.getMinutes())}`
+  const mmdd = `${zeroPad(date.getMonth() + 1)}-${zeroPad(date.getDate())} ${hhmm}`
+  const yyyymmdd = `${date.getFullYear()}-${mmdd}`
+
+  if (isSameDay) {
+    return hhmm
+  } else if (isSameYear) {
+    return mmdd
+  } else {
+    return yyyymmdd
   }
 }

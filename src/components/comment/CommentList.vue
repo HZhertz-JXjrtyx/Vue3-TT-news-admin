@@ -1,64 +1,79 @@
 <script setup>
-import { ref, inject } from 'vue'
+import { ref } from 'vue'
 import { getCommentListApi } from '@/api'
+import { useCommentStore } from '@/stores'
 import CommentItem from './CommentItem.vue'
 
 const props = defineProps({
-  type: {
+  commentType: {
     type: Number,
     required: true,
   },
-  sourceId: {
+  relatedId: {
     type: String,
     required: true,
   },
 })
 
-const commentList = inject('commentList')
+const commentStore = useCommentStore()
 
 const page = ref(1)
 const pageSize = ref(10)
+
 const loading = ref(false)
 const hasMore = ref(true)
+const finished = ref(false)
 
 const getCommentList = async () => {
-  const res = await getCommentListApi(props.type, props.sourceId, page.value, pageSize.value)
-  console.log('评论列表', res)
+  const res = await getCommentListApi(props.commentType, props.relatedId, page.value, pageSize.value)
+  console.log(res)
   if (res.data.length < pageSize.value) {
     hasMore.value = false
   }
-  commentList.value = commentList.value.concat(res.data)
-  loading.value = false
+  if ([1, 2].includes(props.commentType)) {
+    commentStore.commentList = commentStore.commentList.concat(res.data)
+  } else {
+    commentStore.commentReplyList = commentStore.commentReplyList.concat(res.data)
+  }
 }
 
-const finished = ref(false)
 const onLoad = async () => {
   // console.log('hasMore.value', hasMore.value)
   if (hasMore.value) {
     loading.value = true
-    getCommentList()
+    await getCommentList()
+    loading.value = false
     page.value++
   } else {
     finished.value = true
   }
 }
 
-const updCommentlist = (commentId) => {
-  commentList.value = commentList.value.filter((item) => {
-    return item.comment_id !== commentId
-  })
-}
+defineExpose({
+  page,
+  getCommentList,
+})
 </script>
 
 <template>
   <div class="comment-list">
-    <van-list v-model:loading="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-      <CommentItem
-        v-for="item in commentList"
-        :key="item.comment_id"
-        :comment="item"
-        @updCommentlist="updCommentlist"
-      />
+    <van-list
+      v-if="[1, 2].includes(commentType)"
+      v-model:loading="loading"
+      :finished="finished"
+      finished-text="没有更多了"
+      @load="onLoad"
+    >
+      <template #loading>
+        <img class="loading-gif-2" src="@/assets/image/loading2.gif" />
+      </template>
+      <CommentItem v-for="item in commentStore.commentList" :key="item._id" :comment="item" />
+    </van-list>
+    <van-list v-else v-model:loading="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+      <template #loading>
+        <img class="loading-gif-2" src="@/assets/image/loading2.gif" />
+      </template>
+      <CommentItem v-for="item in commentStore.commentReplyList" :key="item._id" :comment="item" />
     </van-list>
   </div>
 </template>
