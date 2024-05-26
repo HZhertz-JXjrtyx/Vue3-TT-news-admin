@@ -134,7 +134,7 @@ onDeactivated(() => {
       @open="handleOpen"
       @close="handleClose"
     >
-      <ChannelEdit @switch-channel="onSwitchChannel"></ChannelEdit>
+      <ChannelEdit :active="active" @switch-channel="onSwitchChannel" />
     </van-popup>
   </div>
 </template>
