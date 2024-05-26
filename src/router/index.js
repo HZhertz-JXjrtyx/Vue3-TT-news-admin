@@ -12,8 +12,8 @@ import PublishVideo from '@/views/PublishVideo'
 import SearchDetail from '@/views/SearchDetail'
 import ArticleDetail from '@/views/ArticleDetail'
 import VideoDetail from '@/views/VideoDetail'
-import CommentDetail from '@/views/CommentDetail'
-import MessageDetail from '@/views/MessageDetail'
+import NoticeDetail from '@/views/NoticeDetail'
+import ConversationDetail from '@/views/ConversationDetail'
 import UserLogin from '@/views/UserLogin'
 import UserSpace from '@/views/UserSpace'
 import UserFollows from '@/views/UserFollows'
@@ -43,6 +43,9 @@ const router = createRouter({
       path: '/message',
       name: 'message',
       component: MessageTab,
+      meta: {
+        keepAlive: true,
+      },
     },
     {
       path: '/user',
@@ -78,16 +81,22 @@ const router = createRouter({
       props: true,
     },
     {
-      path: '/comment/detail/:commentId',
-      name: 'commentdetail',
-      component: CommentDetail,
+      path: '/notice/detail/:noticeType',
+      name: 'noticedetail',
+      component: NoticeDetail,
       props: true,
+      meta: {
+        requiresAuth: true,
+      },
     },
     {
-      path: '/message/detail/:messageId',
-      name: 'messagedetail',
-      component: MessageDetail,
+      path: '/conversation/detail/:conversationId',
+      name: 'conversationdetail',
+      component: ConversationDetail,
       props: true,
+      meta: {
+        requiresAuth: true,
+      },
     },
     {
       path: '/user/login',
@@ -160,11 +169,9 @@ router.beforeEach((to, from, next) => {
   } else {
     // 如果用户已登录，或者该路由不需要登录，继续跳转
     // 转换参数为 Number 类型
-
     if (to.params.userId) {
       to.params.userId = Number(to.params.userId)
     }
-
     next()
   }
 })

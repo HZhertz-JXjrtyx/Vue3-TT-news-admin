@@ -2,8 +2,17 @@
 import draggable from 'vuedraggable'
 import { useChannelStore } from '@/stores'
 
+defineProps({
+  active: {
+    type: Number,
+    required: true,
+  },
+})
+
 const emit = defineEmits(['switch-channel'])
+
 const channelStore = useChannelStore()
+
 const checkMove = (evt) => {
   if (evt.draggedContext.element.id === 0) {
     return false
@@ -30,7 +39,7 @@ const switchChannel = (element) => {
         itemKey="id"
       >
         <template #item="{ element }">
-          <div class="item container" @click="switchChannel(element)">
+          <div class="item" :class="{ active: active === element.id }" @click="switchChannel(element)">
             {{ element.name }}
           </div>
         </template>
@@ -47,7 +56,7 @@ const switchChannel = (element) => {
         itemKey="id"
       >
         <template #item="{ element }">
-          <div class="item container">{{ element.name }}</div>
+          <div class="item">{{ element.name }}</div>
         </template>
       </draggable>
     </div>
@@ -73,10 +82,18 @@ const switchChannel = (element) => {
 }
 
 .item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 140px;
   height: 80px;
   margin: 20px;
-  border: 4px solid var(--main-color-red-1);
+  color: #535353;
+  border: 3px solid #535353;
   border-radius: 10px;
+}
+.active {
+  border: 4px solid var(--main-color-red-2);
+  color: var(--main-color-red-2);
 }
 </style>

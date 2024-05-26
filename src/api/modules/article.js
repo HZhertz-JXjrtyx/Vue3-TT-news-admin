@@ -58,9 +58,8 @@ export const publishArticleApi = (
   coverImage,
   articleImage,
   uiStyle,
-  publishTime = ~~(Date.now() / 1000)
+  publishTime = Date.now()
 ) => {
-  console.log(channelId, title, content, coverImage, articleImage, uiStyle, publishTime)
   return instance({
     method: 'POST',
     url: '/article/publish',

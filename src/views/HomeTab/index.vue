@@ -76,7 +76,7 @@ const scrollTo = () => {
 
 const scrollContainers = ref({})
 onMounted(() => {
-  console.log('onMounted')
+  console.log('HomeTab onMounted')
   sessionStorage.removeItem('scrollPositions')
   scrollPositions.value = {}
   list.value.forEach((item) => {
@@ -89,12 +89,12 @@ const handleChange = (name, title) => {
 }
 
 onActivated(() => {
-  console.log('组件被重新激活')
+  console.log('HomeTab组件被重新激活')
   scrollTo()
 })
 
 onDeactivated(() => {
-  console.log('组件被缓存')
+  console.log('HomeTab组件被缓存')
 })
 </script>
 
@@ -113,18 +113,13 @@ onDeactivated(() => {
       @change="handleChange"
     >
       <van-tab v-for="item in list" :key="item.id" :name="item.id" :title="item.name">
-        <div
-          class="scroll-container"
-          :ref="(el) => (scrollContainers[item.id] = el)"
-          @scroll="handleScroll"
-          style="height: calc(100vh - 100px); overflow: auto"
-        >
+        <div class="scroll-container" :ref="(el) => (scrollContainers[item.id] = el)" @scroll="handleScroll">
           <NewsList :channelId="item.channel_id" :channelName="item.name"></NewsList>
         </div>
       </van-tab>
 
       <template #nav-bottom>
-        <span @click="isChannelEditShow = true" class="iconfont icon-a-44tubiao-93 container"></span>
+        <span @click="isChannelEditShow = true" class="iconfont icon-filtrate"></span>
       </template>
     </van-tabs>
 
@@ -139,13 +134,20 @@ onDeactivated(() => {
       @open="handleOpen"
       @close="handleClose"
     >
-      <ChannelEdit @switch-channel="onSwitchChannel"></ChannelEdit>
+      <ChannelEdit :active="active" @switch-channel="onSwitchChannel" />
     </van-popup>
   </div>
 </template>
 
 <style lang="less" scoped>
-.icon-a-44tubiao-93 {
+.scroll-container {
+  height: calc(100vh - 300px);
+  overflow: auto;
+}
+.icon-filtrate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: absolute;
   top: 0;
   right: 0;

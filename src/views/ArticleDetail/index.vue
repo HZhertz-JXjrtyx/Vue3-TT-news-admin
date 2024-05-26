@@ -1,14 +1,15 @@
 <script setup>
-import { ref, onMounted, provide } from 'vue'
+import { ref, onMounted } from 'vue'
+import { onBeforeRouteLeave } from 'vue-router'
 import { debounce } from 'lodash'
-import { useUserStore } from '@/stores'
+import { useUserStore, useCommentStore } from '@/stores'
 import { getArticleInfoApi, collectArticleApi, likeArticleApi, addUserBrowseApi } from '@/api'
 import '@/styles/github-markdown-light.less'
 import NavBar from '@/components/NavBar.vue'
-import UserInfo from '@/components/user/UserInfo.vue'
-import UserInfoSkt from '@/components/user/UserInfoSkt.vue'
+import UserItem from '@/components/user/UserItem.vue'
 import CommentList from '@/components/comment/CommentList.vue'
-import DetailBottom from '@/components/DetailBottom.vue'
+import CommentBar from '@/components/CommentBar.vue'
+import CommentDetail from '@/components/comment/CommentDetail.vue'
 
 const props = defineProps({
   articleId: {
@@ -18,17 +19,7 @@ const props = defineProps({
 })
 
 const userStore = useUserStore()
-
-const commentCount = ref(0)
-provide('commentCount', commentCount)
-const commentList = ref([])
-provide('commentList', commentList)
-const isShowTextarea = ref(false)
-provide('isShowTextarea', isShowTextarea)
-const isLike = ref(false)
-provide('isLike', isLike)
-const isCollected = ref(false)
-provide('isCollected', isCollected)
+const commentStore = useCommentStore()
 
 /* 新增浏览历史 */
 const addUserBrowse = async () => {
@@ -37,38 +28,44 @@ const addUserBrowse = async () => {
 
 /* 获取文章详情 */
 const articleInfo = ref({})
+const isLikeArticle = ref(false)
+const isCollectArticle = ref(false)
 const isLoading = ref(true)
 const getArticleInfo = async () => {
   const res = await getArticleInfoApi(props.articleId)
   console.log(res)
   articleInfo.value = res.data
-  commentCount.value = res.data.comment_count
-  isCollected.value = res.data.is_collected
-  isLike.value = res.data.is_liked
+  isLikeArticle.value = res.data.is_liked
+  isCollectArticle.value = res.data.is_collected
   isLoading.value = false
 }
 
-onMounted(() => {
-  getArticleInfo()
-  userStore.token && addUserBrowse()
+onMounted(async () => {
+  await getArticleInfo()
+  commentStore.commentCount = articleInfo.value.comment_count
+  commentStore.replyUser = articleInfo.value.user_info._id
+  commentStore.relatedId = articleInfo.value._id
+  commentStore.relatedWork = articleInfo.value._id
+  commentStore.workModel = 'Article'
+  userStore.token && (await addUserBrowse())
 })
 
 /* 收藏文章 */
 const collectArticle = async () => {
-  await collectArticleApi(articleInfo.value.article_id, isCollected.value)
+  await collectArticleApi(articleInfo.value._id, isCollectArticle.value)
 }
 const debouncedCollectArticle = debounce(collectArticle, 500)
 const handleClickCollect = () => {
-  isCollected.value = !isCollected.value
+  isCollectArticle.value = !isCollectArticle.value
   debouncedCollectArticle()
 }
 /* 点赞文章 */
 const likeArticle = async () => {
-  await likeArticleApi(articleInfo.value.article_id, isLike.value)
+  await likeArticleApi(articleInfo.value._id, isLikeArticle.value)
 }
 const debouncedLikeArticle = debounce(likeArticle, 500)
 const handleClickLike = () => {
-  isLike.value = !isLike.value
+  isLikeArticle.value = !isLikeArticle.value
   debouncedLikeArticle()
 }
 
@@ -79,65 +76,70 @@ const scrollToComment = () => {
   const isInViewPort = rect.top >= 0 && rect.top <= window.innerHeight
   !isInViewPort && commentSection.value.scrollIntoView({ behavior: 'smooth' })
 }
+onBeforeRouteLeave(() => {
+  commentStore.commentList = []
+  commentStore.commentReplyList = []
+})
 </script>
 
 <template>
   <div class="article-detail">
     <NavBar title="文章详情" />
+    <h1 class="article-title">{{ articleInfo.title }}</h1>
+    <UserItem
+      v-if="!isLoading"
+      :userInfo="articleInfo.user_info"
+      :showTime="true"
+      :time="articleInfo.publish_time"
+    />
+    <div class="article-content markdown-body" v-html="articleInfo.content || ''"></div>
 
-    <div class="article">
-      <h1 class="title">{{ articleInfo.title }}</h1>
-      <UserInfo v-if="!isLoading" :userInfo="articleInfo.user_info" :publishTime="articleInfo.publish_time" />
-      <UserInfoSkt v-if="isLoading" />
-      <div class="article-content markdown-body" v-html="articleInfo.content || ''"></div>
-    </div>
     <div class="divider"></div>
     <div class="comment" ref="commentSection">
       <div class="comment-header">
-        <div class="title">评论{{ commentCount }}</div>
+        <div class="title">评论{{ commentStore.commentCount }}</div>
       </div>
-      <CommentList :type="1" :sourceId="articleId" />
+      <CommentList :commentType="1" :relatedId="articleId" />
     </div>
-
-    <van-back-top right="28px" bottom="80px" />
-    <DetailBottom
+    <van-back-top right="6vw" bottom="16vw" />
+    <CommentBar
       v-if="!isLoading"
-      :sourceType="1"
-      :sourceId="props.articleId"
+      :commentType="1"
+      :relatedId="articleId"
+      :replyUser="articleInfo.user_info._id"
+      :isLike="isLikeArticle"
+      :isCollect="isCollectArticle"
       @clickLike="handleClickLike"
       @clickCollect="handleClickCollect"
       @scrollTo="scrollToComment"
     />
   </div>
+  <van-popup v-model:show="commentStore.isShowCommentDetail" position="bottom" :style="{ height: '100%' }">
+    <CommentDetail />
+  </van-popup>
 </template>
 
 <style lang="less" scoped>
-.article {
-  margin: 20px 20px 100px;
-
-  .title {
-    margin-bottom: 20px;
-    font-size: 42px;
-  }
+.article-title {
+  margin: 20px;
+  font-size: 42px;
+}
+.article-content {
+  margin: 20px;
 }
 
 .divider {
-  width: 750px;
+  width: 100%;
   height: 12px;
-  margin: 0;
   background-color: var(--bg-color-3);
 }
 
 .comment {
-  margin: 20px 20px 160px;
-  padding-top: 100px;
-
+  margin: 20px 20px 120px;
   .comment-header {
     border-bottom: 1px solid var(--bg-color-3);
-
     .title {
       display: inline-block;
-
       height: 60px;
       color: var(--main-color-red-1);
       border-bottom: 2px solid var(--main-color-red-1);

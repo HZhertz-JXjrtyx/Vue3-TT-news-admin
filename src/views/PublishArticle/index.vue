@@ -116,7 +116,7 @@ const handleNext = async () => {
   // }
   // console.log(quill.root.innerHTML)
   publishStore.quillContent = quill.root.innerHTML
-  console.log('publishStore.quillContent', publishStore.quillContent)
+  // console.log('publishStore.quillContent', publishStore.quillContent)
   showPopup.value = true
 }
 </script>

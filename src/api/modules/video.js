@@ -59,9 +59,8 @@ export const publishVideoApi = (
   coverImage,
   duration,
   uiStyle,
-  publishTime = ~~(Date.now() / 1000)
+  publishTime = Date.now()
 ) => {
-  console.log(channelId, title, intro, video, coverImage, duration, uiStyle, publishTime)
   return instance({
     method: 'POST',
     url: '/video/publish',

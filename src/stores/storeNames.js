@@ -4,4 +4,5 @@ export default {
   NEWS: 'NEWS',
   COMMENT: 'COMMENT',
   PUBLISH: 'PUBLISH',
+  MESSAGE: 'MESSAGE',
 }

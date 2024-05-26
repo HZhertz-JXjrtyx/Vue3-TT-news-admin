@@ -105,7 +105,7 @@ const changePwdSubmit = async () => {
       center
     >
       <template #left-icon>
-        <span class="iconfont icon-a-44tubiao-33"></span>
+        <span class="iconfont icon-lock"></span>
       </template>
     </van-field>
     <van-field
@@ -118,7 +118,7 @@ const changePwdSubmit = async () => {
       center
     >
       <template #left-icon>
-        <span class="iconfont icon-a-44tubiao-33"></span>
+        <span class="iconfont icon-lock"></span>
       </template>
     </van-field>
     <van-field
@@ -131,7 +131,7 @@ const changePwdSubmit = async () => {
       center
     >
       <template #left-icon>
-        <span class="iconfont icon-a-44tubiao-33"></span>
+        <span class="iconfont icon-lock"></span>
       </template>
     </van-field>
 
@@ -146,7 +146,7 @@ const changePwdSubmit = async () => {
       center
     >
       <template #left-icon>
-        <span class="iconfont icon-a-44tubiao-114"></span>
+        <span class="iconfont icon-security"></span>
       </template>
       <template #button>
         <van-count-down v-if="isCountDownShow" @finish="isCountDownShow = false" :time="time" format="ss s" />

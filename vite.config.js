@@ -25,6 +25,15 @@ const quill_pxtovw = pxtovw({
 })
 
 export default defineConfig({
+  server: {
+    proxy: {
+      '/socket.io': {
+        target: 'http://127.0.0.1:3007',
+        changeOrigin: true,
+        ws: true, // 启用WebSocket代理
+      },
+    },
+  },
   plugins: [
     vue({
       template: {

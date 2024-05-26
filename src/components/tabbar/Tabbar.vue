@@ -1,11 +1,21 @@
 <script setup>
-import { ref } from 'vue'
-import { useUserStore } from '@/stores'
+import { ref, onMounted } from 'vue'
+import { useUserStore, useMessageStore } from '@/stores'
+
 import LoadIcon from './LoadIcon.vue'
 
 const userStore = useUserStore()
+const messageStore = useMessageStore()
 
 const showPublishType = ref(false)
+
+onMounted(() => {
+  if (userStore.token) {
+    messageStore.getTotalUnreadCount()
+  } else {
+    messageStore.initialize()
+  }
+})
 </script>
 <template>
   <div class="tabbar">
@@ -27,15 +37,17 @@ const showPublishType = ref(false)
       </van-tabbar-item>
       <van-tabbar-item>
         <div class="publish" v-login="() => (showPublishType = true)">
-          <span class="iconfont icon-cc-plus-crude"></span>
+          <span class="iconfont icon-plus"></span>
         </div>
       </van-tabbar-item>
       <van-tabbar-item replace to="/message">
         <template #icon="{ active }">
           <LoadIcon iconSrc="http://127.0.0.1:3007/other/lord_icon/chat.json" :active="active"></LoadIcon>
         </template>
+        <van-badge v-show="messageStore.unreadCountTotal > 0" :content="messageStore.unreadCountTotal" />
         消息
       </van-tabbar-item>
+
       <van-tabbar-item replace to="/user">
         <template #icon="{ active }">
           <LoadIcon iconSrc="http://127.0.0.1:3007/other/lord_icon/account.json" :active="active"></LoadIcon>
@@ -44,7 +56,7 @@ const showPublishType = ref(false)
       </van-tabbar-item>
     </van-tabbar>
   </div>
-  <van-popup v-model:show="showPublishType" position="bottom" round :style="{ height: '40%' }">
+  <van-popup v-model:show="showPublishType" position="bottom" round :style="{ height: '70vw' }">
     <van-cell-group inset>
       <van-cell title="发布文章" size="large" to="/publish/article">
         <img src="@/assets/image/edit.png" alt=""
@@ -73,7 +85,7 @@ const showPublishType = ref(false)
   text-align: center;
   line-height: 100px;
   background-color: var(--main-color-red-2);
-  .icon-cc-plus-crude {
+  .icon-plus {
     color: var(--bg-color-1);
     font-size: 50px;
   }
@@ -95,5 +107,11 @@ const showPublishType = ref(false)
       margin-right: 40px;
     }
   }
+}
+:deep(.van-badge) {
+  position: absolute;
+  top: 15px;
+  right: 190px;
+  z-index: 2024;
 }
 </style>

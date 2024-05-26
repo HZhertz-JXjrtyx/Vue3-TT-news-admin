@@ -1,13 +1,17 @@
 <script setup>
-import { ref, computed, inject } from 'vue'
+import { ref, computed } from 'vue'
 import { useCommentStore } from '@/stores'
 
 const props = defineProps({
-  sourceType: {
+  commentType: {
     type: Number,
     required: true,
   },
-  sourceId: {
+  relatedId: {
+    type: String,
+    required: true,
+  },
+  replyUser: {
     type: String,
     required: true,
   },
@@ -15,20 +19,16 @@ const props = defineProps({
     type: String,
     required: false,
   },
+  isLike: {
+    type: Boolean,
+    required: true,
+  },
+  isCollect: {
+    type: Boolean,
+    required: false,
+  },
 })
 const emit = defineEmits(['scrollTo', 'clickCollect', 'clickLike'])
-
-let isCollected
-if (props.sourceType !== 3) {
-  isCollected = inject('isCollected')
-}
-const isLike = inject('isLike')
-// 评论popup显示隐藏
-const isShowTextarea = inject('isShowTextarea')
-// 评论数量
-const commentCount = inject('commentCount')
-// commentList 用来提交评论后更新评论列表
-const commentList = inject('commentList')
 
 const commentStore = useCommentStore()
 
@@ -42,13 +42,15 @@ const isSubmitDisabled = computed(() => {
 // 点击 input 显示 popup , 更改 pinia 中数据
 const clickInput = () => {
   // 更改 placeholder
-  commentStore.textareaPlaceholder = props.sourceType !== 3 ? '请输入评论' : `回复${props.replyName}:`
+  commentStore.textareaPlaceholder = props.commentType !== 3 ? '请输入评论' : `回复${props.replyName}:`
   // 显示 popup
-  isShowTextarea.value = true
-  // 页面类型 1：文章详情页 2：视频详情页 3：评论详情页
-  commentStore.typeParam = props.sourceType
+  commentStore.isShowTextarea = true
+  // 1: 文章评论 2: 视频评论 3: 评论回复 4: 回复回复
+  commentStore.commentType = props.commentType
   // 页面id
-  commentStore.sourceidParam = props.sourceId
+  commentStore.relatedId = props.relatedId
+
+  commentStore.replyUser = props.replyUser
 }
 // 提交
 const submit = async () => {
@@ -59,29 +61,35 @@ const submit = async () => {
     // 清空
     commentContent.value = ''
     // 关闭 popup
-    isShowTextarea.value = false
+    commentStore.isShowTextarea = false
     // 如果不是在评论详情页
-    if (props.sourceType !== 3) {
+    if (!commentStore.isShowCommentDetail) {
       // 如果不是对评论回复
-      if (res.data.type !== 3) {
+      if ([1, 2].includes(res.data.comment_type)) {
         // 将返回的数据添加在列表头部
-        commentList.value.unshift(res.data)
+        commentStore.commentList.unshift(res.data)
         // 更新数量
-        commentCount.value++
+        commentStore.commentCount++
         emit('scrollTo')
       } else {
         // 如果是对评论回复,找到回复项,添加在回复项 replies 头部
-        const replyIndex = commentList.value.findIndex((item) => {
-          return item.comment_id === res.data.source_id
+        const replyIndex = commentStore.commentList.findIndex((item) => {
+          return item._id === res.data.related_entity
         })
-        commentList.value[replyIndex].replies.unshift(res.data)
-        commentList.value[replyIndex].reply_count++
-        commentCount.value++
+        commentStore.commentList[replyIndex].replies.unshift(res.data)
+        commentStore.commentReplyList.length > 0 && commentStore.commentReplyList.unshift(res.data)
+        commentStore.replyCount++
+        commentStore.commentCount++
       }
     } else {
       // 如果是在评论详情页,将返回的数据添加在列表头部
-      commentList.value.unshift(res.data)
-      commentCount.value++
+      commentStore.commentReplyList.unshift(res.data)
+      const replyIndex = commentStore.commentList.findIndex((item) => {
+        return item._id === res.data.related_entity
+      })
+      commentStore.commentList[replyIndex].replies.unshift(res.data)
+      commentStore.replyCount++
+      commentStore.commentCount++
     }
   }
 }
@@ -103,7 +111,7 @@ const options = [
 ]
 /* 点击评论 */
 const clickComment = () => {
-  if (props.sourceType === 3) {
+  if (props.commentType === 3) {
     clickInput()
   } else {
     emit('scrollTo')
@@ -116,7 +124,7 @@ const clickComment = () => {
     <div class="bottom">
       <span
         class="iconfont"
-        :class="isLike ? 'icon-a-44tubiao-188' : 'icon-a-44tubiao-21'"
+        :class="isLike ? 'icon-like_fill' : 'icon-like'"
         v-login="
           () => {
             emit('clickLike')
@@ -124,17 +132,17 @@ const clickComment = () => {
         "
       ></span>
       <span
-        v-if="sourceType !== 3"
+        v-if="commentType !== 3"
         class="iconfont"
-        :class="isCollected ? 'icon-a-44tubiao-242' : 'icon-a-44tubiao-134'"
+        :class="isCollect ? 'icon-favorite_fill' : 'icon-favorite'"
         v-login="
           () => {
             emit('clickCollect')
           }
         "
       ></span>
-      <span class="iconfont icon-a-44tubiao-112" v-login="clickComment"></span>
-      <span class="iconfont icon-fenxiang" v-login="() => (isShowShare = true)"></span>
+      <span class="iconfont icon-message" v-login="clickComment"></span>
+      <span class="iconfont icon-share" v-login="() => (isShowShare = true)"></span>
       <input
         class="bottom-comment"
         v-model="commentContent"
@@ -146,10 +154,10 @@ const clickComment = () => {
     </div>
     <van-popup
       class="commentPopup"
-      v-model:show="isShowTextarea"
+      v-model:show="commentStore.isShowTextarea"
       round
       position="bottom"
-      :style="{ height: '30%' }"
+      :style="{ height: '60vw' }"
     >
       <van-field
         v-model="commentContent"
@@ -209,6 +217,7 @@ const clickComment = () => {
   }
 }
 .commentPopup {
+  box-shadow: 0 -5px 5px rgb(242, 242, 242);
   :deep(.van-button--small) {
     position: absolute;
     right: 20px;
@@ -220,5 +229,8 @@ const clickComment = () => {
   position: absolute;
   right: 0;
   top: -50px;
+}
+.van-overlay {
+  background: #ffffff00;
 }
 </style>

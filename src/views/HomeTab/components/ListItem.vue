@@ -1,5 +1,5 @@
 <script setup>
-import { formatCount, formatVideoDuration, formatPublishTime } from '@/utils'
+import { formatCount, formatVideoDuration, formatTimeRoughly } from '@/utils'
 
 const props = defineProps({
   news: {
@@ -29,7 +29,7 @@ const imgList = props.news.cover_list ? props.news.cover_list.slice(0, 3) : []
         <div class="content__publish-info news-publish-info">
           <span class="publish-info__user-nickname">{{ props.news.user_info.user_nickname }}</span>
           <span class="publish-info__comment-count">{{ props.news.comment_count }}评论</span>
-          <span class="publish-info__publish-time">{{ formatPublishTime(props.news.publish_time) }}</span>
+          <span class="publish-info__publish-time">{{ formatTimeRoughly(props.news.publish_time) }}</span>
         </div>
       </div>
       <div class="item__cover--right" v-if="uiStyle === 'image_right'">
@@ -44,14 +44,14 @@ const imgList = props.news.cover_list ? props.news.cover_list.slice(0, 3) : []
           <van-image fit="contain" position="center" :src="props.news.cover_src" />
         </div>
         <i class="content__playicon">
-          <span class="iconfont icon-playfill"></span>
+          <span class="iconfont icon-play_fill"></span>
         </i>
         <span class="content__duration">{{ formatVideoDuration(props.news.duration) }}</span>
       </div>
       <div class="item__publish-info news-publish-info">
         <span class="publish-info__user-nickname">{{ props.news.user_info.user_nickname }}</span>
         <span class="publish-info__comment-count">{{ formatCount(props.news.comment_count) }}评论</span>
-        <span class="publish-info__publish-time">{{ formatPublishTime(props.news.publish_time) }}</span>
+        <span class="publish-info__publish-time">{{ formatTimeRoughly(props.news.publish_time) }}</span>
       </div>
     </div>
   </div>
