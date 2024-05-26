@@ -1,6 +1,8 @@
 <script setup>
 import { ref, watchEffect, onMounted, onActivated, onDeactivated } from 'vue'
+import { showConfirmDialog } from 'vant'
 import { useUserStore, useMessageStore } from '@/stores'
+import { clearUnreadApi } from '@/api'
 import ConversationList from './components/ConversationList.vue'
 
 const userStore = useUserStore()
@@ -29,6 +31,30 @@ const onRefresh = async () => {
   await conversationListRef.value.onLoad()
   loading.value = false
 }
+
+const handleClearAll = () => {
+  messageStore.unreadCountTotal > 0 &&
+    showConfirmDialog({
+      title: '确定清除所有未读消息吗？',
+    })
+      .then(async () => {
+        // 发起删除请求
+        const res = await clearUnreadApi('all')
+        console.log(res)
+        if (res.status === 200) {
+          // 前端更新
+          for (let key in messageStore.notifyList) {
+            messageStore.notifyList[key].unReadCount = 0
+          }
+          messageStore.chatList.forEach((item) => {
+            item.unread_count = 0
+          })
+          messageStore.unreadCountTotal = 0
+        }
+      })
+      .catch()
+}
+
 onMounted(() => {
   console.log('MessageTab onMounted')
 })
@@ -43,7 +69,13 @@ onDeactivated(() => {
 </script>
 
 <template>
-  <div class="tab-title">消息私信</div>
+  <div class="nav-bar">
+    <span class="tab-title">消息私信</span>
+    <i class="clear-icon">
+      <span class="iconfont icon-clear" @click="handleClearAll"></span>
+    </i>
+  </div>
+
   <van-pull-refresh v-model="loading" @refresh="onRefresh">
     <template #loading>
       <img class="loading-gif-1" src="@/assets/image/loading1.gif" />
@@ -157,18 +189,37 @@ onDeactivated(() => {
 </template>
 
 <style lang="less" scoped>
-.tab-title {
+.nav-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: fixed;
   top: 0;
   z-index: 2024;
   width: 100%;
   height: 100px;
 
-  font-size: 34px;
-  text-align: center;
-  line-height: 100px;
   background-color: #fff;
   border-bottom: 1px solid #eeeeee;
+  .tab-title {
+    font-size: 34px;
+  }
+  .clear-icon {
+    // position: relative;
+    display: inline-block;
+    width: 45px;
+    height: 45px;
+    margin: 0 20px;
+    border: 1px solid #939393;
+    border-radius: 50%;
+    background-color: #f3f3f3;
+    .icon-clear {
+      // position: absolute;
+      // top: 1px;
+      line-height: 45px;
+      margin-left: 2px;
+    }
+  }
 }
 
 .message-container {
