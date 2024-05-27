@@ -27,6 +27,12 @@ const quill_pxtovw = pxtovw({
 export default defineConfig({
   server: {
     proxy: {
+      '/api': {
+        target: 'http://127.0.0.1:3007',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+
       '/socket.io': {
         target: 'http://127.0.0.1:3007',
         changeOrigin: true,
