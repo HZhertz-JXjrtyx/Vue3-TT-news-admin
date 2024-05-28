@@ -91,6 +91,7 @@ onMounted(() => {
   }
 }
 .van-popup {
+  z-index: 2025 !important;
   background-color: var(--bg-color-3);
   .van-cell-group {
     margin: 60px 40px;

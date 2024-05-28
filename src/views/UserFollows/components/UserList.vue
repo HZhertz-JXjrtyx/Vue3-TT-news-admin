@@ -62,7 +62,7 @@ const followText = computed(() => {
 <template>
   <div class="user-list">
     <van-empty
-      v-if="!loading && userList.length === 0"
+      v-if="!hasMore && userList.length === 0"
       image="https://fastly.jsdelivr.net/npm/@vant/assets/custom-empty-image.png"
       image-size="80"
       description="没有用户"

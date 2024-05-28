@@ -218,7 +218,7 @@ const handleNext = async () => {
 
 .ql-container {
   border: none;
-  height: 1016px;
+  height: calc(100vh - 370px);
   overflow: auto;
 }
 #toolbar {

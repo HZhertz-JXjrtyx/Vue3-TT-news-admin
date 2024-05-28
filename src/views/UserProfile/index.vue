@@ -77,7 +77,7 @@ const onSubmit = async () => {
             label="简介"
             rows="2"
             type="textarea"
-            maxlength="30"
+            maxlength="50"
             show-word-limit
             placeholder="请输入简介"
           />
@@ -128,6 +128,7 @@ const onSubmit = async () => {
     :deep(textarea) {
       background-color: rgb(236, 236, 236) !important;
       border-radius: 10px;
+      height: 300px;
     }
     :deep(.van-cell__title) {
       width: 60px;

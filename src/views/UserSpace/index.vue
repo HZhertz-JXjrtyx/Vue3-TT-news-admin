@@ -123,12 +123,20 @@ const handleChat = async () => {
       <div class="user-avatar"><img :src="userDetail.user_avatar" alt="" /></div>
       <div class="right-info">
         <div class="user-data">
-          <router-link :to="{ name: 'userfollows', params: { userId: props.userId } }" class="fans item">
+          <router-link
+            class="fans item"
+            :to="{ name: 'userfollows', params: { userId: props.userId } }"
+            @click="userStore.userFollowActiveTab = 1"
+          >
             <span>{{ userDetail.fans_count || 0 }}</span>
             <span>粉丝</span>
           </router-link>
           <van-divider vertical />
-          <router-link :to="{ name: 'userfollows', params: { userId: props.userId } }" class="followers item">
+          <router-link
+            class="followers item"
+            :to="{ name: 'userfollows', params: { userId: props.userId } }"
+            @click="userStore.userFollowActiveTab = 0"
+          >
             <span>{{ userDetail.followers_count || 0 }}</span>
             <span>关注</span>
           </router-link>

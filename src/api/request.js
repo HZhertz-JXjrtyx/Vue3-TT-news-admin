@@ -5,7 +5,7 @@ import { useUserStore } from '@/stores'
 import router from '@/router'
 import { removeLocal } from '@/utils'
 
-const baseURL = 'http://localhost:3007'
+const baseURL = '/api'
 const instance = axios.create({
   baseURL,
   timeout: 10000,
@@ -59,4 +59,3 @@ instance.interceptors.response.use(
 )
 
 export default instance
-export { baseURL }
